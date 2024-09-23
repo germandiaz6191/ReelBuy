@@ -1,70 +1,69 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ReelBuy.Backend.Data;
+using ReelBuy.Backend.UnitsOfWork.Implementations;
+using ReelBuy.Backend.UnitsOfWork.Interfaces;
+using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 
 namespace ReelBuy.Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MarketplacesController : ControllerBase
+public class MarketplacesController : GenericController<Marketplace>
 {
-    private readonly DataContext _context;
+    private readonly IMarketplacesUnitOfWork _marketplacesUnitOfWork;
 
-    public MarketplacesController(DataContext context)
+    public MarketplacesController(IGenericUnitOfWork<Marketplace> unit, IMarketplacesUnitOfWork marketplacesUnitOfWork) : base(unit)
     {
-        _context = context;
+        _marketplacesUnitOfWork = marketplacesUnitOfWork;
+    }
+
+    [HttpGet("combo")]
+    public async Task<IActionResult> GetComboAsync()
+    {
+        return Ok(await _marketplacesUnitOfWork.GetComboAsync());
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAsync()
+    public override async Task<IActionResult> GetAsync()
     {
-        return Ok(await _context.Marketplaces.ToListAsync());
+        var response = await _marketplacesUnitOfWork.GetAsync();
+        if (response.WasSuccess)
+        {
+            return Ok(response.Result);
+        }
+        return BadRequest();
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(int id)
+    public override async Task<IActionResult> GetAsync(int id)
     {
-        var marketplace = await _context.Marketplaces.FindAsync(id);
-        if (marketplace == null)
+        var response = await _marketplacesUnitOfWork.GetAsync(id);
+        if (response.WasSuccess)
         {
-            return NotFound();
+            return Ok(response.Result);
         }
-        return Ok(marketplace);
+        return NotFound(response.Message);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostAsync(Marketplace marketplace)
+    [HttpGet("paginated")]
+    public override async Task<IActionResult> GetAsync(PaginationDTO pagination)
     {
-        _context.Add(marketplace);
-        await _context.SaveChangesAsync();
-        return Ok(marketplace);
+        var response = await _marketplacesUnitOfWork.GetAsync(pagination);
+        if (response.WasSuccess)
+        {
+            return Ok(response.Result);
+        }
+        return BadRequest();
     }
 
-    [HttpPut]
-    public async Task<IActionResult> PutAsync(Marketplace marketplace)
+    [HttpGet("totalRecordsPaginated")]
+    public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
-        var currentMarketplace = await _context.Marketplaces.FindAsync(marketplace.Id);
-        if (currentMarketplace == null)
+        var action = await _marketplacesUnitOfWork.GetTotalRecordsAsync(pagination);
+        if (action.WasSuccess)
         {
-            return NotFound();
+            return Ok(action.Result);
         }
-        currentMarketplace.Name = marketplace.Name;
-        _context.Update(currentMarketplace);
-        await _context.SaveChangesAsync();
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteAsync(int id)
-    {
-        var marketPlace = await _context.Marketplaces.FindAsync(id);
-        if (marketPlace == null)
-        {
-            return NotFound();
-        }
-        _context.Remove(marketPlace);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        return BadRequest();
     }
 }

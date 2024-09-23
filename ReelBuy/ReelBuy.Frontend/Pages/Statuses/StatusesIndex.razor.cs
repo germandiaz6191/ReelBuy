@@ -4,7 +4,6 @@ using Microsoft.Extensions.Localization;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
-using System.Diagnostics.Metrics;
 
 namespace ReelBuy.Frontend.Pages.Statuses;
 
