@@ -1,0 +1,37 @@
+﻿@page "/marketplaces"
+
+<h3>@Localizer["Marketplaces"]</h3>
+
+<div class="mb-3">
+    <a class="btn btn-primary" href="/marketplaces/create">@Localizer["New"] @Localizer["Marketplace"]</a>
+</div>
+
+<GenericList MyList="Marketplaces">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Localizer["Marketplace"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var marketplace in Marketplaces!)
+                {
+                    <tr>
+                        <td>
+                            @marketplace.Name
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" href="/marketplaces/edit/@marketplace.Id">@Localizer["Edit"]</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(marketplace))>@Localizer["Delete"]</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>
+
+
+

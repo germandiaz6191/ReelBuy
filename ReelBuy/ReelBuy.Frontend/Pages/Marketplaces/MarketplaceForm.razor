@@ -1,0 +1,20 @@
+﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>@Localizer["Marketplace"]:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Marketplace.Name" />
+            <ValidationMessage For="@(() => Marketplace.Name)" />
+        </div>
+        <label>@Localizer["Domain"]:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Marketplace.Domain" />
+            <ValidationMessage For="@(() => Marketplace.Domain)" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
+    <button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>
+</EditForm>

@@ -1,0 +1,12 @@
+﻿@page "/statuses/edit/{Id:int}"
+
+<h3>@Localizer["Edit"] @Localizer["Status"]</h3>
+
+@if (status is null)
+{
+    <Loading />
+}
+else
+{
+    <StatusForm @ref="statusForm" Status="status" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}

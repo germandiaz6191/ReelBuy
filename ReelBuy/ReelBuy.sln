@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReelBuy.Backend", "ReelBuy.Backend\ReelBuy.Backend.csproj", "{1287B794-0CEB-4C0E-B312-877948569C79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReelBuy.Backend", "ReelBuy.Backend\ReelBuy.Backend.csproj", "{1287B794-0CEB-4C0E-B312-877948569C79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReelBuy.Frontend", "ReelBuy.Frontend\ReelBuy.Frontend.csproj", "{54B99BFE-8A25-4BAF-ADE4-CCAE95917725}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReelBuy.Frontend", "ReelBuy.Frontend\ReelBuy.Frontend.csproj", "{54B99BFE-8A25-4BAF-ADE4-CCAE95917725}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReelBuy.Shared", "ReelBuy.Shared\ReelBuy.Shared.csproj", "{F616DD83-F792-45FE-BF32-4DEE4E9A138C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReelBuy.Shared", "ReelBuy.Shared\ReelBuy.Shared.csproj", "{F616DD83-F792-45FE-BF32-4DEE4E9A138C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReelBuy.Tests", "ReelBuy.Tests\ReelBuy.Tests.csproj", "{3D5D8D95-12E2-42C6-BD77-8A1C73A4A926}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReelBuy.Tests", "ReelBuy.Tests\ReelBuy.Tests.csproj", "{3D5D8D95-12E2-42C6-BD77-8A1C73A4A926}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
