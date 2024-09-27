@@ -21,6 +21,10 @@ builder.Services.AddScoped<IStatusesRepository, StatusesRepository>();
 builder.Services.AddScoped<IStatusesUnitOfWork, StatusesUnitOfWork>();
 builder.Services.AddScoped<IMarketplacesRepository, MarketplacesRepository>();
 builder.Services.AddScoped<IMarketplacesUnitOfWork, MarketplacesUnitOfWork>();
+builder.Services.AddScoped<IProfilesRepository, ProfilesRepository>();
+builder.Services.AddScoped<IProfilesUnitOfWork, ProfilesUnitOfWork>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<ICategoriesUnitOfWork, CategoriesUnitOfWork>();
 
 var app = builder.Build();
 
