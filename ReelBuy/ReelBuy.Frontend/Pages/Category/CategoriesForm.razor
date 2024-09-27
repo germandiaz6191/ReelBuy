@@ -1,0 +1,15 @@
+﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+
+<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label>@Localizer["Categories"]:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Categories.Name" />
+            <ValidationMessage For="@(() => Categories.Name)" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
+    <button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>
+</EditForm>
