@@ -9,6 +9,7 @@ public class DataContext : DbContext
     {
     }
 
+    public DbSet<Country> Countries { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Status> Statuses { get; set; }
     public DbSet<Marketplace> Marketplaces { get; set; }
@@ -16,6 +17,7 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Country>().HasIndex(x => x.Name).IsUnique();
         modelBuilder.Entity<Product>().HasIndex(i => i.Name);
         modelBuilder.Entity<Status>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Marketplace>().HasIndex(i => i.Name).IsUnique();
