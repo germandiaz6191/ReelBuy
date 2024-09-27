@@ -1,0 +1,12 @@
+﻿@page "/profiles/edit/{Id:int}"
+
+<h3>@Localizer["Edit"] @Localizer["Profiles"]</h3>
+
+@if (profile is null)
+{
+    <Loading />
+}
+else
+{
+    <ProfilesForm @ref="profileForm" Profiles="profile" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}

@@ -1,0 +1,34 @@
+﻿@page "/profiles"
+
+<h3>@Localizer["Profiles"]</h3>
+
+<div class="mb-3">
+    <a class="btn btn-primary" href="/profiles/create">@Localizer["New"] @Localizer["Profile"]</a>
+</div>
+
+<GenericList MyList="Profiles">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Localizer["Profiles"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var profile in Profiles!)
+                {
+                    <tr>
+                        <td>
+                            @profile.Name
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" href="/profiles/edit/@profile.Id">@Localizer["Edit"]</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(profile))>@Localizer["Delete"]</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>

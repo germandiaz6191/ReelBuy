@@ -13,6 +13,8 @@ public class DataContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Status> Statuses { get; set; }
     public DbSet<Marketplace> Marketplaces { get; set; }
+    public DbSet<Profiles> Profiles{ get; set; }
+    public DbSet<Categories> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,5 +23,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<Product>().HasIndex(i => i.Name);
         modelBuilder.Entity<Status>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Marketplace>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Profiles>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Categories>().HasIndex(i => i.Name).IsUnique();
     }
 }
