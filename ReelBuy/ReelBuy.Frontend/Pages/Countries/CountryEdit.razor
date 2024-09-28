@@ -1,13 +1,12 @@
-﻿@page "/countries/edit/{Id:int}"
-
-<h3>@Localizer["Edit"] @Localizer["Countries"]</h3>
-
-@if (country is null)
+﻿@if(country is null)
 {
-    <Loading />
+    <Loading/>
 }
 else
 {
-    <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
-
+    <MudDialog>
+        <DialogContent>
+            <CountryForm @ref="countryForm" Country="country" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
 }
