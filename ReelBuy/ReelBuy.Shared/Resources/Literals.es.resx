@@ -214,4 +214,28 @@
   <data name="Profile" xml:space="preserve">
     <value>Perfil</value>
   </data>
+  <data name="RecordsdNumber" xml:space="preserve">
+    <value>Número de registros</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Buscar</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtrar</value>
+  </data>
+  <data name="Clean" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Acciones</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Si</value>
+  </data>
 </root>
