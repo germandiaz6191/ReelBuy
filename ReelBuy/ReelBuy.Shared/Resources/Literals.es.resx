@@ -214,7 +214,7 @@
   <data name="Profile" xml:space="preserve">
     <value>Perfil</value>
   </data>
-  <data name="RecordsdNumber" xml:space="preserve">
+  <data name="RecordsNumber" xml:space="preserve">
     <value>Número de registros</value>
   </data>
   <data name="Search" xml:space="preserve">
@@ -229,13 +229,10 @@
   <data name="Actions" xml:space="preserve">
     <value>Acciones</value>
   </data>
-  <data name="Actions" xml:space="preserve">
-    <value>Acciones</value>
-  </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
   </data>
-  <data name="Yes" xml:space="preserve">
-    <value>Si</value>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Por favor espere...</value>
   </data>
 </root>
