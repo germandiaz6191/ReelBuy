@@ -1,5 +1,4 @@
-﻿using ReelBuy.Backend.Repositories.Implementations;
-using ReelBuy.Backend.Repositories.Interfaces;
+﻿using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;

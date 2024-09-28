@@ -6,92 +6,91 @@ using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Responses;
 
-namespace ReelBuy.Backend.Repositories.Implementations
+namespace ReelBuy.Backend.Repositories.Implementations;
+
+public class ProfilesRepository : GenericRepository<Profile>, IProfilesRepository
 {
-    public class ProfilesRepository : GenericRepository<Profiles>, IProfilesRepository
+    private readonly DataContext _context;
+
+    public ProfilesRepository(DataContext context) : base(context)
     {
-        private readonly DataContext _context;
+        _context = context;
+    }
 
-        public ProfilesRepository(DataContext context) : base(context)
-        {
-            _context = context;
-        }
-
-        public override async Task<ActionResponse<IEnumerable<Profiles>>> GetAsync()
-        {
-            var profiles = await _context.Profiles
-                .OrderBy(c => c.Name)
-                .ToListAsync();
-            return new ActionResponse<IEnumerable<Profiles>>
-            {
-                WasSuccess = true,
-                Result = profiles
-            };
-        }
-
-        public override async Task<ActionResponse<Profiles>> GetAsync(int id)
-        {
-            var profile = await _context.Profiles
-                 .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (profile == null)
-            {
-                return new ActionResponse<Profiles>
-                {
-                    WasSuccess = false,
-                    Message = "ERR001"
-                };
-            }
-
-            return new ActionResponse<Profiles>
-            {
-                WasSuccess = true,
-                Result = profile
-            };
-        }
-
-        public async Task<IEnumerable<Profiles>> GetComboAsync()
-        {
-            return await _context.Profiles
-                .OrderBy(c => c.Name)
+    public override async Task<ActionResponse<IEnumerable<Profile>>> GetAsync()
+    {
+        var profiles = await _context.Profiles
+            .OrderBy(c => c.Name)
             .ToListAsync();
-        }
-
-        public override async Task<ActionResponse<IEnumerable<Profiles>>> GetAsync(PaginationDTO pagination)
+        return new ActionResponse<IEnumerable<Profile>>
         {
-            var queryable = _context.Profiles
-                .AsQueryable();
+            WasSuccess = true,
+            Result = profiles
+        };
+    }
 
-            if (!string.IsNullOrWhiteSpace(pagination.Filter))
-            {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
-            }
+    public override async Task<ActionResponse<Profile>> GetAsync(int id)
+    {
+        var profile = await _context.Profiles
+             .FirstOrDefaultAsync(c => c.Id == id);
 
-            return new ActionResponse<IEnumerable<Profiles>>
+        if (profile == null)
+        {
+            return new ActionResponse<Profile>
             {
-                WasSuccess = true,
-                Result = await queryable
-                    .OrderBy(x => x.Name)
-                    .Paginate(pagination)
-                    .ToListAsync()
+                WasSuccess = false,
+                Message = "ERR001"
             };
         }
 
-        public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination)
+        return new ActionResponse<Profile>
         {
-            var queryable = _context.Profiles.AsQueryable();
+            WasSuccess = true,
+            Result = profile
+        };
+    }
 
-            if (!string.IsNullOrWhiteSpace(pagination.Filter))
-            {
-                queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
-            }
+    public async Task<IEnumerable<Profile>> GetComboAsync()
+    {
+        return await _context.Profiles
+            .OrderBy(c => c.Name)
+        .ToListAsync();
+    }
 
-            double count = await queryable.CountAsync();
-            return new ActionResponse<int>
-            {
-                WasSuccess = true,
-                Result = (int)count
-            };
+    public override async Task<ActionResponse<IEnumerable<Profile>>> GetAsync(PaginationDTO pagination)
+    {
+        var queryable = _context.Profiles
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(pagination.Filter))
+        {
+            queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
         }
+
+        return new ActionResponse<IEnumerable<Profile>>
+        {
+            WasSuccess = true,
+            Result = await queryable
+                .OrderBy(x => x.Name)
+                .Paginate(pagination)
+                .ToListAsync()
+        };
+    }
+
+    public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination)
+    {
+        var queryable = _context.Profiles.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(pagination.Filter))
+        {
+            queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+        }
+
+        double count = await queryable.CountAsync();
+        return new ActionResponse<int>
+        {
+            WasSuccess = true,
+            Result = (int)count
+        };
     }
 }

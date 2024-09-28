@@ -1,0 +1,14 @@
+﻿@page "/categories/edit/{Id:int}"
+
+<h3>@Localizer["Edit"] @Localizer["Category"]</h3>
+
+@if (category is null)
+{
+    <Loading />
+}
+else
+{
+    <CategoryForm @ref="categoryForm" Category="category" OnValidSubmit="EditAsync" ReturnAction="Return" />
+}
+
+

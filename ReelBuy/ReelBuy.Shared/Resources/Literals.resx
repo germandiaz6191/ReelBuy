@@ -222,4 +222,16 @@
   <data name="Countries" xml:space="preserve">
     <value>Countries</value>
   </data>
+  <data name="Reputation" xml:space="preserve">
+    <value>Reputation</value>
+  </data>
+  <data name="Reputations" xml:space="preserve">
+    <value>Reputations</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
 </root>

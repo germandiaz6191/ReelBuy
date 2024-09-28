@@ -1,6 +1,6 @@
 ﻿@page "/statuses/create"
 
-<h3>Crear Status</h3>
+<h3>@Localizer["New"] @Localizer["Status"]</h3>
 
 <StatusForm @ref="statusForm" Status="status" OnValidSubmit="CreateAsync" ReturnAction="Return" />
 

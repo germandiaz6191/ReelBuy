@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ReelBuy.Shared.Resources;
+using System.ComponentModel.DataAnnotations;
 
 namespace ReelBuy.Shared.Entities;
 
@@ -6,7 +7,8 @@ public class Status
 {
     public int Id { get; set; }
 
-    [MaxLength(50)]
-    [Required]
+    [Display(Name = "Name", ResourceType = typeof(Literals))]
+    [MaxLength(50, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+    [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public String Name { get; set; } = null!;
 }

@@ -2,18 +2,17 @@
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Responses;
 
-namespace ReelBuy.Backend.Repositories.Interfaces
+namespace ReelBuy.Backend.Repositories.Interfaces;
+
+public interface IStatusesRepository
 {
-    public interface IStatusesRepository
-    {
-        Task<ActionResponse<Status>> GetAsync(int id);
+    Task<ActionResponse<Status>> GetAsync(int id);
 
-        Task<ActionResponse<IEnumerable<Status>>> GetAsync();
+    Task<ActionResponse<IEnumerable<Status>>> GetAsync();
 
-        Task<IEnumerable<Status>> GetComboAsync();
+    Task<IEnumerable<Status>> GetComboAsync();
 
-        Task<ActionResponse<IEnumerable<Status>>> GetAsync(PaginationDTO pagination);
+    Task<ActionResponse<IEnumerable<Status>>> GetAsync(PaginationDTO pagination);
 
-        Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
-    }
+    Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
 }

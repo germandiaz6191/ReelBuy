@@ -202,4 +202,16 @@
   <data name="Countries" xml:space="preserve">
     <value>Paises</value>
   </data>
+  <data name="Reputation" xml:space="preserve">
+    <value>Calificación</value>
+  </data>
+  <data name="Reputations" xml:space="preserve">
+    <value>Calificaciones</value>
+  </data>
+  <data name="Score" xml:space="preserve">
+    <value>Calificación</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Perfil</value>
+  </data>
 </root>

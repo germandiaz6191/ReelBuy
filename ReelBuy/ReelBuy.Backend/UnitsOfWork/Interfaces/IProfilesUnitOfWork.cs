@@ -2,18 +2,17 @@ using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Responses;
 
-namespace ReelBuy.Backend.UnitsOfWork.Interfaces
+namespace ReelBuy.Backend.UnitsOfWork.Interfaces;
+
+public interface IProfilesUnitOfWork
 {
-    public interface IProfilesUnitOfWork
-    {
-        Task<ActionResponse<Profiles>> GetAsync(int id);
+    Task<ActionResponse<Profile>> GetAsync(int id);
 
-        Task<ActionResponse<IEnumerable<Profiles>>> GetAsync();
+    Task<ActionResponse<IEnumerable<Profile>>> GetAsync();
 
-        Task<IEnumerable<Profiles>> GetComboAsync();
+    Task<IEnumerable<Profile>> GetComboAsync();
 
-        Task<ActionResponse<IEnumerable<Profiles>>> GetAsync(PaginationDTO pagination);
+    Task<ActionResponse<IEnumerable<Profile>>> GetAsync(PaginationDTO pagination);
 
-        Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
-    }
+    Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
 }

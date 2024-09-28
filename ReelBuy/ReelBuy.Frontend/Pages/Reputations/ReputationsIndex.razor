@@ -1,0 +1,37 @@
+﻿@page "/reputations"
+
+<h3>@Localizer["Reputations"]</h3>
+
+<div class="mb-3">
+    <a class="btn btn-primary" href="/reputations/create">@Localizer["New"] @Localizer["Reputation"]</a>
+</div>
+
+<GenericList MyList="Reputations">
+    <Body>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@Localizer["Reputation"]</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reputation in Reputations!)
+                {
+                    <tr>
+                        <td>
+                            @reputation.Score
+                        </td>
+                        <td>
+                            <a class="btn btn-warning" href="/reputations/edit/@reputation.Id">@Localizer["Edit"]</a>
+                            <button class="btn btn-danger" @onclick=@(() => DeleteAsync(reputation))>@Localizer["Delete"]</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Body>
+</GenericList>
+
+
+

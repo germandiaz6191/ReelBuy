@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ReelBuy.Backend.Data;
 using ReelBuy.Backend.UnitsOfWork.Implementations;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;

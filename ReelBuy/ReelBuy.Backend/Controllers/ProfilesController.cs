@@ -7,13 +7,11 @@ namespace ReelBuy.Backend.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
-
-public class ProfilesController : GenericController<Profiles>
+public class ProfilesController : GenericController<Profile>
 {
     private readonly IProfilesUnitOfWork _profilesUnitOfWork;
 
-    public ProfilesController(IGenericUnitOfWork<Profiles> unit, IProfilesUnitOfWork profilesUnitOfWork) : base(unit)
+    public ProfilesController(IGenericUnitOfWork<Profile> unit, IProfilesUnitOfWork profilesUnitOfWork) : base(unit)
     {
         _profilesUnitOfWork = profilesUnitOfWork;
     }
@@ -67,6 +65,4 @@ public class ProfilesController : GenericController<Profiles>
         }
         return BadRequest();
     }
-
-
 }

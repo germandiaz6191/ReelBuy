@@ -9,11 +9,11 @@ namespace ReelBuy.Backend.Controllers;
 [Route("api/[controller]")]
 
 
-public class CategoriesController : GenericController<Categories>
+public class CategoriesController : GenericController<Category>
 {
     private readonly ICategoriesUnitOfWork _categoriesUnitOfWork;
 
-    public CategoriesController(IGenericUnitOfWork<Categories> unit, ICategoriesUnitOfWork categoriesUnitOfWork) : base(unit)
+    public CategoriesController(IGenericUnitOfWork<Category> unit, ICategoriesUnitOfWork categoriesUnitOfWork) : base(unit)
     {
         _categoriesUnitOfWork = categoriesUnitOfWork;
     }

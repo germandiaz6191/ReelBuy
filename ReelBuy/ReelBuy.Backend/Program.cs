@@ -27,6 +27,8 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 builder.Services.AddScoped<ICategoriesUnitOfWork, CategoriesUnitOfWork>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesUnitOfWork, CountriesUnitOfWork>();
+builder.Services.AddScoped<IReputationsRepository, ReputationsRepository>();
+builder.Services.AddScoped<IReputationsUnitOfWork, ReputationsUnitOfWork>();
 
 var app = builder.Build();
 

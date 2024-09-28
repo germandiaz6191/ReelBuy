@@ -1,0 +1,7 @@
+﻿@page "/reputations/create"
+
+<h3>@Localizer["New"] @Localizer["Reputation"]</h3>
+
+<ReputationForm @ref="reputationForm" Reputation="reputation" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+
+
