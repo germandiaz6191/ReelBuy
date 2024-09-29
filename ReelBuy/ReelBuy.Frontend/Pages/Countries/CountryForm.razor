@@ -2,7 +2,7 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <MudTextField Label="@Localizer["Country"]"
+    <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Country.Name"
                   For="@(() => Country.Name)"
                   Class="mb-4" />
