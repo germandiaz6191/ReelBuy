@@ -1,5 +1,5 @@
-﻿@page "/marketplaces/create"
-
-<h3>@Localizer["New"] @Localizer["Marketplace"]</h3>
-
-<MarketplaceForm @ref="marketplaceForm" Marketplace="marketplace" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+﻿<MudDialog>
+    <DialogContent>
+        <MarketplaceForm @ref="marketplaceForm" Marketplace="marketplace" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+    </DialogContent>
+</MudDialog>

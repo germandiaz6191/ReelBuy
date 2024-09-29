@@ -1,12 +1,12 @@
-﻿@page "/profiles/edit/{Id:int}"
-
-<h3>@Localizer["Edit"] @Localizer["Profiles"]</h3>
-
-@if (profile is null)
+﻿@if(profile is null)
 {
-    <Loading />
+    <Loading/>
 }
 else
 {
-    <ProfileForm @ref="profileForm" Profile="profile" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <MudDialog>
+        <DialogContent>
+            <ProfileForm @ref="profileForm" Profile="profile" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
 }

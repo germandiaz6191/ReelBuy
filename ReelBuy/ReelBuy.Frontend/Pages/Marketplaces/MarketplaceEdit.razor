@@ -1,13 +1,12 @@
-﻿@page "/marketplaces/edit/{Id:int}"
-
-<h3>@Localizer["Edit"] @Localizer["Marketplace"]</h3>
-
-@if (marketplace is null)
+﻿@if(marketplace is null)
 {
-    <Loading />
+    <Loading/>
 }
 else
 {
-    <MarketplaceForm @ref="marketplaceForm" Marketplace="marketplace" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <MudDialog>
+        <DialogContent>
+            <MarketplaceForm @ref="marketplaceForm" Marketplace="marketplace" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
 }
-
