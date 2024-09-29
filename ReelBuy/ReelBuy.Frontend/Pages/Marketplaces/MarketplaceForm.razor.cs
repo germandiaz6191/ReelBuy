@@ -1,7 +1,7 @@
 using CurrieTechnologies.Razor.SweetAlert2;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;

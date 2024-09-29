@@ -2,16 +2,25 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <div class="mb-3">
-        <label>@Localizer["Profile"]:</label>
-        <div>
-            <InputText class="form-control" @bind-Value="@Profile.Name" />
-            <ValidationMessage For="@(() => Profile.Name)" />
-        </div>
-    </div>
+    <MudTextField Label="@Localizer["Profile"]"
+                  @bind-Value="@Profile.Name"
+                  For="@(() => Profile.Name)"
+                  Class="mb-4" />
 
-    <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
-    <button class="btn btn-success" @onclick="ReturnAction">@Localizer["Return"]</button>
+    <MudButton Variant="Variant.Outlined"
+               StartIcon="@Icons.Material.Filled.ArrowBack"
+               Color="Color.Info"
+               OnClick="ReturnAction">
+        @Localizer["Return"]
+    </MudButton>
+
+    <MudButton Variant="Variant.Outlined"
+               StartIcon="@Icons.Material.Filled.Check"
+               Color="Color.Primary"
+               ButtonType="ButtonType.Submit">
+        @Localizer["SaveChanges"]
+    </MudButton>
 </EditForm>
+
 
 

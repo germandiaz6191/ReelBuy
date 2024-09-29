@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ReelBuy.Shared.Resources;
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Resources;
 
 namespace ReelBuy.Frontend.Pages.Profiles;
 

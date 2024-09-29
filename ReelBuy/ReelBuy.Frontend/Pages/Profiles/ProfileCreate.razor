@@ -1,5 +1,5 @@
-﻿@page "/profiles/create"
-
-<h3>@Localizer["New"] @Localizer["Profile"]</h3>
-
-<ProfileForm @ref="profileForm" Profile="profile" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+﻿<MudDialog>
+    <DialogContent>
+        <ProfileForm @ref="profileForm" Profile="profile" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+    </DialogContent>
+</MudDialog>
