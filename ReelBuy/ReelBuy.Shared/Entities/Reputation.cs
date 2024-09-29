@@ -10,7 +10,7 @@ public class Reputation
     [Display(Name = "Name", ResourceType = typeof(Literals))]
     [MaxLength(20, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
-    public String Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     [Display(Name = "Score", ResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]

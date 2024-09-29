@@ -10,10 +10,10 @@ public class Marketplace
     [Display(Name = "Name", ResourceType = typeof(Literals))]
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
-    public String Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 
     [Display(Name = "Domain", ResourceType = typeof(Literals))]
     [MaxLength(60, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
-    public String Domain { get; set; } = null!;
+    public string Domain { get; set; } = null!;
 }

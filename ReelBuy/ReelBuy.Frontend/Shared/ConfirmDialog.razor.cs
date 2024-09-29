@@ -5,7 +5,7 @@ using MudBlazor;
 
 namespace ReelBuy.Frontend.Shared;
 
-public partial class ConfirmDialog
+public partial class ConfirmDialog : ComponentBase
 {
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;

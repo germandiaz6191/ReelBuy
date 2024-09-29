@@ -10,5 +10,5 @@ public class Status
     [Display(Name = "Name", ResourceType = typeof(Literals))]
     [MaxLength(50, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
-    public String Name { get; set; } = null!;
+    public string Name { get; set; } = null!;
 }
