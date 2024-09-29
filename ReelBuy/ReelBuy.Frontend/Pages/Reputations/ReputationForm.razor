@@ -3,11 +3,18 @@
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
     <div class="mb-3">
-        <label>@Localizer["Reputation"]:</label>
-        <div>
-            <InputNumber class="form-control" @bind-Value="@Reputation.Score" />
-            <ValidationMessage For="@(() => Reputation.Score)" />
-        </div>
+        
+          <MudTextField Label="@Localizer["Name"]"
+                  @bind-Value="@Reputation.Name"
+                  For="@(() => Reputation.Name)"
+                  Class="mb-4" />
+        
+            
+            <MudNumericField Label="@Localizer["Score"]"
+                          @bind-Value="@Reputation.Score"
+                          For="@(() => Reputation.Score)"
+                          Class="mb-4" />
+     
     </div>
 
     <button class="btn btn-primary" type="submit">@Localizer["SaveChanges"]</button>
