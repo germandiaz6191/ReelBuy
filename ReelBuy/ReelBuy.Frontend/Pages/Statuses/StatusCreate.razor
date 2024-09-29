@@ -1,6 +1,5 @@
-﻿@page "/statuses/create"
-
-<h3>@Localizer["New"] @Localizer["Status"]</h3>
-
-<StatusForm @ref="statusForm" Status="status" OnValidSubmit="CreateAsync" ReturnAction="Return" />
-
+﻿<MudDialog>
+    <DialogContent>
+        <StatusForm @ref="statusForm" Status="status" OnValidSubmit="CreateAsync" ReturnAction="Return" />
+    </DialogContent>
+</MudDialog>

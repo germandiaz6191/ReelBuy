@@ -26,5 +26,6 @@ public class DataContext : DbContext
         modelBuilder.Entity<Marketplace>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Profile>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Category>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Reputation>().HasIndex(i => i.Name).IsUnique();
     }
 }

@@ -20,7 +20,7 @@ public class ReputationsRepository : GenericRepository<Reputation>, IReputations
     public override async Task<ActionResponse<IEnumerable<Reputation>>> GetAsync()
     {
         var reputations = await _context.Reputations
-            .OrderBy(c => c.Score)
+            .OrderBy(c => c.Name)
             .ToListAsync();
         return new ActionResponse<IEnumerable<Reputation>>
         {
@@ -53,7 +53,7 @@ public class ReputationsRepository : GenericRepository<Reputation>, IReputations
     public async Task<IEnumerable<Reputation>> GetComboAsync()
     {
         return await _context.Reputations
-             .OrderBy(c => c.Score)
+             .OrderBy(c => c.Name)
          .ToListAsync();
     }
 
@@ -63,14 +63,14 @@ public class ReputationsRepository : GenericRepository<Reputation>, IReputations
                     .AsQueryable();
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
-            queryable = queryable.Where(x => x.Score.Equals(pagination.Filter));
+            queryable = queryable.Where(x => x.Name. ToLower().Contains(pagination.Filter.ToLower()));
         }
 
         return new ActionResponse<IEnumerable<Reputation>>
         {
             WasSuccess = true,
             Result = await queryable
-                .OrderBy(x => x.Score)
+                .OrderBy(x => x.Name)
                 .Paginate(pagination)
                 .ToListAsync()
         };
@@ -82,7 +82,7 @@ public class ReputationsRepository : GenericRepository<Reputation>, IReputations
 
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
-            queryable = queryable.Where(x => x.Score.Equals(pagination.Filter));
+            queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
         }
 
         double count = await queryable.CountAsync();

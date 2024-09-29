@@ -1,12 +1,12 @@
-﻿@page "/statuses/edit/{Id:int}"
-
-<h3>@Localizer["Edit"] @Localizer["Status"]</h3>
-
-@if (status is null)
+﻿@if(status is null)
 {
-    <Loading />
+    <Loading/>
 }
 else
 {
-    <StatusForm @ref="statusForm" Status="status" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <MudDialog>
+        <DialogContent>
+            <StatusForm @ref="statusForm" Status="status" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
 }

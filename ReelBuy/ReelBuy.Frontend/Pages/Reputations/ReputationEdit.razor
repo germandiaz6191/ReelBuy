@@ -1,12 +1,12 @@
-﻿@page "/reputations/edit/{Id:int}"
-
-<h3>@Localizer["Edit"] @Localizer["Reputation"]</h3>
-
-@if (reputation is null)
+﻿@if(reputation is null)
 {
-    <Loading />
+    <Loading/>
 }
 else
 {
-    <ReputationForm @ref="reputationForm" Reputation="reputation" OnValidSubmit="EditAsync" ReturnAction="Return" />
+    <MudDialog>
+        <DialogContent>
+            <ReputationForm @ref="reputationForm" Reputation="reputation" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
 }
