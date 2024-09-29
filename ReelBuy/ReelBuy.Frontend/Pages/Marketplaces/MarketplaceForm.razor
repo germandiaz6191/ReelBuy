@@ -2,9 +2,15 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
-    <MudTextField Label="@Localizer["Marketplace"]"
+
+    <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Marketplace.Name"
                   For="@(() => Marketplace.Name)"
+                  Class="mb-4" />
+
+    <MudTextField Label="@Localizer["Domain"]"
+                  @bind-Value="@Marketplace.Domain"
+                  For="@(() => Marketplace.Domain)"
                   Class="mb-4" />
 
     <MudButton Variant="Variant.Outlined"
