@@ -258,4 +258,31 @@
   <data name="Category" xml:space="preserve">
     <value>Category</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="UserType" xml:space="preserve">
+    <value>User Type</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Not Found</value>
+  </data>
+  <data name="NothingInRoute" xml:space="preserve">
+    <value>Sorry, there is nothing on this route.</value>
+  </data>
+  <data name="Authorizing" xml:space="preserve">
+    <value>Authorizing...</value>
+  </data>
+  <data name="NotAuthorized" xml:space="preserve">
+    <value>You are not authorized to view this content...</value>
+  </data>
 </root>

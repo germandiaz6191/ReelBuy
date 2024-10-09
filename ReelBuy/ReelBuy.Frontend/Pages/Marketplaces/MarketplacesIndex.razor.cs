@@ -6,9 +6,11 @@ using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReelBuy.Frontend.Pages.Marketplaces;
 
+[Authorize(Roles = "Admin")]
 public partial class MarketplacesIndex
 {
     private List<Marketplace>? Marketplaces { get; set; }

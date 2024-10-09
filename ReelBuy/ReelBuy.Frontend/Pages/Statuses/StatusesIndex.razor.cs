@@ -6,9 +6,11 @@ using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReelBuy.Frontend.Pages.Statuses;
 
+[Authorize(Roles = "Admin")]
 public partial class StatusesIndex
 {
     private List<Status>? Statuses { get; set; }

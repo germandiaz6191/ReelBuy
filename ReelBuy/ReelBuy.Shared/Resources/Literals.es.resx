@@ -238,4 +238,31 @@
   <data name="Category" xml:space="preserve">
     <value>Categoria</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Administrador</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Usuario</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Nombres</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellidos</value>
+  </data>
+  <data name="UserType" xml:space="preserve">
+    <value>Tipo de Usuario</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>No Encontrado</value>
+  </data>
+  <data name="NothingInRoute" xml:space="preserve">
+    <value>Lo sentimos no hay nada en esta ruta.</value>
+  </data>
+  <data name="Authorizing" xml:space="preserve">
+    <value>Autorizando...</value>
+  </data>
+  <data name="NotAuthorized" xml:space="preserve">
+    <value>No estas autorizado para ver este contenido...</value>
+  </data>
 </root>
