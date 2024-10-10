@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using ReelBuy.Backend.Data;
+using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Responses;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,25 +18,59 @@ public class AccountsController : ControllerBase
 {
     private readonly IUsersUnitOfWork _usersUnitOfWork;
     private readonly IConfiguration _configuration;
+    private readonly IMailHelper _mailHelper;
+    private readonly DataContext _context;
 
-    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration)
+    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration, IMailHelper mailHelper, DataContext context)
     {
         _usersUnitOfWork = usersUnitOfWork;
         _configuration = configuration;
+        _mailHelper = mailHelper;
+        _context = context;
     }
 
     [HttpPost("CreateUser")]
     public async Task<IActionResult> CreateUser([FromBody] UserDTO model)
     {
+        var country = await _context.Countries.FindAsync(model.CountryId);
+        if (country == null)
+        {
+            return BadRequest("ERR004");
+        }
         User user = model;
+        user.Country = country;
         var result = await _usersUnitOfWork.AddUserAsync(user, model.Password);
         if (result.Succeeded)
         {
             await _usersUnitOfWork.AddUserToRoleAsync(user, user.UserType.ToString());
-            return Ok(BuildToken(user));
+            var response = await SendConfirmationEmailAsync(user, model.Language);
+            if (response.WasSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(response.Message);
         }
 
         return BadRequest(result.Errors.FirstOrDefault());
+    }
+
+    [HttpGet("ConfirmEmail")]
+    public async Task<IActionResult> ConfirmEmailAsync(string userId, string token)
+    {
+        token = token.Replace(" ", "+");
+        var user = await _usersUnitOfWork.GetUserAsync(new Guid(userId));
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var result = await _usersUnitOfWork.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+        {
+            return BadRequest(result.Errors.FirstOrDefault());
+        }
+
+        return NoContent();
     }
 
     [HttpPost("Login")]
@@ -44,6 +81,16 @@ public class AccountsController : ControllerBase
         {
             var user = await _usersUnitOfWork.GetUserAsync(model.Email);
             return Ok(BuildToken(user));
+        }
+
+        if (result.IsLockedOut)
+        {
+            return BadRequest("ERR007");
+        }
+
+        if (result.IsNotAllowed)
+        {
+            return BadRequest("ERR008");
         }
 
         return BadRequest("ERR006");
@@ -76,5 +123,21 @@ public class AccountsController : ControllerBase
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiration = expiration
         };
+    }
+
+    public async Task<ActionResponse<string>> SendConfirmationEmailAsync(User user, string language)
+    {
+        var myToken = await _usersUnitOfWork.GenerateEmailConfirmationTokenAsync(user);
+        var tokenLink = Url.Action("ConfirmEmail", "accounts", new
+        {
+            userid = user.Id,
+            token = myToken
+        }, HttpContext.Request.Scheme, _configuration["Url Frontend"]);
+
+        if (language == "es")
+        {
+            return _mailHelper.SendMail(user.FullName, user.Email!, _configuration["Mail:SubjectConfirmationEs"]!, string.Format(_configuration["Mail:BodyConfirmationEs"]!, tokenLink), language);
+        }
+        return _mailHelper.SendMail(user.FullName, user.Email!, _configuration["Mail:SubjectConfirmationEn"]!, string.Format(_configuration["Mail:BodyConfirmationEn"]!, tokenLink), language);
     }
 }

@@ -88,6 +88,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Administrator Registration.
+        /// </summary>
+        public static string AdminRegister {
+            get {
+                return ResourceManager.GetString("AdminRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Authorizing....
         /// </summary>
         public static string Authorizing {
@@ -124,11 +133,47 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change Password.
+        /// </summary>
+        public static string ChangePassword {
+            get {
+                return ResourceManager.GetString("ChangePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clean.
         /// </summary>
         public static string Clean {
             get {
                 return ResourceManager.GetString("Clean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Thank you for confirming your email, you can now log in to the system..
+        /// </summary>
+        public static string ConfirmedEmailMessage {
+            get {
+                return ResourceManager.GetString("ConfirmedEmailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email confirmation.
+        /// </summary>
+        public static string ConfirmEmail {
+            get {
+                return ResourceManager.GetString("ConfirmEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press the button to confirm your account..
+        /// </summary>
+        public static string ConfirmEmailMessage {
+            get {
+                return ResourceManager.GetString("ConfirmEmailMessage", resourceCulture);
             }
         }
         
@@ -156,6 +201,15 @@ namespace ReelBuy.Shared.Resources {
         public static string Create {
             get {
                 return ResourceManager.GetString("Create", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Current Password.
+        /// </summary>
+        public static string CurrentPassword {
+            get {
+                return ResourceManager.GetString("CurrentPassword", resourceCulture);
             }
         }
         
@@ -214,6 +268,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The email you entered already exists..
+        /// </summary>
+        public static string EmailAlreadyExists {
+            get {
+                return ResourceManager.GetString("EmailAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Record not found..
         /// </summary>
         public static string ERR001 {
@@ -250,6 +313,24 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have exceeded the maximum number of attempts, your account is blocked, please try again in 5 minutes..
+        /// </summary>
+        public static string ERR007 {
+            get {
+                return ResourceManager.GetString("ERR007", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The user has not been enabled, you must follow the instructions in the email sent to enable the user..
+        /// </summary>
+        public static string ERR008 {
+            get {
+                return ResourceManager.GetString("ERR008", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Error {
@@ -273,6 +354,15 @@ namespace ReelBuy.Shared.Resources {
         public static string FirstName {
             get {
                 return ResourceManager.GetString("FirstName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Have you forgotten your password?.
+        /// </summary>
+        public static string ForgottenYourPassword {
+            get {
+                return ResourceManager.GetString("ForgottenYourPassword", resourceCulture);
             }
         }
         
@@ -367,6 +457,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mail forwarding.
+        /// </summary>
+        public static string MailForwarding {
+            get {
+                return ResourceManager.GetString("MailForwarding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Marketplace.
         /// </summary>
         public static string Marketplace {
@@ -417,6 +516,15 @@ namespace ReelBuy.Shared.Resources {
         public static string New {
             get {
                 return ResourceManager.GetString("New", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Password.
+        /// </summary>
+        public static string NewPassword {
+            get {
+                return ResourceManager.GetString("NewPassword", resourceCulture);
             }
         }
         
@@ -493,11 +601,47 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Password Changed Successfully..
+        /// </summary>
+        public static string PasswordChangedSuccessfully {
+            get {
+                return ResourceManager.GetString("PasswordChangedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password Confirm.
         /// </summary>
         public static string PasswordConfirm {
             get {
                 return ResourceManager.GetString("PasswordConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password changed successfully, you can now log in with your new password..
+        /// </summary>
+        public static string PasswordRecoveredMessage {
+            get {
+                return ResourceManager.GetString("PasswordRecoveredMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password Recovery.
+        /// </summary>
+        public static string PasswordRecovery {
+            get {
+                return ResourceManager.GetString("PasswordRecovery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phone Number.
+        /// </summary>
+        public static string PhoneNumber {
+            get {
+                return ResourceManager.GetString("PhoneNumber", resourceCulture);
             }
         }
         
@@ -565,6 +709,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An email has been sent to you with instructions on how to recover your password..
+        /// </summary>
+        public static string RecoverPasswordMessage {
+            get {
+                return ResourceManager.GetString("RecoverPasswordMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Register as new user.
         /// </summary>
         public static string Register {
@@ -601,6 +754,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Resend account activation email.
+        /// </summary>
+        public static string ResendAccountActivationEmail {
+            get {
+                return ResourceManager.GetString("ResendAccountActivationEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Return.
         /// </summary>
         public static string Return {
@@ -633,6 +795,24 @@ namespace ReelBuy.Shared.Resources {
         public static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        public static string Send {
+            get {
+                return ResourceManager.GetString("Send", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your account has been created successfully. An email has been sent to you with instructions on how to activate your account..
+        /// </summary>
+        public static string SendEmailConfirmationMessage {
+            get {
+                return ResourceManager.GetString("SendEmailConfirmationMessage", resourceCulture);
             }
         }
         
@@ -678,6 +858,15 @@ namespace ReelBuy.Shared.Resources {
         public static string User {
             get {
                 return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Registration.
+        /// </summary>
+        public static string UserRegister {
+            get {
+                return ResourceManager.GetString("UserRegister", resourceCulture);
             }
         }
         
