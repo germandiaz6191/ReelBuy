@@ -2,6 +2,7 @@ using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Identity;
+using ReelBuy.Shared.DTOs;
 
 namespace ReelBuy.Backend.UnitsOfWork.Implementations;
 
@@ -23,4 +24,8 @@ public class UsersUnitOfWork : IUsersUnitOfWork
     public async Task<User> GetUserAsync(string email) => await _usersRepository.GetUserAsync(email);
 
     public async Task<bool> IsUserInRoleAsync(User user, string roleName) => await _usersRepository.IsUserInRoleAsync(user, roleName);
+
+    public async Task<SignInResult> LoginAsync(LoginDTO model) => await _usersRepository.LoginAsync(model);
+
+    public async Task LogoutAsync() => await _usersRepository.LogoutAsync();
 }

@@ -1,10 +1,15 @@
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.DTOs;
 using Microsoft.AspNetCore.Identity;
 
 namespace ReelBuy.Backend.Repositories.Interfaces;
 
 public interface IUsersRepository
 {
+    Task<SignInResult> LoginAsync(LoginDTO model);
+
+    Task LogoutAsync();
+
     Task<User> GetUserAsync(string email);
 
     Task<IdentityResult> AddUserAsync(User user, string password);

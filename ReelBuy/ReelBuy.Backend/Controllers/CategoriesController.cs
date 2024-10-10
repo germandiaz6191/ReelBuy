@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
@@ -6,9 +8,8 @@ using ReelBuy.Shared.Entities;
 namespace ReelBuy.Backend.Controllers;
 
 [ApiController]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
-
-
 public class CategoriesController : GenericController<Category>
 {
     private readonly ICategoriesUnitOfWork _categoriesUnitOfWork;
@@ -67,6 +68,4 @@ public class CategoriesController : GenericController<Category>
         }
         return BadRequest();
     }
-
-
 }
