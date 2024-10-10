@@ -83,7 +83,6 @@ public class SeedDb
         }
     }
 
-
     private async Task CheckRolesAsync()
     {
         await _usersUnitOfWork.CheckRoleAsync(UserType.Admin.ToString());
@@ -109,9 +108,11 @@ public class SeedDb
 
             await _usersUnitOfWork.AddUserAsync(user, "123456");
             await _usersUnitOfWork.AddUserToRoleAsync(user, userType.ToString());
+
+            var token = await _usersUnitOfWork.GenerateEmailConfirmationTokenAsync(user);
+            await _usersUnitOfWork.ConfirmEmailAsync(user, token);
         }
 
         return user;
     }
-
 }
