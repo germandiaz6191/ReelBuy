@@ -5,6 +5,8 @@ using ReelBuy.Backend.UnitsOfWork.Implementations;
 using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using System.Text.Json.Serialization;
+using ReelBuy.Shared.Entities;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,21 @@ builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<ICountriesUnitOfWork, CountriesUnitOfWork>();
 builder.Services.AddScoped<IReputationsRepository, ReputationsRepository>();
 builder.Services.AddScoped<IReputationsUnitOfWork, ReputationsUnitOfWork>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
+
+builder.Services.AddIdentity<User, IdentityRole>(x =>
+{
+    x.User.RequireUniqueEmail = true;
+    x.Password.RequireDigit = false;
+    x.Password.RequiredUniqueChars = 0;
+    x.Password.RequireLowercase = false;
+    x.Password.RequireNonAlphanumeric = false;
+    x.Password.RequireUppercase = false;
+})
+    .AddEntityFrameworkStores<DataContext>()
+    .AddDefaultTokenProviders();
+
 
 var app = builder.Build();
 SeedData(app);

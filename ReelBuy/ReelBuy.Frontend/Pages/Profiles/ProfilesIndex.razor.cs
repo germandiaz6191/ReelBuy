@@ -6,9 +6,11 @@ using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReelBuy.Frontend.Pages.Profiles;
 
+[Authorize(Roles = "Admin")]
 public partial class ProfilesIndex
 {
     private List<Profile>? Profiles { get; set; }

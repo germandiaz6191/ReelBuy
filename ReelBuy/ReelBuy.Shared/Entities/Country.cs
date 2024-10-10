@@ -11,4 +11,6 @@ public class Country
     [MaxLength(100, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
+    public ICollection<User>? Users { get; set; }
+    public int UsersCount => Users == null ? 0 : Users.Count;
 }

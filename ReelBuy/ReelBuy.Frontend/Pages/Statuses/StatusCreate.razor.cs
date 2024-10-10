@@ -34,6 +34,6 @@ public partial class StatusCreate
     private void Return()
     {
         statusForm!.FormPostedSuccessfully = true;
-        NavigationManager.NavigateTo("/categories");
+        NavigationManager.NavigateTo("/statuses");
     }
 }
