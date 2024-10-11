@@ -25,4 +25,8 @@ public interface IUsersUnitOfWork
     Task AddUserToRoleAsync(User user, string roleName);
 
     Task<bool> IsUserInRoleAsync(User user, string roleName);
+
+    Task<IdentityResult> ChangePasswordAsync(User user, string currentPassword, string newPassword);
+
+    Task<IdentityResult> UpdateUserAsync(User user);
 }
