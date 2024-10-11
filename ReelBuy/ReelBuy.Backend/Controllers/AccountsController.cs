@@ -73,6 +73,24 @@ public class AccountsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("ResedToken")]
+    public async Task<IActionResult> ResedTokenAsync([FromBody] EmailDTO model)
+    {
+        var user = await _usersUnitOfWork.GetUserAsync(model.Email);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        var response = await SendConfirmationEmailAsync(user, model.Language);
+        if (response.WasSuccess)
+        {
+            return NoContent();
+        }
+
+        return BadRequest(response.Message);
+    }
+
     [HttpPost("Login")]
     public async Task<IActionResult> LoginAsync([FromBody] LoginDTO model)
     {
