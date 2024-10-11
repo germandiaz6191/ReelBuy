@@ -396,4 +396,7 @@
   <data name="ForgottenYourPassword" xml:space="preserve">
     <value>Have you forgotten your password?</value>
   </data>
+  <data name="SelectACountry" xml:space="preserve">
+    <value>-- Select a Country ---</value>
+  </data>
 </root>
