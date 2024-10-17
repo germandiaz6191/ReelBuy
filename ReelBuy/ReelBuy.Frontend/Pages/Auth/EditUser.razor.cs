@@ -59,7 +59,7 @@ public partial class EditUser
                 return;
             }
             var messageError = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(messageError, Severity.Error);
+            Snackbar.Add(messageError!, Severity.Error);
             return;
         }
         user = responseHttp.Response;

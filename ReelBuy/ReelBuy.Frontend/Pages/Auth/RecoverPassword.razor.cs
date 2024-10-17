@@ -1,29 +1,31 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Localization;
-using MudBlazor;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Resources;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
+using MudBlazor;
 
 namespace ReelBuy.Frontend.Pages.Auth;
 
-public partial class ChangePassword
+public partial class RecoverPassword
 {
-    private ChangePasswordDTO changePasswordDTO = new();
+    private EmailDTO emailDTO = new();
     private bool loading;
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
-    [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+
     [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
 
-    private async Task ChangePasswordAsync()
+    private async Task SendRecoverPasswordEmailTokenAsync()
     {
+        emailDTO.Language = System.Globalization.CultureInfo.CurrentCulture.Name.Substring(0, 2);
         loading = true;
-        var responseHttp = await Repository.PostAsync("/api/accounts/changePassword", changePasswordDTO);
+        var responseHttp = await Repository.PostAsync("/api/accounts/RecoverPassword", emailDTO);
         loading = false;
+
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
@@ -32,13 +34,8 @@ public partial class ChangePassword
         }
 
         MudDialog.Cancel();
-        NavigationManager.NavigateTo("/EditUser");
-        Snackbar.Add(Localizer["PasswordChangedSuccessfully"], Severity.Success);
-    }
-
-    private void ReturnAction()
-    {
-        MudDialog.Cancel();
-        NavigationManager.NavigateTo("/EditUser");
+        NavigationManager.NavigateTo("/");
+        Snackbar.Add(Localizer["RecoverPasswordMessage"], Severity.Success);
     }
 }
+
