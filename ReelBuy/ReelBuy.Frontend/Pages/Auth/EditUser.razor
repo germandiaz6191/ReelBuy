@@ -25,6 +25,10 @@ else
                                       @bind-Value="user.PhoneNumber"
                                       For="@(() => user.PhoneNumber)"
                                       InputType="InputType.Telephone" />
+                        <MudTextField Label="@Localizer["Profile"]"
+                                      @bind-Value="selectedProfile.Name"
+                                      For="@(() => selectedProfile.Name)"
+                                      ReadOnly="true" /> 
                     </MudCardContent>
                 </MudItem>
                 <MudItem xs="12" sm="6">

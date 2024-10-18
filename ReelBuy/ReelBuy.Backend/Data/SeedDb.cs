@@ -87,6 +87,7 @@ public class SeedDb
     {
         await _usersUnitOfWork.CheckRoleAsync(UserType.Admin.ToString());
         await _usersUnitOfWork.CheckRoleAsync(UserType.User.ToString());
+        await _usersUnitOfWork.CheckRoleAsync(UserType.Seller.ToString());
     }
 
     private async Task<User> CheckUserAsync(string firstName, string lastName, string email, string phone, UserType userType)
@@ -95,6 +96,8 @@ public class SeedDb
         if (user == null)
         {
             var country = await _context.Countries.FirstOrDefaultAsync(x => x.Name == "Colombia");
+            var profile = await _context.Profiles.FirstOrDefaultAsync(x => x.Name == userType.ToString());
+
             user = new User
             {
                 FirstName = firstName,
@@ -103,7 +106,7 @@ public class SeedDb
                 UserName = email,
                 PhoneNumber = phone,
                 Country = country!,
-                UserType = userType,
+                Profile = profile!,
             };
 
             await _usersUnitOfWork.AddUserAsync(user, "123456");

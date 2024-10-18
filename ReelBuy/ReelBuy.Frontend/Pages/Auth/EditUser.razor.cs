@@ -20,6 +20,7 @@ public partial class EditUser
     private string? imageUrl;
 
     private Country selectedCountry = new();
+    private Profile selectedProfile = new();
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IDialogService DialogService { get; set; } = null!;
@@ -34,6 +35,7 @@ public partial class EditUser
         await LoadCountriesAsync();
 
         selectedCountry = user!.Country!;
+        selectedProfile = user!.Profile!;
 
         if (!string.IsNullOrEmpty(user!.Photo))
         {
@@ -78,7 +80,7 @@ public partial class EditUser
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(Localizer[message], Severity.Error);
+            Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
         countries = responseHttp.Response;
@@ -108,7 +110,7 @@ public partial class EditUser
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(Localizer[message], Severity.Error);
+            Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
 

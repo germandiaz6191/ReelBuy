@@ -19,6 +19,7 @@ public class ProfilesController : GenericController<Profile>
         _profilesUnitOfWork = profilesUnitOfWork;
     }
 
+    [AllowAnonymous]
     [HttpGet("combo")]
     public async Task<IActionResult> GetComboAsync()
     {

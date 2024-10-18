@@ -35,16 +35,18 @@ public class AccountsController : ControllerBase
     public async Task<IActionResult> CreateUser([FromBody] UserDTO model)
     {
         var country = await _context.Countries.FindAsync(model.CountryId);
-        if (country == null)
+        var profile = await _context.Profiles.FindAsync(model.ProfileId);
+        if (country == null || profile == null)
         {
             return BadRequest("ERR004");
         }
         User user = model;
         user.Country = country;
+        user.Profile = profile;
         var result = await _usersUnitOfWork.AddUserAsync(user, model.Password);
         if (result.Succeeded)
         {
-            await _usersUnitOfWork.AddUserToRoleAsync(user, user.UserType.ToString());
+            await _usersUnitOfWork.AddUserToRoleAsync(user, profile.Name);
             var response = await SendConfirmationEmailAsync(user, model.Language);
             if (response.WasSuccess)
             {
@@ -121,7 +123,7 @@ public class AccountsController : ControllerBase
         var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, user.Email!),
-                new(ClaimTypes.Role, user.UserType.ToString()),
+                new(ClaimTypes.Role, user.Profile.Name),
                 new("FirstName", user.FirstName),
                 new("LastName", user.LastName),
                 new("Photo", user.Photo ?? string.Empty),

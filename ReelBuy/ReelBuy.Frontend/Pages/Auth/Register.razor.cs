@@ -15,11 +15,13 @@ public partial class Register
 {
     private UserDTO userDTO = new();
     private List<Country>? countries;
+    private List<Profile>? profiles;
     private bool loading;
     private string? imageUrl;
     private string? titleLabel;
 
     private Country selectedCountry = new();
+    private Profile selectedProfile = new();
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private ILoginService LogInService { get; set; } = null!;
@@ -33,6 +35,7 @@ public partial class Register
     protected override async Task OnInitializedAsync()
     {
         await LoadCountriesAsync();
+        await LoadProfilesAsync();
     }
 
     protected override void OnParametersSet()
@@ -59,9 +62,26 @@ public partial class Register
         countries = responseHttp.Response;
     }
 
+    private async Task LoadProfilesAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Profile>>("/api/profiles/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        profiles = responseHttp.Response;
+    }
+
     private void CountryChanged(Country country)
     {
         selectedCountry = country;
+    }
+
+      private void ProfileChanged(Profile profile)
+    {
+        selectedProfile = profile;
     }
 
     private async Task<IEnumerable<Country>> SearchCountries(string searchText, CancellationToken cancellationToken)
@@ -73,6 +93,19 @@ public partial class Register
         }
 
         return countries!
+            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+    }
+
+    private async Task<IEnumerable<Profile>> SearchProfiles(string searchText, CancellationToken cancellationToken)
+    {
+        await Task.Delay(5);
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return profiles!;
+        }
+
+        return profiles!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
     }
@@ -89,16 +122,12 @@ public partial class Register
             return;
         }
 
-        userDTO.UserType = UserType.User;
         userDTO.UserName = userDTO.Email;
         userDTO.Country = selectedCountry;
         userDTO.CountryId = selectedCountry.Id;
+        userDTO.Profile = selectedProfile;
+        userDTO.ProfileId = selectedProfile.Id;
         userDTO.Language = System.Globalization.CultureInfo.CurrentCulture.Name.Substring(0, 2);
-
-        if (IsAdmin)
-        {
-            userDTO.UserType = UserType.Admin;
-        }
 
         loading = true;
         var responseHttp = await Repository.PostAsync<UserDTO>("/api/accounts/CreateUser", userDTO);

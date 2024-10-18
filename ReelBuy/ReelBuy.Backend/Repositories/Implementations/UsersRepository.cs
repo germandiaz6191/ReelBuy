@@ -58,6 +58,7 @@ public class UsersRepository : IUsersRepository
     {
         var user = await _context.Users
             .Include(u => u.Country)
+            .Include(u => u.Profile)
             .FirstOrDefaultAsync(x => x.Email == email);
         return user!;
     }
@@ -66,6 +67,7 @@ public class UsersRepository : IUsersRepository
     {
         var user = await _context.Users
        .Include(u => u.Country)
+       .Include(u => u.Profile)
        .FirstOrDefaultAsync(x => x.Id == userId.ToString());
         return user!;
     }

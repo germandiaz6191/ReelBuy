@@ -20,9 +20,6 @@ public class User : IdentityUser
     [Display(Name = "Image", ResourceType = typeof(Literals))]
     public string? Photo { get; set; }
 
-    [Display(Name = "UserType", ResourceType = typeof(Literals))]
-    public UserType UserType { get; set; }
-
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public Country Country { get; set; } = null!;
 
@@ -32,4 +29,11 @@ public class User : IdentityUser
 
     [Display(Name = "User", ResourceType = typeof(Literals))]
     public string FullName => $"{FirstName} {LastName}";
+
+    [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
+    public Profile Profile { get; set; } = null!;
+
+    [Display(Name = "Profile", ResourceType = typeof(Literals))]
+    [Range(1, int.MaxValue, ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
+    public int ProfileId { get; set; }
 }

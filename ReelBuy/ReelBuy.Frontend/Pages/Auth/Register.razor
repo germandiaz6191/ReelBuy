@@ -22,6 +22,17 @@ else
                         <MudTextField Label="@Localizer["LastName"]"
                                       @bind-Value="userDTO.LastName"
                                       For="@(() => userDTO.LastName)" />
+                        <MudAutocomplete T="Profile"
+                                      Label=@Localizer["Profile"]
+                                      Placeholder=@Localizer["SelectAProfile"]
+                                      SearchFunc="SearchProfiles"
+                                      Value="selectedProfile"
+                                      ValueChanged="ProfileChanged"
+                                      ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+                            <ItemTemplate Context="itemContext">
+                                @itemContext.Name
+                            </ItemTemplate>
+                        </MudAutocomplete>              
                         <MudTextField Label="@Localizer["PhoneNumber"]"
                                       @bind-Value="userDTO.PhoneNumber"
                                       For="@(() => userDTO.PhoneNumber)"

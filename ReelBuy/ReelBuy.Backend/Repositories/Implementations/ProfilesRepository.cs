@@ -52,7 +52,7 @@ public class ProfilesRepository : GenericRepository<Profile>, IProfilesRepositor
 
     public async Task<IEnumerable<Profile>> GetComboAsync()
     {
-        return await _context.Profiles
+        return await _context.Profiles.Where(profile => !profile.Name.Contains("Admin"))
             .OrderBy(c => c.Name)
         .ToListAsync();
     }
