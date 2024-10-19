@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ReelBuy.Frontend.Pages.Marketplaces;
 
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "Admin,Seller")]
 public partial class MarketplacesIndex
 {
     private List<Marketplace>? Marketplaces { get; set; }

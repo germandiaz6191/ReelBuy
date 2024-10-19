@@ -15,6 +15,18 @@
             <MudDivider />
         </Authorized>
     </AuthorizeView>
+    <AuthorizeView Roles="Seller">
+        <Authorized>
+            <MudNavLink Href="/marketplaces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AddBusiness">@Localizer["Marketplaces"]</MudNavLink>
+            <MudDivider />
+        </Authorized>
+    </AuthorizeView>
+    <AuthorizeView Roles="User">
+        <Authorized>
+            <MudNavLink Href="/statuses" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.DonutSmall">@Localizer["Statuses"]</MudNavLink>
+            <MudDivider />
+        </Authorized>
+    </AuthorizeView>
     <MudNavLink Href="/reputations" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Reputations"]</MudNavLink>
     <MudDivider />
     <MudNavLink Href="/about" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Info">@Localizer["About"]</MudNavLink>

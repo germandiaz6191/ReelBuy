@@ -25,6 +25,7 @@ public class ReputationsController : GenericController<Reputation>
         return Ok(await _reputationsUnitOfWork.GetComboAsync());
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public override async Task<IActionResult> GetAsync()
     {
@@ -47,6 +48,7 @@ public class ReputationsController : GenericController<Reputation>
         return NotFound(response.Message);
     }
 
+    [AllowAnonymous]
     [HttpGet("paginated")]
     public override async Task<IActionResult> GetAsync(PaginationDTO pagination)
     {
@@ -58,6 +60,7 @@ public class ReputationsController : GenericController<Reputation>
         return BadRequest();
     }
 
+    [AllowAnonymous]
     [HttpGet("totalRecordsPaginated")]
     public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
