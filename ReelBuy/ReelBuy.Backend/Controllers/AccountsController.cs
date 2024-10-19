@@ -22,13 +22,15 @@ public class AccountsController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IMailHelper _mailHelper;
     private readonly DataContext _context;
+    private readonly IFileStorage _fileStorage;
 
-    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration, IMailHelper mailHelper, DataContext context)
+    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration, IMailHelper mailHelper, DataContext context, IFileStorage fileStorage)
     {
         _usersUnitOfWork = usersUnitOfWork;
         _configuration = configuration;
         _mailHelper = mailHelper;
         _context = context;
+        _fileStorage = fileStorage;
     }
 
     [HttpPost("CreateUser")]
@@ -41,6 +43,13 @@ public class AccountsController : ControllerBase
             return BadRequest("ERR004");
         }
         User user = model;
+
+        if (!string.IsNullOrEmpty(model.Photo))
+        {
+            var photoUser = Convert.FromBase64String(model.Photo);
+            user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
+        }
+
         user.Country = country;
         user.Profile = profile;
         var result = await _usersUnitOfWork.AddUserAsync(user, model.Password);
@@ -126,7 +135,6 @@ public class AccountsController : ControllerBase
                 new(ClaimTypes.Role, user.Profile.Name),
                 new("FirstName", user.FirstName),
                 new("LastName", user.LastName),
-                new("Photo", user.Photo ?? string.Empty),
                 new("CountryId", user.Country.Id.ToString())
             };
 
@@ -175,12 +183,22 @@ public class AccountsController : ControllerBase
                 return NotFound();
             }
 
+            if (!string.IsNullOrEmpty(user.Photo))
+            {
+                var photoUser = Convert.FromBase64String(user.Photo);
+                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
+            }
+
+            if (user.CountryId != currentUser.CountryId)
+            {
+                currentUser.CountryId = user.CountryId;
+                currentUser.Country = user.Country;
+            }
+
             currentUser.FirstName = user.FirstName;
             currentUser.LastName = user.LastName;
             currentUser.PhoneNumber = user.PhoneNumber;
             currentUser.Photo = !string.IsNullOrEmpty(user.Photo) && user.Photo != currentUser.Photo ? user.Photo : currentUser.Photo;
-            currentUser.CountryId = user.CountryId;
-            currentUser.Country = user.Country;
 
             var result = await _usersUnitOfWork.UpdateUserAsync(currentUser);
             if (result.Succeeded)
@@ -200,7 +218,20 @@ public class AccountsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAsync()
     {
-        return Ok(await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!));
+        var user = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
+
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        if (!string.IsNullOrEmpty(user.Photo))
+        {
+            var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
+            user.Photo = Convert.ToBase64String(photoUser);
+        }
+
+        return Ok(user);
     }
 
     [HttpPost("changePassword")]

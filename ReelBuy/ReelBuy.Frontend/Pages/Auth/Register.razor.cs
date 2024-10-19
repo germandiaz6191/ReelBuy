@@ -6,7 +6,6 @@ using ReelBuy.Frontend.Repositories;
 using ReelBuy.Frontend.Services;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
-using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Resources;
 
 namespace ReelBuy.Frontend.Pages.Auth;
@@ -79,7 +78,7 @@ public partial class Register
         selectedCountry = country;
     }
 
-      private void ProfileChanged(Profile profile)
+    private void ProfileChanged(Profile profile)
     {
         selectedProfile = profile;
     }
