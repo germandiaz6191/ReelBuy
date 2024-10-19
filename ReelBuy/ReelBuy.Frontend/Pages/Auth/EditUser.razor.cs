@@ -106,6 +106,9 @@ public partial class EditUser
 
     private async Task SaveUserAsync()
     {
+        user!.Country = selectedCountry;
+        user!.CountryId = selectedCountry.Id;
+
         var responseHttp = await Repository.PutAsync<User, TokenDTO>("/api/accounts", user!);
         if (responseHttp.Error)
         {

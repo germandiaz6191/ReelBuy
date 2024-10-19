@@ -180,6 +180,7 @@ public class AccountsController : ControllerBase
             currentUser.PhoneNumber = user.PhoneNumber;
             currentUser.Photo = !string.IsNullOrEmpty(user.Photo) && user.Photo != currentUser.Photo ? user.Photo : currentUser.Photo;
             currentUser.CountryId = user.CountryId;
+            currentUser.Country = user.Country;
 
             var result = await _usersUnitOfWork.UpdateUserAsync(currentUser);
             if (result.Succeeded)
