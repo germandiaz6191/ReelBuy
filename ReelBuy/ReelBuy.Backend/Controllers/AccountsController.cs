@@ -111,6 +111,11 @@ public class AccountsController : ControllerBase
         if (result.Succeeded)
         {
             var user = await _usersUnitOfWork.GetUserAsync(model.Email);
+            if (!string.IsNullOrEmpty(user.Photo))
+            {
+                var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
+                user.Photo = Convert.ToBase64String(photoUser);
+            }
             return Ok(BuildToken(user));
         }
 
@@ -135,7 +140,8 @@ public class AccountsController : ControllerBase
                 new(ClaimTypes.Role, user.Profile.Name),
                 new("FirstName", user.FirstName),
                 new("LastName", user.LastName),
-                new("CountryId", user.Country.Id.ToString())
+                new("CountryId", user.Country.Id.ToString()),
+                new("Photo", user.Photo ?? string.Empty)
             };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtKey"]!));
