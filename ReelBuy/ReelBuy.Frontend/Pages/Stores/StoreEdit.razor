@@ -1,0 +1,12 @@
+﻿@if(store is null)
+{
+    <Loading/>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <StoreForm @ref="storeForm" Store="store" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
+}

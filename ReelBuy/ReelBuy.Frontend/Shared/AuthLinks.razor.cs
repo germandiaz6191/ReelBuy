@@ -24,7 +24,7 @@ public partial class AuthLinks
         var nameClaim = claims.FirstOrDefault(x => x.Type == "UserName");
         if (photoClaim is not null)
         {
-            photoUser = photoClaim.Value;
+            photoUser = String.Concat("data:image/jpeg;base64,", photoClaim.Value);
         }
     }
 

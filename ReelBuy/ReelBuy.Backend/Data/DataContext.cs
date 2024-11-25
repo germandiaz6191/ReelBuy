@@ -2,7 +2,6 @@
 using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-
 namespace ReelBuy.Backend.Data;
 
 public class DataContext : IdentityDbContext<User>
@@ -12,6 +11,9 @@ public class DataContext : IdentityDbContext<User>
     }
 
     public DbSet<Country> Countries { get; set; }
+    public DbSet<Department> Departments { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<Store> Stores { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Status> Statuses { get; set; }
     public DbSet<Marketplace> Marketplaces { get; set; }
@@ -23,6 +25,9 @@ public class DataContext : IdentityDbContext<User>
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.Entity<Country>().HasIndex(x => x.Name).IsUnique();
+        modelBuilder.Entity<Department>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<City>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Store>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Product>().HasIndex(i => i.Name);
         modelBuilder.Entity<Status>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Marketplace>().HasIndex(i => i.Name).IsUnique();

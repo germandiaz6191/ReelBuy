@@ -73,6 +73,7 @@ builder.Services.AddScoped<IReputationsUnitOfWork, ReputationsUnitOfWork>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
 builder.Services.AddScoped<IFileStorage, FileStorage>();
+builder.Services.AddScoped<IImageResizer, ImageResizer>();
 
 builder.Services.AddIdentity<User, IdentityRole>(x =>
 {

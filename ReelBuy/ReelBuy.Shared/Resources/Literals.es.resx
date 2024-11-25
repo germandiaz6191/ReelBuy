@@ -379,4 +379,22 @@
   <data name="SelectACountry" xml:space="preserve">
     <value>-- Selecciona un País ---</value>
   </data>
+  <data name="Department" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="Store" xml:space="preserve">
+    <value>Tienda</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="Cities" xml:space="preserve">
+    <value>Ciudades</value>
+  </data>
+  <data name="Departments" xml:space="preserve">
+    <value>Departamentos</value>
+  </data>
+  <data name="Stores" xml:space="preserve">
+    <value>Tiendas</value>
+  </data>
 </root>

@@ -23,14 +23,16 @@ public class AccountsController : ControllerBase
     private readonly IMailHelper _mailHelper;
     private readonly DataContext _context;
     private readonly IFileStorage _fileStorage;
+    private readonly IImageResizer _imageResizer;
 
-    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration, IMailHelper mailHelper, DataContext context, IFileStorage fileStorage)
+    public AccountsController(IUsersUnitOfWork usersUnitOfWork, IConfiguration configuration, IMailHelper mailHelper, DataContext context, IFileStorage fileStorage, IImageResizer imageResizer)
     {
         _usersUnitOfWork = usersUnitOfWork;
         _configuration = configuration;
         _mailHelper = mailHelper;
         _context = context;
         _fileStorage = fileStorage;
+        _imageResizer = imageResizer;
     }
 
     [HttpPost("CreateUser")]
@@ -114,7 +116,8 @@ public class AccountsController : ControllerBase
             if (!string.IsNullOrEmpty(user.Photo))
             {
                 var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
-                user.Photo = Convert.ToBase64String(photoUser);
+                var imageResize = _imageResizer.ResizeImage(photoUser, 200, 200, 70);
+                user.Photo = Convert.ToBase64String(imageResize);
             }
             return Ok(BuildToken(user));
         }
@@ -192,7 +195,7 @@ public class AccountsController : ControllerBase
             if (!string.IsNullOrEmpty(user.Photo))
             {
                 var photoUser = Convert.FromBase64String(user.Photo);
-                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
+                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".png", "users");
             }
 
             if (user.CountryId != currentUser.CountryId)
@@ -209,6 +212,13 @@ public class AccountsController : ControllerBase
             var result = await _usersUnitOfWork.UpdateUserAsync(currentUser);
             if (result.Succeeded)
             {
+                if (!string.IsNullOrEmpty(currentUser.Photo))
+                {
+                    var photoUser = await _fileStorage.GetFileAsync(currentUser.Photo, "users");
+                    var imageResize = _imageResizer.ResizeImage(photoUser, 200, 200, 70);
+                    currentUser.Photo = Convert.ToBase64String(imageResize);
+                }
+
                 return Ok(BuildToken(currentUser));
             }
 
