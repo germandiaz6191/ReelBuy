@@ -340,6 +340,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Falta.
+        /// </summary>
+        public static string ERR005 {
+            get {
+                return ResourceManager.GetString("ERR005", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incorrect email or password..
         /// </summary>
         public static string ERR006 {

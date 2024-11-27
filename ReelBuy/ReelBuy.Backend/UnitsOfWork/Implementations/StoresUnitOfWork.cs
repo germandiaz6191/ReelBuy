@@ -24,4 +24,8 @@ public class StoresUnitOfWork : GenericUnitOfWork<Store>, IStoresUnitOfWork
     public override async Task<ActionResponse<IEnumerable<Store>>> GetAsync(PaginationDTO pagination) => await _storesRepository.GetAsync(pagination);
 
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination) => await _storesRepository.GetTotalRecordsAsync(pagination);
+
+    public async Task<ActionResponse<Store>> AddAsync(StoreDTO storeDTO) => await _storesRepository.AddAsync(storeDTO);
+
+    public async Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO) => await _storesRepository.UpdateAsync(storeDTO);
 }

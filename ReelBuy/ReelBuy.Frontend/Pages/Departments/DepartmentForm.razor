@@ -1,7 +1,25 @@
 ﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
-<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+<EditForm EditContext="editContext" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
+    <MudCardContent>
+        <MudAutocomplete T="Country"
+                         Label=@Localizer["Country"]
+                         Placeholder=@Localizer["SelectACountry"]
+                         SearchFunc="SearchCountries"
+                         Value="selectedCountry"
+                         ValueChanged="CountryChanged"
+                         OnBlur="OnFieldBlur"
+                         OnInternalInputChanged="OnFieldBlur"
+                         ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+        <ValidationMessage For="@(() => Department.Country)" />
+
+    </MudCardContent>
+
     <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Department.Name"
                   For="@(() => Department.Name)"

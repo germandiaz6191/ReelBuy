@@ -11,6 +11,7 @@ public partial class CityEdit
 {
     private City? city;
     private CityForm? cityForm;
+    private List<Department>? departments;
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -21,24 +22,8 @@ public partial class CityEdit
 
     protected override async Task OnInitializedAsync()
     {
-        var responseHttp = await Repository.GetAsync<City>($"api/cities/{Id}");
-
-        if (responseHttp.Error)
-        {
-            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                NavigationManager.NavigateTo("cities");
-            }
-            else
-            {
-                var messageError = await responseHttp.GetErrorMessageAsync();
-                Snackbar.Add(messageError!, Severity.Error);
-            }
-        }
-        else
-        {
-            city = responseHttp.Response;
-        }
+        await LoadDepartmentsAsync();
+        await LoadCitiesAsync();
     }
 
     private async Task EditAsync()
@@ -60,5 +45,39 @@ public partial class CityEdit
     {
         cityForm!.FormPostedSuccessfully = true;
         NavigationManager.NavigateTo("cities");
+    }
+
+    private async Task LoadDepartmentsAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Department>>("/api/departments/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        departments = responseHttp.Response;
+    }
+
+    private async Task LoadCitiesAsync()
+    {
+        var responseHttp = await Repository.GetAsync<City>($"api/cities/{Id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("cities");
+            }
+            else
+            {
+                var messageError = await responseHttp.GetErrorMessageAsync();
+                Snackbar.Add(messageError!, Severity.Error);
+            }
+        }
+        else
+        {
+            city = responseHttp.Response;
+        }
     }
 }

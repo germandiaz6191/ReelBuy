@@ -397,4 +397,7 @@
   <data name="Stores" xml:space="preserve">
     <value>Tiendas</value>
   </data>
+  <data name="ERR005" xml:space="preserve">
+    <value>Falta</value>
+  </data>
 </root>

@@ -15,4 +15,8 @@ public interface IStoresRepository
     Task<ActionResponse<IEnumerable<Store>>> GetAsync(PaginationDTO pagination);
 
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
+
+    Task<ActionResponse<Store>> AddAsync(StoreDTO storeDTO);
+
+    Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO);
 }

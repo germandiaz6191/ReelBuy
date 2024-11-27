@@ -15,4 +15,8 @@ public interface IDepartmentsRepository
     Task<ActionResponse<IEnumerable<Department>>> GetAsync(PaginationDTO pagination);
 
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
+
+    Task<ActionResponse<Department>> AddAsync(DepartmentDTO departmentDTO);
+
+    Task<ActionResponse<Department>> UpdateAsync(DepartmentDTO departmentDTO);
 }

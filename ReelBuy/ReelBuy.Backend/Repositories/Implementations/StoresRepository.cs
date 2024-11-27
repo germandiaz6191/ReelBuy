@@ -93,4 +93,110 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
             Result = (int)count
         };
     }
+
+    public async Task<ActionResponse<Store>> AddAsync(StoreDTO storeDTO)
+    {
+        var city = await _context.Cities.FindAsync(storeDTO.CityId);
+        if (city == null)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR009"
+            };
+        }
+
+        var store = storeDTO.Store;
+        if (store == null)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        store.City = city;
+
+        _context.Add(store);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Store>
+            {
+                WasSuccess = true,
+                Result = store
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
+
+    public async Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO)
+    {
+        var store = storeDTO?.Store;
+        var currentStore = await _context.Stores.FindAsync(store?.Id);
+        if (currentStore == null || store == null)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        var city = await _context.Cities.FindAsync(storeDTO?.CityId);
+        if (city == null)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR004"
+            };
+        }
+
+        currentStore.Name = store.Name;
+        currentStore.City = city;
+
+        _context.Update(currentStore);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Store>
+            {
+                WasSuccess = true,
+                Result = currentStore
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Store>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
 }

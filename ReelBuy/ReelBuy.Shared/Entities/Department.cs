@@ -17,5 +17,5 @@ public class Department
 
     [Display(Name = "Country", ResourceType = typeof(Literals))]
     [Range(1, int.MaxValue, ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
-    public int CountryId { get; set; }
+    public int? CountryId { get; set; }
 }

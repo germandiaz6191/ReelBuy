@@ -2,6 +2,23 @@
 
 <EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
+    <MudCardContent>
+        <MudAutocomplete T="City"
+                         Label=@Localizer["City"]
+                         Placeholder=@Localizer["SelectACity"]
+                         SearchFunc="SearchCity"
+                         Value="selectedCity"
+                         ValueChanged="CityChanged"
+                         OnBlur="OnFieldBlur"
+                         ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+        <ValidationMessage For="@(() => Store.City)" />
+
+    </MudCardContent>
+
     <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Store.Name"
                   For="@(() => Store.Name)"

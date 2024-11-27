@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Frontend.Repositories;
+using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
 
@@ -11,6 +12,7 @@ public partial class DepartmentEdit
 {
     private Department? department;
     private DepartmentForm? departmentForm;
+    private List<Country>? countries;
 
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -20,6 +22,45 @@ public partial class DepartmentEdit
     [Parameter] public int Id { get; set; }
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadCountriesAsync();
+        await LoadDepartmentAsync();
+    }
+
+    private async Task EditAsync()
+    {
+        var departmentDTO = new DepartmentDTO()
+        {
+            CountryId = department!.Country!.Id,
+            Department = department!
+        };
+
+        var responseHttp = await Repository.PutAsync("api/departments/full", departmentDTO);
+
+        if (responseHttp.Error)
+        {
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(messageError!, Severity.Error);
+            return;
+        }
+
+        Return();
+        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
+    }
+
+    private async Task LoadCountriesAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Country>>("/api/countries/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        countries = responseHttp.Response;
+    }
+
+    private async Task LoadDepartmentAsync()
     {
         var responseHttp = await Repository.GetAsync<Department>($"api/departments/{Id}");
 
@@ -39,21 +80,6 @@ public partial class DepartmentEdit
         {
             department = responseHttp.Response;
         }
-    }
-
-    private async Task EditAsync()
-    {
-        var responseHttp = await Repository.PutAsync("api/departments", department);
-
-        if (responseHttp.Error)
-        {
-            var messageError = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(messageError!, Severity.Error);
-            return;
-        }
-
-        Return();
-        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
     }
 
     private void Return()

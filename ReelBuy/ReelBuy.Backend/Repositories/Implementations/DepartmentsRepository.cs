@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Orders.Backend.Helpers;
 using ReelBuy.Backend.Data;
 using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.Repositories.Interfaces;
@@ -92,5 +93,111 @@ public class DepartmentsRepository : GenericRepository<Department>, IDepartments
             WasSuccess = true,
             Result = (int)count
         };
+    }
+
+    public async Task<ActionResponse<Department>> AddAsync(DepartmentDTO departmentDTO)
+    {
+        var country = await _context.Countries.FindAsync(departmentDTO.CountryId);
+        if (country == null)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR009"
+            };
+        }
+
+        var department = departmentDTO.Department;
+        if (department == null)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        department.Country = country;
+
+        _context.Add(department);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Department>
+            {
+                WasSuccess = true,
+                Result = department
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
+
+    public async Task<ActionResponse<Department>> UpdateAsync(DepartmentDTO departmentDTO)
+    {
+        var department = departmentDTO?.Department;
+        var currentDepartment = await _context.Departments.FindAsync(department?.Id);
+        if (currentDepartment == null || department == null)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        var country = await _context.Countries.FindAsync(departmentDTO?.CountryId);
+        if (country == null)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR004"
+            };
+        }
+
+        currentDepartment.Name = department.Name;
+        currentDepartment.Country = country;
+
+        _context.Update(currentDepartment);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Department>
+            {
+                WasSuccess = true,
+                Result = currentDepartment
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<Department>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
     }
 }

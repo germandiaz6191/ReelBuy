@@ -93,4 +93,110 @@ public class CitiesRepository : GenericRepository<City>, ICitiesRepository
             Result = (int)count
         };
     }
+
+    public async Task<ActionResponse<City>> AddAsync(CityDTO cityDTO)
+    {
+        var department = await _context.Departments.FindAsync(cityDTO.DepartmentId);
+        if (department == null)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR009"
+            };
+        }
+
+        var city = cityDTO.City;
+        if (city == null)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        city.Department = department;
+
+        _context.Add(city);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<City>
+            {
+                WasSuccess = true,
+                Result = city
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
+
+    public async Task<ActionResponse<City>> UpdateAsync(CityDTO cityDTO)
+    {
+        var city = cityDTO?.City;
+        var currentCity = await _context.Cities.FindAsync(city?.Id);
+        if (currentCity == null || city == null)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR005"
+            };
+        }
+
+        var department = await _context.Departments.FindAsync(cityDTO?.DepartmentId);
+        if (department == null)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR004"
+            };
+        }
+
+        currentCity.Name = city.Name;
+        currentCity.Department = department;
+
+        _context.Update(currentCity);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return new ActionResponse<City>
+            {
+                WasSuccess = true,
+                Result = currentCity
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception exception)
+        {
+            return new ActionResponse<City>
+            {
+                WasSuccess = false,
+                Message = exception.Message
+            };
+        }
+    }
 }

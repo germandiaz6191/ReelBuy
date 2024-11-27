@@ -69,4 +69,25 @@ public class DepartmentsController : GenericController<Department>
         }
         return BadRequest();
     }
+    [HttpPost("full")]
+    public async Task<IActionResult> PostAsync(DepartmentDTO departmentDTO)
+    {
+        var action = await _departmentsUnitOfWork.AddAsync(departmentDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
+
+    [HttpPut("full")]
+    public async Task<IActionResult> PutAsync(DepartmentDTO departmentDTO)
+    {
+        var action = await _departmentsUnitOfWork.UpdateAsync(departmentDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
 }

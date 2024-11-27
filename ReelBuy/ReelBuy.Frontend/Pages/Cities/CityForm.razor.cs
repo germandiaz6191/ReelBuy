@@ -12,12 +12,24 @@ public partial class CityForm
 {
     private EditContext editContext = null!;
 
+    private Department selectedDepartment = new();
+
     protected override void OnInitialized()
     {
         editContext = new(City);
+
+        if (City.DepartmentId != null && City.DepartmentId != 0)
+        {
+            var departmentId = City!.DepartmentId;
+            var department = filterDepartment(departmentId);
+            selectedDepartment = department;
+            City.Department = department;
+            City.DepartmentId = departmentId;
+        }
     }
 
     [EditorRequired, Parameter] public City City { get; set; } = null!;
+    [EditorRequired, Parameter] public List<Department> Departments { get; set; } = null!;
     [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
 
@@ -50,5 +62,38 @@ public partial class CityForm
         }
 
         context.PreventNavigation();
+    }
+    private async Task<IEnumerable<Department>> SearchDepartment(string searchText, CancellationToken cancellationToken)
+    {
+        await Task.Delay(5);
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return Departments!;
+        }
+
+        return Departments!
+            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+    }
+    private void DepartmentChanged(Department department)
+    {
+        selectedDepartment = department;
+        City.Department = department;
+        City.DepartmentId = department.Id;
+
+        CheckValidation();
+    }
+    private void OnFieldBlur()
+    {
+        CheckValidation();
+    }
+    private async void CheckValidation()
+    {
+        await Task.Delay(50);
+        editContext.Validate();
+    }
+    private Department filterDepartment(int? id)
+    {
+        return Departments.FirstOrDefault(x => x.Id == id) ?? new();
     }
 }

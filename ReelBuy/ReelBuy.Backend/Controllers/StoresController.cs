@@ -69,4 +69,26 @@ public class StoresController : GenericController<Store>
         }
         return BadRequest();
     }
+
+    [HttpPost("full")]
+    public async Task<IActionResult> PostAsync(StoreDTO storeDTO)
+    {
+        var action = await _storesUnitOfWork.AddAsync(storeDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
+
+    [HttpPut("full")]
+    public async Task<IActionResult> PutAsync(StoreDTO storeDTO)
+    {
+        var action = await _storesUnitOfWork.UpdateAsync(storeDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
 }

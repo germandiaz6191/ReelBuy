@@ -1,7 +1,7 @@
 using CurrieTechnologies.Razor.SweetAlert2;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Routing;
-using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
@@ -12,12 +12,24 @@ public partial class DepartmentForm
 {
     private EditContext editContext = null!;
 
+    private Country selectedCountry = new();
+
     protected override void OnInitialized()
     {
         editContext = new(Department);
+        
+        if (Department.CountryId != null && Department.CountryId != 0)
+        {
+            var countryId = Department.CountryId;
+            var country = filterCountry(countryId);
+            selectedCountry = country;
+            Department.Country = country;
+            Department.CountryId = countryId;
+        }
     }
 
     [EditorRequired, Parameter] public Department Department { get; set; } = null!;
+    [EditorRequired, Parameter] public List<Country> Countries { get; set; } = null!;
     [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
 
@@ -50,5 +62,48 @@ public partial class DepartmentForm
         }
 
         context.PreventNavigation();
+    }
+
+    private async Task<IEnumerable<Country>> SearchCountries(string searchText, CancellationToken cancellationToken)
+    {
+        await Task.Delay(5);
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return Countries!;
+        }
+
+        return Countries!
+            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+    }
+
+    private void CountryChanged(Country country)
+    {
+        selectedCountry = country;
+        Department.Country = country;
+        Department.CountryId = country.Id;
+
+        CheckValidation();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        await OnValidSubmit.InvokeAsync();
+    }
+
+    private void OnFieldBlur()
+    {
+        CheckValidation();
+    }
+
+    private async void CheckValidation()
+    {
+        await Task.Delay(50);
+        editContext.Validate();
+    }
+
+    private Country filterCountry(int? id)
+    {
+        return Countries.FirstOrDefault(x => x.Id == id) ?? new();
     }
 }

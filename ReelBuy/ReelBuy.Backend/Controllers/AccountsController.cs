@@ -116,7 +116,7 @@ public class AccountsController : ControllerBase
             if (!string.IsNullOrEmpty(user.Photo))
             {
                 var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
-                var imageResize = _imageResizer.ResizeImage(photoUser, 200, 200, 70);
+                var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 5);
                 user.Photo = Convert.ToBase64String(imageResize);
             }
             return Ok(BuildToken(user));
@@ -195,7 +195,7 @@ public class AccountsController : ControllerBase
             if (!string.IsNullOrEmpty(user.Photo))
             {
                 var photoUser = Convert.FromBase64String(user.Photo);
-                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".png", "users");
+                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
             }
 
             if (user.CountryId != currentUser.CountryId)
@@ -215,7 +215,7 @@ public class AccountsController : ControllerBase
                 if (!string.IsNullOrEmpty(currentUser.Photo))
                 {
                     var photoUser = await _fileStorage.GetFileAsync(currentUser.Photo, "users");
-                    var imageResize = _imageResizer.ResizeImage(photoUser, 200, 200, 70);
+                    var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 20);
                     currentUser.Photo = Convert.ToBase64String(imageResize);
                 }
 
