@@ -11,4 +11,5 @@ public class Category
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

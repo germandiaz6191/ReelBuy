@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReelBuy.Backend.Data;
 
@@ -11,9 +12,11 @@ using ReelBuy.Backend.Data;
 namespace ReelBuy.Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241128025354_reels")]
+    partial class reels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -285,12 +288,6 @@ namespace ReelBuy.Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MarketplaceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -300,10 +297,6 @@ namespace ReelBuy.Backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("MarketplaceId");
 
                     b.HasIndex("Name");
 
@@ -594,27 +587,11 @@ namespace ReelBuy.Backend.Migrations
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Product", b =>
                 {
-                    b.HasOne("ReelBuy.Shared.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ReelBuy.Shared.Entities.Marketplace", "Marketplace")
-                        .WithMany("Products")
-                        .HasForeignKey("MarketplaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ReelBuy.Shared.Entities.Status", "Status")
-                        .WithMany("Products")
+                        .WithMany()
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Marketplace");
 
                     b.Navigation("Status");
                 });
@@ -660,29 +637,14 @@ namespace ReelBuy.Backend.Migrations
                     b.Navigation("Profile");
                 });
 
-            modelBuilder.Entity("ReelBuy.Shared.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("ReelBuy.Shared.Entities.Country", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("ReelBuy.Shared.Entities.Marketplace", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("ReelBuy.Shared.Entities.Product", b =>
                 {
                     b.Navigation("Reels");
-                });
-
-            modelBuilder.Entity("ReelBuy.Shared.Entities.Status", b =>
-                {
-                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

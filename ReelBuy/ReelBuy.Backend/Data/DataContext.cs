@@ -20,7 +20,7 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Reputation> Reputations { get; set; }
-
+    public DbSet<Reel> Reels { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -34,5 +34,31 @@ public class DataContext : IdentityDbContext<User>
         modelBuilder.Entity<Profile>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Category>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Reputation>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Reel>().HasIndex(i => i.Name).IsUnique();
+
+        // Configuración de relaciones
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Status)
+            .WithMany(s => s.Products)
+            .HasForeignKey(p => p.StatusId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Marketplace)
+            .WithMany(m => m.Products)
+            .HasForeignKey(p => p.MarketplaceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany(c => c.Products)
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Reel>()
+            .HasOne(r => r.Product)
+            .WithMany(p => p.Reels)
+            .HasForeignKey(r => r.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
