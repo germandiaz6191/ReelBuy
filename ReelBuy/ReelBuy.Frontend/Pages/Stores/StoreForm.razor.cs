@@ -63,6 +63,7 @@ public partial class StoreForm
 
         context.PreventNavigation();
     }
+
     private async Task<IEnumerable<City>> SearchCity(string searchText, CancellationToken cancellationToken)
     {
         await Task.Delay(5);
@@ -75,6 +76,7 @@ public partial class StoreForm
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
     }
+
     private void CityChanged(City city)
     {
         selectedCity = city;
@@ -83,15 +85,18 @@ public partial class StoreForm
 
         CheckValidation();
     }
+
     private void OnFieldBlur()
     {
         CheckValidation();
     }
+
     private async void CheckValidation()
     {
         await Task.Delay(50);
         editContext.Validate();
     }
+
     private City filterCity(int? id)
     {
         return Cities.FirstOrDefault(x => x.Id == id) ?? new();

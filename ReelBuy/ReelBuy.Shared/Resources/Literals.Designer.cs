@@ -844,11 +844,29 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- Select a City --.
+        /// </summary>
+        public static string SelectACity {
+            get {
+                return ResourceManager.GetString("SelectACity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -- Select a Country ---.
         /// </summary>
         public static string SelectACountry {
             get {
                 return ResourceManager.GetString("SelectACountry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to -- Select a Department --.
+        /// </summary>
+        public static string SelectADepartment {
+            get {
+                return ResourceManager.GetString("SelectADepartment", resourceCulture);
             }
         }
         

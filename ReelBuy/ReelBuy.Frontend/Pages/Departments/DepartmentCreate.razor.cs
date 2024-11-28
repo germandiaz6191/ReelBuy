@@ -38,13 +38,11 @@ public partial class DepartmentCreate
 
     private async Task CreateAsync()
     {
-        Console.WriteLine("LLego el evento");
         var departmentDTO = new DepartmentDTO()
         {
             CountryId = department!.Country!.Id,
             Department = department!
         };
-        Console.WriteLine("consumo de servicio");
         var responseHttp = await Repository.PostAsync("/api/departments/full", departmentDTO);
         if (responseHttp.Error)
         {

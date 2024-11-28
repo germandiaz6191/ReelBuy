@@ -1,4 +1,5 @@
-﻿using ReelBuy.Backend.Repositories.Interfaces;
+﻿using ReelBuy.Backend.Repositories.Implementations;
+using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Responses;
@@ -23,4 +24,8 @@ public class CitiesUnitOfWork : GenericUnitOfWork<City>, ICitiesUnitOfWork
     public override async Task<ActionResponse<IEnumerable<City>>> GetAsync(PaginationDTO pagination) => await _citiesRepository.GetAsync(pagination);
 
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination) => await _citiesRepository.GetTotalRecordsAsync(pagination);
+
+    public async Task<ActionResponse<City>> AddAsync(CityDTO cityDTO) => await _citiesRepository.AddAsync(cityDTO);
+
+    public async Task<ActionResponse<City>> UpdateAsync(CityDTO cityDTO) => await _citiesRepository.UpdateAsync(cityDTO);
 }

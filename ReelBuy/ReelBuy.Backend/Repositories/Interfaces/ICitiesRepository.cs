@@ -15,4 +15,8 @@ public interface ICitiesRepository
     Task<ActionResponse<IEnumerable<City>>> GetAsync(PaginationDTO pagination);
 
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
+
+    Task<ActionResponse<City>> AddAsync(CityDTO cityDTO);
+
+    Task<ActionResponse<City>> UpdateAsync(CityDTO cityDTO);
 }

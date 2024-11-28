@@ -106,17 +106,12 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
             };
         }
 
-        var store = storeDTO.Store;
-        if (store == null)
+        var store = new Store()
         {
-            return new ActionResponse<Store>
-            {
-                WasSuccess = false,
-                Message = "ERR005"
-            };
-        }
-
-        store.City = city;
+            City = city,
+            CityId = city.Id,
+            Name = storeDTO.Name
+        };
 
         _context.Add(store);
         try
@@ -148,9 +143,8 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
 
     public async Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO)
     {
-        var store = storeDTO?.Store;
-        var currentStore = await _context.Stores.FindAsync(store?.Id);
-        if (currentStore == null || store == null)
+        var currentStore = await _context.Stores.FindAsync(storeDTO?.Id);
+        if (currentStore == null)
         {
             return new ActionResponse<Store>
             {
@@ -169,7 +163,7 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
             };
         }
 
-        currentStore.Name = store.Name;
+        currentStore.Name = storeDTO!.Name;
         currentStore.City = city;
 
         _context.Update(currentStore);

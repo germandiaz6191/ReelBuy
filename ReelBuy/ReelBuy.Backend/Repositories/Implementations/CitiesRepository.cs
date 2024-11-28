@@ -106,17 +106,13 @@ public class CitiesRepository : GenericRepository<City>, ICitiesRepository
             };
         }
 
-        var city = cityDTO.City;
-        if (city == null)
+        var city = new City()
         {
-            return new ActionResponse<City>
-            {
-                WasSuccess = false,
-                Message = "ERR005"
-            };
-        }
+            Department = department,
+            DepartmentId = department.Id,
+            Name = cityDTO.Name
 
-        city.Department = department;
+        };
 
         _context.Add(city);
         try
@@ -148,9 +144,8 @@ public class CitiesRepository : GenericRepository<City>, ICitiesRepository
 
     public async Task<ActionResponse<City>> UpdateAsync(CityDTO cityDTO)
     {
-        var city = cityDTO?.City;
-        var currentCity = await _context.Cities.FindAsync(city?.Id);
-        if (currentCity == null || city == null)
+        var currentCity = await _context.Cities.FindAsync(cityDTO?.Id);
+        if (currentCity == null)
         {
             return new ActionResponse<City>
             {
@@ -169,7 +164,7 @@ public class CitiesRepository : GenericRepository<City>, ICitiesRepository
             };
         }
 
-        currentCity.Name = city.Name;
+        currentCity.Name = cityDTO!.Name;
         currentCity.Department = department;
 
         _context.Update(currentCity);

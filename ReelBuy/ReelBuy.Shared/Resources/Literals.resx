@@ -420,4 +420,10 @@
   <data name="ERR005" xml:space="preserve">
     <value>Falta</value>
   </data>
+  <data name="SelectADepartment" xml:space="preserve">
+    <value>-- Select a Department --</value>
+  </data>
+  <data name="SelectACity" xml:space="preserve">
+    <value>-- Select a City --</value>
+  </data>
 </root>

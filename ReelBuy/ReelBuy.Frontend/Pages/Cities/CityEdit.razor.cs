@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Frontend.Repositories;
+using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
 
@@ -28,7 +29,13 @@ public partial class CityEdit
 
     private async Task EditAsync()
     {
-        var responseHttp = await Repository.PutAsync("api/cities", city);
+        var cityDTO = new CityDTO()
+        {
+            DepartmentId = city!.Department!.Id,
+            Id = city.Id,
+            Name = city.Name
+        };
+        var responseHttp = await Repository.PutAsync("api/cities/full", cityDTO);
 
         if (responseHttp.Error)
         {
