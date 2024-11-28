@@ -12,6 +12,7 @@ public class Department
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
 
+    [Display(Name = "Country", ResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public Country Country { get; set; } = null!;
 

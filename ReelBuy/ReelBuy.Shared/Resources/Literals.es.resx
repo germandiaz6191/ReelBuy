@@ -400,6 +400,12 @@
   <data name="ERR005" xml:space="preserve">
     <value>Falta</value>
   </data>
+  <data name="SelectADepartment" xml:space="preserve">
+    <value>-- Selecciona un Departamento--</value>
+  </data>
+  <data name="SelectACity" xml:space="preserve">
+    <value>-- Selecciona una Ciudad --</value>
+  </data>
   <data name="Reels" xml:space="preserve">
     <value>Reels</value>
   </data>

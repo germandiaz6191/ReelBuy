@@ -69,4 +69,25 @@ public class CitiesController : GenericController<City>
         }
         return BadRequest();
     }
+    [HttpPost("full")]
+    public async Task<IActionResult> PostAsync(CityDTO cityDTO)
+    {
+        var action = await _citiesUnitOfWork.AddAsync(cityDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
+
+    [HttpPut("full")]
+    public async Task<IActionResult> PutAsync(CityDTO cityDTO)
+    {
+        var action = await _citiesUnitOfWork.UpdateAsync(cityDTO);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
 }
