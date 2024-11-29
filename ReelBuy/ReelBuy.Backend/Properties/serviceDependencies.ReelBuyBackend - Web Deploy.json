@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "apis1": {
+      "ignored": "true",
+      "type": "apis.azure"
+    },
+    "identityapp1": {
+      "ignored": "true",
+      "type": "identityapp"
+    },
+    "mssql1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/ReelBuyBackend/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsLocalConnection_C95A1D8EF9",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/reelbuyserver/databases/ReelBuy",
+      "type": "mssql.azure",
+      "connectionId": "ConnectionStrings:LocalConnection",
+      "dynamicId": null
+    },
+    "storage1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Web/sites/ReelBuyBackend/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsAzureStorage_AFC491AB8D, /subscriptions/9357a986-fb1b-4d54-a750-b85443acc8f5/resourcegroups/ITM/providers/Microsoft.Web/sites/ReelBuyBackend/providers/Microsoft.ServiceLinker/linkers/ConnectionStringsAzureStorage_6823FA3BDF",
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/azurerb2024",
+      "type": "storage.azure",
+      "connectionId": "ConnectionStrings:AzureStorage",
+      "dynamicId": null
+    }
+  }
+}

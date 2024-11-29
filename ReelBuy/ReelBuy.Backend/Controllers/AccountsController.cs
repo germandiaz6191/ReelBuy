@@ -35,6 +35,12 @@ public class AccountsController : ControllerBase
         _imageResizer = imageResizer;
     }
 
+    [HttpOptions]
+    public IActionResult HandlePreflight()
+    {
+        return Ok();
+    }
+
     [HttpPost("CreateUser")]
     public async Task<IActionResult> CreateUser([FromBody] UserDTO model)
     {
