@@ -18,6 +18,21 @@
             @Localizer["Title"]
         </MudLink>
         <MudSpacer />
+        <MudAutocomplete T="string"
+                         Label=@Localizer["PrincipalSearchAProducts"]
+                         Adornment="Adornment.End"
+                         AdornmentIcon="@Icons.Material.Filled.Search"
+                         Value="selectedText"
+                         SearchFunc="SearchProduct"
+                         Variant="Variant.Text"
+                         IconSize="Size.Medium"
+                         MaxItems="11"
+                         ToStringFunc="@(e=> e==null?null : $"{e}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext
+            </ItemTemplate>
+        </MudAutocomplete>
+        <MudSpacer />
         <MudMenu Icon="@Icons.Material.Filled.Settings"
                  Color="Color.Inherit"
                  ActivationEvent="@MouseEvent.MouseOver"

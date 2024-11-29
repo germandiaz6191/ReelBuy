@@ -700,6 +700,33 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buscar productos....
+        /// </summary>
+        public static string PrincipalSearchAProducts {
+            get {
+                return ResourceManager.GetString("PrincipalSearchAProducts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Existen más de 10 resultados, por favor refine su búsqueda.
+        /// </summary>
+        public static string PrincipalSearchExceededMaxResults {
+            get {
+                return ResourceManager.GetString("PrincipalSearchExceededMaxResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No se encontrarón resultados.
+        /// </summary>
+        public static string PrincipalSearchNotFoundResults {
+            get {
+                return ResourceManager.GetString("PrincipalSearchNotFoundResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Product.
         /// </summary>
         public static string Product {

@@ -9,6 +9,8 @@ public partial class MainLayout
 {
     private bool _drawerOpen = true;
     private string _icon = Icons.Material.Filled.DarkMode;
+    private string? selectedText;
+    private List<string> searchResults = new List<string>();
 
     private bool _darkMode { get; set; } = true;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
@@ -52,5 +54,52 @@ public partial class MainLayout
     {
         _darkMode = !_darkMode;
         _icon = _darkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+    }
+
+    private async Task<IEnumerable<String>> SearchProduct(string searchText, CancellationToken cancellationToken)
+    {
+        await Task.Delay(5);
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length <= 3)
+        {
+            return new List<string>();
+        }
+
+        return await PerformSearch(searchText);
+    }
+
+    private async Task<List<string>> PerformSearch(string query)
+    {
+        var allResults = await GetSearchResults(query);
+
+        searchResults = allResults;
+
+        if (allResults.Count == 0)
+        {
+            searchResults.Add(Localizer["PrincipalSearchNotFoundResults"]);
+        }
+        if (allResults.Count > 10)
+        {
+            searchResults = allResults.Take(10).ToList();
+            searchResults.Add(Localizer["PrincipalSearchExceededMaxResults"]);
+        }
+
+        return searchResults;
+    }
+
+    private async Task<List<string>> GetSearchResults(string query)
+    {
+        // Simula un retraso (esto se debe reemplazar con una búsqueda real)
+        await Task.Delay(500);
+
+        // Lista simulada de productos
+        var allResults = new List<string>
+        {
+            "Producto 1", "Producto 2", "Producto 3", "Producto 4", "Producto 5",
+            "Producto 6", "Producto 7", "Producto 8", "Producto 9", "Producto 10",
+            "Producto 11", "Producto 12"
+        };
+
+        // Filtra los resultados que contienen el texto de búsqueda
+        return allResults.Where(p => p.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
     }
 }

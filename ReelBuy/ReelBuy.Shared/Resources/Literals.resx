@@ -438,4 +438,13 @@
   <data name="Product" xml:space="preserve">
     <value>Product</value>
   </data>
+  <data name="PrincipalSearchAProducts" xml:space="preserve">
+    <value>Buscar productos...</value>
+  </data>
+  <data name="PrincipalSearchExceededMaxResults" xml:space="preserve">
+    <value>Existen más de 10 resultados, por favor refine su búsqueda</value>
+  </data>
+  <data name="PrincipalSearchNotFoundResults" xml:space="preserve">
+    <value>No se encontrarón resultados</value>
+  </data>
 </root>

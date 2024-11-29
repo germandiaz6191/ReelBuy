@@ -418,4 +418,13 @@
   <data name="Product" xml:space="preserve">
     <value>Producto</value>
   </data>
+  <data name="PrincipalSearchAProducts" xml:space="preserve">
+    <value>Search products...</value>
+  </data>
+  <data name="PrincipalSearchExceededMaxResults" xml:space="preserve">
+    <value>There are more than 10 results, please refine your search</value>
+  </data>
+  <data name="PrincipalSearchNotFoundResults" xml:space="preserve">
+    <value>No results found</value>
+  </data>
 </root>
