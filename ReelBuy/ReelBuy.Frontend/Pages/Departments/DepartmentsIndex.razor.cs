@@ -10,7 +10,7 @@ using System.Net;
 
 namespace ReelBuy.Frontend.Pages.Departments;
 
-[Authorize(Roles = "Seller")]
+[Authorize(Roles = "Admin")]
 public partial class DepartmentsIndex
 {
     private List<Department>? Departments { get; set; }
