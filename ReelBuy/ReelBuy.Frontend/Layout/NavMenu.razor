@@ -13,17 +13,17 @@
             <MudDivider />
             <MudNavLink Href="/countries" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Flag">@Localizer["Countries"]</MudNavLink>
             <MudDivider />
-            <MudNavLink Href="/departments" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Flag">@Localizer["Departments"]</MudNavLink>
+            <MudNavLink Href="/departments" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Departments"]</MudNavLink>
             <MudDivider />
-            <MudNavLink Href="/cities" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Flag">@Localizer["Cities"]</MudNavLink>
-            <MudDivider />
-            <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Flag">@Localizer["Stores"]</MudNavLink>
+            <MudNavLink Href="/cities" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Cities"]</MudNavLink>
             <MudDivider />
         </Authorized>
     </AuthorizeView>
     <AuthorizeView Roles="Seller">
         <Authorized>
             <MudNavLink Href="/marketplaces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AddBusiness">@Localizer["Marketplaces"]</MudNavLink>
+            <MudDivider />
+            <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Stores"]</MudNavLink>
             <MudDivider />
         </Authorized>
     </AuthorizeView>
@@ -34,12 +34,6 @@
         </Authorized>
     </AuthorizeView>
     <MudNavLink Href="/reputations" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Reputations"]</MudNavLink>
-    <MudDivider />
-    <MudNavLink Href="/departments" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Departments"]</MudNavLink>
-    <MudDivider />
-    <MudNavLink Href="/cities" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Cities"]</MudNavLink>
-    <MudDivider />
-    <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Score">@Localizer["Stores"]</MudNavLink>
     <MudDivider />
     <MudNavLink Href="/reels" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PersonalVideo">@Localizer["Reels"]</MudNavLink>
     <MudDivider />

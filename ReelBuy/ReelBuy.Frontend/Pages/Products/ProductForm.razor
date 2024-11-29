@@ -1,11 +1,57 @@
 ﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
-<EditForm EditContext="editContext" OnValidSubmit="OnValidSubmit">
+<EditForm EditContext="editContext" OnValidSubmit="SaveProductAsync">
     <DataAnnotationsValidator />
     <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Product.Name"
                   For="@(() => Product.Name)"
-                  Class="mb-4" />
+                  Class="mb-4" />     
+   
+    <MudCardContent>
+        <MudAutocomplete T="Status"
+            Label=@Localizer["Status"]
+            Placeholder=@Localizer["SelectAStatus"]
+            SearchFunc="SearchStatuses"
+            Value="selectedStatus"
+            ValueChanged="StatusChanged"
+            ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+    </MudCardContent>
+
+    <MudCardContent>
+        <MudAutocomplete T="Category"
+            Label=@Localizer["Category"]
+            Placeholder=@Localizer["SelectACategory"]
+            SearchFunc="SearchCategories"
+            Value="selectedCategory"
+            ValueChanged="CategoryChanged"
+            ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+    </MudCardContent>    
+
+    <MudCardContent>
+        <MudAutocomplete T="Marketplace"
+            Label=@Localizer["Marketplace"]
+            Placeholder=@Localizer["SelectAMarketplace"]
+            SearchFunc="SearchMarketplaces"
+            Value="selectedMarketplace"
+            ValueChanged="MarketplaceChanged"
+            ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+    </MudCardContent> 
+
+    <MudItem xs="12" sm="6">
+        <InputReel Label=@Localizer["Reel"] ReelSelected="ReelSelected" />
+    </MudItem>
 
     <MudButton Variant="Variant.Outlined"
                StartIcon="@Icons.Material.Filled.ArrowBack"
