@@ -28,10 +28,14 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh>@Localizer["Product"]</MudTh>
+            <MudTh>@Localizer["Category"]</MudTh>
+            <MudTh>@Localizer["Marketplace"]</MudTh>
             <MudTh>@Localizer["Actions"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
+            <MudTd>@context.CategoryId</MudTd>
+            <MudTd>@context.MarketplaceId</MudTd>
             <MudTd>
                 <MudTooltip Text="@Localizer["Edit"]">
                     <MudButton Variant="Variant.Filled"
