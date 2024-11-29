@@ -439,12 +439,12 @@
     <value>Product</value>
   </data>
   <data name="PrincipalSearchAProducts" xml:space="preserve">
-    <value>Buscar productos...</value>
+    <value>Search products...</value>
   </data>
   <data name="PrincipalSearchExceededMaxResults" xml:space="preserve">
-    <value>Existen más de 10 resultados, por favor refine su búsqueda</value>
+    <value>There are more than 10 results, please refine your search</value>
   </data>
   <data name="PrincipalSearchNotFoundResults" xml:space="preserve">
-    <value>No se encontrarón resultados</value>
+    <value>No results found</value>
   </data>
 </root>

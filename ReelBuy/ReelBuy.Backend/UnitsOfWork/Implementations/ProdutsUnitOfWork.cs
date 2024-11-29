@@ -24,4 +24,6 @@ public class ProductsUnitOfWork : GenericUnitOfWork<Product>, IProductsUnitOfWor
     public override async Task<ActionResponse<IEnumerable<Product>>> GetAsync(PaginationDTO pagination) => await _productsRepository.GetAsync(pagination);
 
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination) => await _productsRepository.GetTotalRecordsAsync(pagination);
+
+    public async Task<ActionResponse<IEnumerable<Product>>> GetProductsByLikeAsync(PrincipalSearchDTO principalSearch) => await _productsRepository.GetProductsByLikeAsync(principalSearch);
 }

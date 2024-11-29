@@ -68,4 +68,15 @@ public class ProductsController : GenericController<Product>
         }
         return BadRequest();
     }
+
+    [HttpGet("search")]
+    public async Task<ActionResult<IEnumerable<Product>>> SearchProducts([FromQuery] PrincipalSearchDTO principalSearch)
+    {
+        var action = await _productsUnitOfWork.GetProductsByLikeAsync(principalSearch);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest();
+    }
 }

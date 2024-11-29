@@ -700,7 +700,7 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Buscar productos....
+        ///   Looks up a localized string similar to Search products....
         /// </summary>
         public static string PrincipalSearchAProducts {
             get {
@@ -709,7 +709,7 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Existen más de 10 resultados, por favor refine su búsqueda.
+        ///   Looks up a localized string similar to There are more than 10 results, please refine your search.
         /// </summary>
         public static string PrincipalSearchExceededMaxResults {
             get {
@@ -718,7 +718,7 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No se encontrarón resultados.
+        ///   Looks up a localized string similar to No results found.
         /// </summary>
         public static string PrincipalSearchNotFoundResults {
             get {

@@ -1,4 +1,3 @@
-
 using Microsoft.EntityFrameworkCore;
 using ReelBuy.Backend.Data;
 using ReelBuy.Backend.Helpers;
@@ -92,6 +91,27 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
         {
             WasSuccess = true,
             Result = (int)count
+        };
+    }
+
+    public async Task<ActionResponse<IEnumerable<Product>>> GetProductsByLikeAsync(PrincipalSearchDTO principalSearch)
+    {
+        var queryable = _context.Products.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(principalSearch.keyword))
+        {
+            queryable = queryable.Where(x => EF.Functions.Like(x.Name, $"%{principalSearch.keyword}%"));
+        }
+
+        var results = await queryable
+        .OrderBy(x => x.Name)
+        .Take(11)
+        .ToListAsync();
+
+        return new ActionResponse<IEnumerable<Product>>
+        {
+            WasSuccess = true,
+            Result = results
         };
     }
 }
