@@ -12,8 +12,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-//var uriApi = "https://localhost:7287";
-var uriApi = "https://reelbuybackend.azurewebsites.net";
+var uriApi = "https://localhost:7287";
+//var uriApi = "https://reelbuybackend.azurewebsites.net";
 builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(uriApi) });
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddLocalization();
