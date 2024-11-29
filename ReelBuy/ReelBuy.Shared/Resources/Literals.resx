@@ -426,4 +426,16 @@
   <data name="SelectACity" xml:space="preserve">
     <value>-- Select a City --</value>
   </data>
+  <data name="Reels" xml:space="preserve">
+    <value>Reels</value>
+  </data>
+  <data name="Reel" xml:space="preserve">
+    <value>Reel</value>
+  </data>
+  <data name="Products" xml:space="preserve">
+    <value>Products</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Product</value>
+  </data>
 </root>

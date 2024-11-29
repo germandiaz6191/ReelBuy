@@ -16,4 +16,5 @@ public class Marketplace
     [MaxLength(60, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Domain { get; set; } = null!;
+    public ICollection<Product> Products { get; set; } = new List<Product>();
 }

@@ -1,0 +1,12 @@
+﻿@if(reel is null)
+{
+    <Loading/>
+}
+else
+{
+    <MudDialog>
+        <DialogContent>
+            <ReelForm @ref="reelForm" Reel="reel" OnValidSubmit="EditAsync" ReturnAction="Return" />
+        </DialogContent>
+    </MudDialog>
+}

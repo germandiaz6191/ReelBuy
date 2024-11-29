@@ -1,9 +1,9 @@
-﻿using ReelBuy.Shared.Resources;
+using ReelBuy.Shared.Resources;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReelBuy.Shared.Entities;
 
-public class Product
+public class Reel
 {
     public int Id { get; set; }
 
@@ -12,11 +12,6 @@ public class Product
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
 
-    public ICollection<Reel> Reels { get; set; } = new List<Reel>();
-    public int StatusId { get; set; }
-    public Status Status { get; set; } = null!;
-    public int MarketplaceId { get; set; }
-    public Marketplace Marketplace { get; set; } = null!;
-    public int CategoryId { get; set; }
-    public Category Category { get; set; } = null!;
+    public int ProductId { get; set; }
+    public Product Product { get; set; } = null!;
 }

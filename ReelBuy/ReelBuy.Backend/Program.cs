@@ -80,6 +80,10 @@ builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddScoped<IUsersUnitOfWork, UsersUnitOfWork>();
 builder.Services.AddScoped<IFileStorage, FileStorage>();
 builder.Services.AddScoped<IImageResizer, ImageResizer>();
+builder.Services.AddScoped<IProductsUnitOfWork, ProductsUnitOfWork>();
+builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<IReelsUnitOfWork, ReelsUnitOfWork>();
+builder.Services.AddScoped<IReelsRepository, ReelsRepository>();
 
 builder.Services.AddIdentity<User, IdentityRole>(x =>
 {
