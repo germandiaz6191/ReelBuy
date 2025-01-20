@@ -21,6 +21,8 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Reputation> Reputations { get; set; }
     public DbSet<Reel> Reels { get; set; }
+    public DbSet<Favorite> Favorites { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -35,13 +37,14 @@ public class DataContext : IdentityDbContext<User>
         modelBuilder.Entity<Category>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Reputation>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Reel>().HasIndex(i => i.Name).IsUnique();
+        modelBuilder.Entity<Favorite>().HasIndex(i => i.Name);
 
         // Configuración de relaciones
         modelBuilder.Entity<Product>()
             .HasOne(p => p.Status)
             .WithMany(s => s.Products)
             .HasForeignKey(p => p.StatusId)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Product>()
             .HasOne(p => p.Marketplace)
@@ -59,6 +62,19 @@ public class DataContext : IdentityDbContext<User>
             .HasOne(r => r.Product)
             .WithMany(p => p.Reels)
             .HasForeignKey(r => r.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Favorite>()
+        .HasOne(f => f.User)
+        .WithMany(u => u.Favorites)
+        .HasForeignKey(f => f.UserId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        // Configuración de la relación con Product
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.Product)
+            .WithMany(p => p.Favorites)
+            .HasForeignKey(f => f.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

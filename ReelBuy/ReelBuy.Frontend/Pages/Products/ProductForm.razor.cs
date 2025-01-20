@@ -45,6 +45,7 @@ public partial class ProductForm
         selectedCategory = product!.Category!;
         selectedMarketplace = product!.Marketplace!;
     }
+
     private void StatusChanged(Status status)
     {
         selectedStatus = status;
@@ -144,7 +145,7 @@ public partial class ProductForm
         product!.Marketplace = selectedMarketplace;
         product!.MarketplaceId = selectedMarketplace.Id;
         product!.Name = Product.Name;
-        
+
         var responseHttp = await Repository.PostAsync("/api/products", product!);
         if (responseHttp.Error)
         {

@@ -6,17 +6,20 @@ using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using ReelBuy.Shared.DTOs;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
 public partial class ProductsIndex
 {
+    private User? user;
     private List<Product>? Products { get; set; }
     private MudTable<Product> table = new();
     private readonly int[] pageSizeOptions = { 10, 25, 50, int.MaxValue };
     private int totalRecords = 0;
     private bool loading;
     private const string baseUrl = "api/products";
+    private const string baseUrlFavorite = "api/favorites";
     private string infoFormat = "{first_item}-{last_item} => {all_items}";
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
@@ -29,6 +32,7 @@ public partial class ProductsIndex
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadUserAsyc();
         await LoadTotalRecordsAsync();
     }
 
@@ -146,5 +150,75 @@ public partial class ProductsIndex
         await LoadTotalRecordsAsync();
         await table.ReloadServerData();
         Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
+
+    private async Task DeleteFavoriteAsync(ICollection<Favorite> favorites)
+    {
+        var foundFavorite = favorites.FirstOrDefault(f => f.UserId == user?.Id);
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlFavorite}/{foundFavorite?.Id}");
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("/products");
+            }
+            else
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                Snackbar.Add(Localizer[message!], Severity.Error);
+            }
+            return;
+        }
+        await LoadTotalRecordsAsync();
+        await table.ReloadServerData();
+        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
+
+    private async Task AddFavoriteAsync(Product product)
+    {
+        if (user == null)
+        {
+            var message = Localizer["FavoriteErrorUserNull"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        FavoriteDTO addFavorite = new FavoriteDTO { ProductId = product.Id, UserId = user.Id };
+        var responseHttp = await Repository.PostAsync("/api/favorites/full", addFavorite);
+
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("/products");
+            }
+            else
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                Snackbar.Add(Localizer[message!], Severity.Error);
+            }
+            return;
+        }
+        await LoadTotalRecordsAsync();
+        await table.ReloadServerData();
+        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
+
+    private async Task LoadUserAsyc()
+    {
+        var responseHttp = await Repository.GetAsync<User>($"/api/accounts");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(messageError!, Severity.Error);
+            return;
+        }
+        user = responseHttp.Response;
+        loading = false;
     }
 }

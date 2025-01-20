@@ -31,6 +31,7 @@ else
             <MudTh>@Localizer["Category"]</MudTh>
             <MudTh>@Localizer["Marketplace"]</MudTh>
             <MudTh>@Localizer["Actions"]</MudTh>
+            <MudTh>@Localizer["Favorites"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
@@ -50,6 +51,25 @@ else
                                OnClick="@(() => DeleteAsync(@context))">
                         <MudIcon Icon="@Icons.Material.Filled.Delete" />
                     </MudButton>
+                </MudTooltip>
+            </MudTd>
+            <MudTd>
+                <MudTooltip Text="@Localizer["Favorite"]">
+                    @if (@context.Favorites == null || @context.Favorites.Count == 0)
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   OnClick="@(() => AddFavoriteAsync(@context))">
+                            <MudIcon Icon="@Icons.Material.Filled.FavoriteBorder" />
+                        </MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Warning"
+                                   OnClick="@(() => DeleteFavoriteAsync(@context.Favorites))">
+                            <MudIcon Icon="@Icons.Material.Filled.Favorite" />
+                        </MudButton>
+                    }
                 </MudTooltip>
             </MudTd>
         </RowTemplate>

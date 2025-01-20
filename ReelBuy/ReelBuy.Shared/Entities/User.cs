@@ -36,4 +36,6 @@ public class User : IdentityUser
     [Display(Name = "Profile", ResourceType = typeof(Literals))]
     [Range(1, int.MaxValue, ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public int ProfileId { get; set; }
+
+    public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 }
