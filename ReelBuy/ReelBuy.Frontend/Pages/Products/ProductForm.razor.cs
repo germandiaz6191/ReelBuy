@@ -145,8 +145,8 @@ public partial class ProductForm
         product!.Marketplace = selectedMarketplace;
         product!.MarketplaceId = selectedMarketplace.Id;
         product!.Name = Product.Name;
-
-        var responseHttp = await Repository.PostAsync("/api/products", product!);
+        
+        var responseHttp = await Repository.PutAsync("/api/products", product!);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
