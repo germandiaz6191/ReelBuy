@@ -54,8 +54,8 @@ public class AccountsController : ControllerBase
 
         if (!string.IsNullOrEmpty(model.Photo))
         {
-            /*    var photoUser = Convert.FromBase64String(model.Photo);
-                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");*/
+            var photoUser = Convert.FromBase64String(model.Photo);
+            user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
         }
 
         user.Country = country;
@@ -121,9 +121,12 @@ public class AccountsController : ControllerBase
             var user = await _usersUnitOfWork.GetUserAsync(model.Email);
             if (!string.IsNullOrEmpty(user.Photo))
             {
-                /*var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
-                var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 5);
-                user.Photo = Convert.ToBase64String(imageResize);*/
+                var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
+                if (photoUser.Length != 0)
+                {
+                    var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 5);
+                    user.Photo = Convert.ToBase64String(imageResize);
+                }
             }
             return Ok(BuildToken(user));
         }
@@ -200,8 +203,8 @@ public class AccountsController : ControllerBase
 
             if (!string.IsNullOrEmpty(user.Photo))
             {
-                /* var photoUser = Convert.FromBase64String(user.Photo);
-                 user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");*/
+                var photoUser = Convert.FromBase64String(user.Photo);
+                user.Photo = await _fileStorage.SaveFileAsync(photoUser, ".jpg", "users");
             }
 
             if (user.CountryId != currentUser.CountryId)
@@ -220,9 +223,12 @@ public class AccountsController : ControllerBase
             {
                 if (!string.IsNullOrEmpty(currentUser.Photo))
                 {
-                    /*   var photoUser = await _fileStorage.GetFileAsync(currentUser.Photo, "users");
-                       var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 20);
-                       currentUser.Photo = Convert.ToBase64String(imageResize);*/
+                    var photoUser = await _fileStorage.GetFileAsync(currentUser.Photo, "users");
+                    if (photoUser.Length != 0)
+                    {
+                        var imageResize = _imageResizer.ResizeImage(photoUser, 100, 100, 20);
+                        currentUser.Photo = Convert.ToBase64String(imageResize);
+                    }
                 }
 
                 return Ok(BuildToken(currentUser));
@@ -249,8 +255,8 @@ public class AccountsController : ControllerBase
 
         if (!string.IsNullOrEmpty(user.Photo))
         {
-            /* var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
-             user.Photo = Convert.ToBase64String(photoUser);*/
+            var photoUser = await _fileStorage.GetFileAsync(user.Photo, "users");
+            user.Photo = Convert.ToBase64String(photoUser);
         }
 
         return Ok(user);
