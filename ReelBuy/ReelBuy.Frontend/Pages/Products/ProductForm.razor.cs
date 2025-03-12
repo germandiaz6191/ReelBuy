@@ -21,6 +21,8 @@ public partial class ProductForm
     private List<Marketplace>? marketplaces;
     private Product product = new();
 
+     private string? reelUrl;
+
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
@@ -185,4 +187,11 @@ public partial class ProductForm
 
         context.PreventNavigation();
     }
+    
+    private void ReelSelected(string videoBase64)
+    {
+        product!.ReelsBase64 = videoBase64;
+        reelUrl = null;
+    }
+
 }

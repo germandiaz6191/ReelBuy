@@ -13,6 +13,7 @@ public class Product
     public string Name { get; set; } = null!;
 
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
+    public string? ReelsBase64 { get; set; }
     public int StatusId { get; set; }
     public Status Status { get; set; } = null!;
     public int MarketplaceId { get; set; }

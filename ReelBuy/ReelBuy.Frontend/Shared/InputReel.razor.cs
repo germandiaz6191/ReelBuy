@@ -13,8 +13,11 @@ public partial class InputReel
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
 
     [Parameter] public string? Label { get; set; }
-    [Parameter] public string? ImageURL { get; set; }
-    [Parameter] public EventCallback<string> ImageSelected { get; set; }
+    [Parameter] public string? ReelURL { get; set; }
+    [Parameter] public EventCallback<string> ReelSelected { get; set; }
+
+    const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
+
 
     protected override void OnParametersSet()
     {
@@ -28,15 +31,20 @@ public partial class InputReel
     private async Task OnChange(InputFileChangeEventArgs e)
     {
         var file = e.File;
+        if (file.Size > MaxFileSize)
+        {
+            Console.WriteLine("El archivo es demasiado grande.");
+            return;
+        }
         if (file != null)
         {
             reelFileName = file.Name;
 
             var arrBytes = new byte[file.Size];
-            await file.OpenReadStream().ReadAsync(arrBytes);
+            await file.OpenReadStream(MaxFileSize).ReadAsync(arrBytes);
             reelBase64 = Convert.ToBase64String(arrBytes);
-            ImageURL = null;
-            await ImageSelected.InvokeAsync(reelBase64);
+            ReelURL = null;
+            await ReelSelected.InvokeAsync(reelBase64);
             StateHasChanged();
         }
     }

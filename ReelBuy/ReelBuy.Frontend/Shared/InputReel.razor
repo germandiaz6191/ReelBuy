@@ -19,11 +19,19 @@
     {
         <div>
             <div style="margin: 10px">
-                <img src="data:image/jpeg;base64,@reelBase64" style="height:200px;" />
                 <video width="320" height="240" controls>
                     <source src="data:video/mp4;base64,@reelBase64" type="video/mp4">
                         Tu navegador no soporta la reproducción de video.
                 </video>
+            </div>
+        </div>
+    }
+
+    @if (ReelURL is not null)
+    {
+        <div>
+            <div style="margin: 10px">
+                <img src="data:video/mp4;base64,@ReelURL" style="height:200px;" />
             </div>
         </div>
     }
