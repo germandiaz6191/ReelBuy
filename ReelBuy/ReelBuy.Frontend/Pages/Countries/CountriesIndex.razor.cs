@@ -56,7 +56,7 @@ public partial class CountriesIndex
         loading = false;
     }
 
-    private async Task<TableData<Country>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, Task<TableData<Country>>> LoadListAsync => async (state) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -83,7 +83,7 @@ public partial class CountriesIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {

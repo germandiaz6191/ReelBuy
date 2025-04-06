@@ -56,7 +56,7 @@ public partial class ProfilesIndex
         loading = false;
     }
 
-    private async Task<TableData<Profile>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, Task<TableData<Profile>>> LoadListAsync => async (state) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -83,7 +83,7 @@ public partial class ProfilesIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {

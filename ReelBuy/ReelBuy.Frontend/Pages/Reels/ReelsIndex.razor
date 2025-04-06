@@ -1,4 +1,5 @@
 ﻿@page "/reels"
+@using ReelBuy.Frontend.Shared
 
 @if (loading)
 {
@@ -29,6 +30,7 @@ else
         <HeaderContent>
             <MudTh>@Localizer["Reel"]</MudTh>
             <MudTh>@Localizer["Actions"]</MudTh>
+            <MudTh>@Localizer["Preview"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
@@ -48,6 +50,15 @@ else
                     </MudButton>
                 </MudTooltip>
             </MudTd>
+            <MudTd>
+                <MudTooltip Text="@Localizer["Preview"]">
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               OnClick="@(() => ShowReelModalAsync(context.ReelUri))">
+                        <MudIcon Icon="@Icons.Material.Filled.PlayArrow" />
+                    </MudButton>
+                </MudTooltip>
+            </MudTd>    
         </RowTemplate>
         <NoRecordsContent>
             <MudText>@Localizer["NoRecords"]</MudText>

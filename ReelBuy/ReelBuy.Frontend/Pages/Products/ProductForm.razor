@@ -38,7 +38,7 @@
     <MudCardContent>
         <MudAutocomplete T="Marketplace"
             Label=@Localizer["Marketplace"]
-            Placeholder=@Localizer["SelectAMarketplace"]
+            Placeholder=@Localizer["SelectMarketplace"]
             SearchFunc="SearchMarketplaces"
             Value="selectedMarketplace"
             ValueChanged="MarketplaceChanged"
@@ -49,8 +49,22 @@
         </MudAutocomplete>
     </MudCardContent> 
 
+    <MudCardContent>
+        <MudAutocomplete T="Store"
+            Label=@Localizer["Store"]
+            Placeholder=@Localizer["SelectAStore"]
+            SearchFunc="SearchStores"
+            Value="selectedStore"
+            ValueChanged="StoreChanged"
+            ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
+            <ItemTemplate Context="itemContext">
+                @itemContext.Name
+            </ItemTemplate>
+        </MudAutocomplete>
+    </MudCardContent> 
+
     <MudItem xs="12" sm="6">
-        <InputReel Label=@Localizer["Reel"] ReelSelected="ReelSelected" ReelURL="@reelUrl"/>
+        <InputReel Label=@Localizer["Reel"] ReelSelected="ReelSelected" ReelURL="@reelUrl" ReelBase64="@reelBase64"/>
     </MudItem>
 
     <MudButton Variant="Variant.Outlined"

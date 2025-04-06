@@ -56,7 +56,7 @@ public partial class CitiesIndex
         loading = false;
     }
 
-    private async Task<TableData<City>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, Task<TableData<City>>> LoadListAsync => async (state) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -83,7 +83,7 @@ public partial class CitiesIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {

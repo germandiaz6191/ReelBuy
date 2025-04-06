@@ -19,4 +19,6 @@ public class City
     [Display(Name = "Country", ResourceType = typeof(Literals))]
     [Range(1, int.MaxValue, ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public int? DepartmentId { get; set; }
+    public ICollection<Store> Stores { get; set; } = new List<Store>();
+  
 }

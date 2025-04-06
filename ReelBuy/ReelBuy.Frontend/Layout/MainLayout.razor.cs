@@ -23,7 +23,7 @@ public partial class MainLayout
 
     private MudTheme CustomTheme => new MudTheme
     {
-        PaletteLight = new PaletteLight
+        Palette = new PaletteLight
         {
             Primary = "rgb(74, 81, 94)",
             Secondary = "rgb(63, 81, 181)",
@@ -62,9 +62,8 @@ public partial class MainLayout
         _icon = _darkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
     }
 
-    private async Task<IEnumerable<String>> SearchProduct(string searchText, CancellationToken cancellationToken)
+    private async Task<IEnumerable<string>> SearchProduct(string searchText)
     {
-        await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length <= 3)
         {
             return new List<string>();

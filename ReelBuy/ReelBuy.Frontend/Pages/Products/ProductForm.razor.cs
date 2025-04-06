@@ -20,6 +20,9 @@ public partial class ProductForm
     private Marketplace selectedMarketplace = new();
     private List<Marketplace>? marketplaces;
     private Product product = new();
+    private Store selectedStore = new();
+    private List<Store>? stores;
+    private string? reelBase64;
 
      private string? reelUrl;
 
@@ -35,6 +38,7 @@ public partial class ProductForm
     protected override void OnInitialized()
     {
         editContext = new(Product);
+        product = Product;
     }
 
     protected override async Task OnInitializedAsync()
@@ -42,10 +46,14 @@ public partial class ProductForm
         await LoadStatusesAsync();
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
+        await LoadStoresAsync();
 
         selectedStatus = product!.Status!;
         selectedCategory = product!.Category!;
         selectedMarketplace = product!.Marketplace!;
+        selectedStore = product!.Store!;
+        reelUrl = product.Reels.FirstOrDefault()?.ReelUri;
+        reelBase64 = string.IsNullOrEmpty(product.Reels?.FirstOrDefault()?.Base64) ? string.Empty : product.Reels.FirstOrDefault()?.Base64;
     }
 
     private void StatusChanged(Status status)
@@ -63,9 +71,13 @@ public partial class ProductForm
         selectedMarketplace = marketplace;
     }
 
-    private async Task<IEnumerable<Status>> SearchStatuses(string searchText, CancellationToken cancellationToken)
+    private void StoreChanged(Store store)
     {
-        await Task.Delay(5);
+        selectedStore = store;
+    }
+
+    private Func<string, Task<IEnumerable<Status>>> SearchStatuses => async (searchText) =>
+    {
         if (string.IsNullOrWhiteSpace(searchText))
         {
             return statuses!;
@@ -74,11 +86,10 @@ public partial class ProductForm
         return statuses!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
-    private async Task<IEnumerable<Category>> SearchCategories(string searchText, CancellationToken cancellationToken)
+    private Func<string, Task<IEnumerable<Category>>> SearchCategories => async (searchText) =>
     {
-        await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
         {
             return categories!;
@@ -87,11 +98,10 @@ public partial class ProductForm
         return categories!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
-    private async Task<IEnumerable<Marketplace>> SearchMarketplaces(string searchText, CancellationToken cancellationToken)
+    private Func<string, Task<IEnumerable<Marketplace>>> SearchMarketplaces => async (searchText) =>
     {
-        await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
         {
             return marketplaces!;
@@ -100,7 +110,19 @@ public partial class ProductForm
         return marketplaces!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
+
+    private Func<string, Task<IEnumerable<Store>>> SearchStores => async (searchText) =>
+    {
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return stores!;
+        }
+
+        return stores!
+            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+    };
 
     private async Task LoadStatusesAsync()
     {
@@ -138,17 +160,31 @@ public partial class ProductForm
         marketplaces = responseHttp.Response;
     }
 
+    private async Task LoadStoresAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Store>>("/api/stores/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        stores = responseHttp.Response;
+    }
+
+
     private async Task SaveProductAsync()
     {
-        product!.Status = selectedStatus;
         product!.StatusId = selectedStatus.Id;
-        product!.Category = selectedCategory;
         product!.CategoryId = selectedCategory.Id;
-        product!.Marketplace = selectedMarketplace;
         product!.MarketplaceId = selectedMarketplace.Id;
         product!.Name = Product.Name;
+        product!.StoreId = selectedStore.Id;
+
+
+        product!.Reels.Add(CreateReel()); 
         
-        var responseHttp = await Repository.PutAsync("/api/products", product!);
+        var responseHttp = await Repository.PostAsync("/api/Products/CreateProduct", product!);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
@@ -156,8 +192,14 @@ public partial class ProductForm
             return;
         }
 
-        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
-        NavigationManager.NavigateTo("/");
+        Return();
+        Snackbar.Add(Localizer["RecordCreatedOk"], Severity.Success);
+    }
+
+    private void Return()
+    {
+        FormPostedSuccessfully = true;
+        NavigationManager.NavigateTo("/products");
     }
 
     public bool FormPostedSuccessfully { get; set; } = false;
@@ -188,10 +230,20 @@ public partial class ProductForm
         context.PreventNavigation();
     }
     
-    private void ReelSelected(string videoBase64)
+    private void ReelSelected(string _videoBase64)
     {
-        product!.ReelsBase64 = videoBase64;
+        reelBase64 = _videoBase64;
         reelUrl = null;
+    }
+
+    private Reel CreateReel() { 
+        var reel = new Reel {
+            Name = product.Name + "-reel-product", 
+            Base64 = reelBase64!, 
+            ProductId = product!.Id,
+            ReelUri = string.Empty
+        }; 
+        return reel;
     }
 
 }

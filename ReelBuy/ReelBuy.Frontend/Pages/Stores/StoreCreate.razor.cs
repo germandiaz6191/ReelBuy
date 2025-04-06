@@ -38,10 +38,13 @@ public partial class StoreCreate
 
     private async Task CreateAsync()
     {
+        var userID = await JS.InvokeAsync<string>("localStorage.getItem", ["UserId"]);
+
         var storeDTO = new StoreDTO()
         {
             CityId = store!.City!.Id,
-            Name = store.Name!
+            Name = store.Name!,
+            UserId = userID!,
         };
         var responseHttp = await Repository.PostAsync("/api/stores/full", storeDTO);
         if (responseHttp.Error)

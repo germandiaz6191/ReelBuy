@@ -26,7 +26,7 @@ public class FileStorage : IFileStorage
     {
         var client = new BlobContainerClient(_connectionString, containerName);
         await client.CreateIfNotExistsAsync();
-        client.SetAccessPolicy(PublicAccessType.Blob);
+        //client.SetAccessPolicy(PublicAccessType.Blob); 
         var fileName = $"{Guid.NewGuid()}{extention}";
         var blob = client.GetBlobClient(fileName);
 
@@ -41,7 +41,7 @@ public class FileStorage : IFileStorage
     public async Task<byte[]> GetFileAsync(string path, string containerName)
     {
         var client = new BlobContainerClient(_connectionString, containerName);
-        await client.CreateIfNotExistsAsync();
+        // await client.CreateIfNotExistsAsync();
         var fileName = Path.GetFileName(path);
         var blob = client.GetBlobClient(fileName);
         if (!await blob.ExistsAsync())

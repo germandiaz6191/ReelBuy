@@ -253,30 +253,24 @@ namespace ReelBuy.Backend.Migrations
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Favorite", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "ProductId");
 
                     b.HasIndex("Name");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Favorites");
                 });
@@ -329,6 +323,9 @@ namespace ReelBuy.Backend.Migrations
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
+                    b.Property<int>("StoreId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -338,6 +335,8 @@ namespace ReelBuy.Backend.Migrations
                     b.HasIndex("Name");
 
                     b.HasIndex("StatusId");
+
+                    b.HasIndex("StoreId");
 
                     b.ToTable("Products");
                 });
@@ -378,6 +377,10 @@ namespace ReelBuy.Backend.Migrations
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ReelUri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -451,12 +454,18 @@ namespace ReelBuy.Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CityId");
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Stores");
                 });
@@ -627,7 +636,7 @@ namespace ReelBuy.Backend.Migrations
                     b.HasOne("ReelBuy.Shared.Entities.Product", "Product")
                         .WithMany("Favorites")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ReelBuy.Shared.Entities.User", "User")
@@ -661,11 +670,19 @@ namespace ReelBuy.Backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ReelBuy.Shared.Entities.Store", "Store")
+                        .WithMany("Products")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Category");
 
                     b.Navigation("Marketplace");
 
                     b.Navigation("Status");
+
+                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Reel", b =>
@@ -682,12 +699,20 @@ namespace ReelBuy.Backend.Migrations
             modelBuilder.Entity("ReelBuy.Shared.Entities.Store", b =>
                 {
                     b.HasOne("ReelBuy.Shared.Entities.City", "City")
-                        .WithMany()
+                        .WithMany("Stores")
                         .HasForeignKey("CityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ReelBuy.Shared.Entities.User", "User")
+                        .WithMany("Stores")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("City");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.User", b =>
@@ -714,6 +739,11 @@ namespace ReelBuy.Backend.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("ReelBuy.Shared.Entities.City", b =>
+                {
+                    b.Navigation("Stores");
+                });
+
             modelBuilder.Entity("ReelBuy.Shared.Entities.Country", b =>
                 {
                     b.Navigation("Users");
@@ -736,9 +766,16 @@ namespace ReelBuy.Backend.Migrations
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("ReelBuy.Shared.Entities.Store", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("ReelBuy.Shared.Entities.User", b =>
                 {
                     b.Navigation("Favorites");
+
+                    b.Navigation("Stores");
                 });
 #pragma warning restore 612, 618
         }

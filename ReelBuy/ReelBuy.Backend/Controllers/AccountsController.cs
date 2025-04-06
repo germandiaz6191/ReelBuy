@@ -153,7 +153,8 @@ public class AccountsController : ControllerBase
                 new("FirstName", user.FirstName),
                 new("LastName", user.LastName),
                 new("CountryId", user.Country.Id.ToString()),
-                new("Photo", user.Photo ?? string.Empty)
+                new("Photo", user.Photo ?? string.Empty),
+                new("UserId", user.Id.ToString())
             };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwtKey"]!));

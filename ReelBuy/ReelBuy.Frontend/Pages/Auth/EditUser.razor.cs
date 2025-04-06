@@ -91,9 +91,8 @@ public partial class EditUser
         selectedCountry = country;
     }
 
-    private async Task<IEnumerable<Country>> SearchCountries(string searchText, CancellationToken cancellationToken)
+    private Func<string, Task<IEnumerable<Country>>> SearchCountries => async (searchText) =>
     {
-        await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
         {
             return countries!;
@@ -102,7 +101,7 @@ public partial class EditUser
         return countries!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
     private async Task SaveUserAsync()
     {

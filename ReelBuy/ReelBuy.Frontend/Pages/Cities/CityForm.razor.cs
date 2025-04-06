@@ -63,9 +63,9 @@ public partial class CityForm
 
         context.PreventNavigation();
     }
-    private async Task<IEnumerable<Department>> SearchDepartment(string searchText, CancellationToken cancellationToken)
+
+    private Func<string, Task<IEnumerable<Department>>> SearchDepartment => async (searchText) =>
     {
-        await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
         {
             return Departments!;
@@ -74,7 +74,8 @@ public partial class CityForm
         return Departments!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
+
     private void DepartmentChanged(Department department)
     {
         selectedDepartment = department;
@@ -83,15 +84,18 @@ public partial class CityForm
 
         CheckValidation();
     }
+
     private void OnFieldBlur()
     {
         CheckValidation();
     }
+
     private async void CheckValidation()
     {
         await Task.Delay(50);
         editContext.Validate();
     }
+
     private Department filterDepartment(int? id)
     {
         return Departments.FirstOrDefault(x => x.Id == id) ?? new();

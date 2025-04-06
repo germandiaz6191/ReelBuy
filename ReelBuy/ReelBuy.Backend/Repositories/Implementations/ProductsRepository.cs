@@ -32,8 +32,13 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
     public override async Task<ActionResponse<Product>> GetAsync(int id)
     {
         var products = await _context.Products
-             .Include(p => p.Favorites)
-             .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(p => p.Reels)
+            .Include(p => p.Status)
+            .Include(p => p.Category)
+            .Include(p => p.Marketplace)
+            .Include(p => p.Favorites)
+            .Include(p => p.Store)
+            .FirstOrDefaultAsync(c => c.Id == id);
 
         if (products == null)
         {
@@ -61,7 +66,12 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
     public override async Task<ActionResponse<IEnumerable<Product>>> GetAsync(PaginationDTO pagination)
     {
         var queryable = _context.Products
+            .Include(p => p.Reels)
+            .Include(p => p.Status)
+            .Include(p => p.Category)
+            .Include(p => p.Marketplace)
             .Include(p => p.Favorites)
+            .Include(p => p.Store)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(pagination.Filter))

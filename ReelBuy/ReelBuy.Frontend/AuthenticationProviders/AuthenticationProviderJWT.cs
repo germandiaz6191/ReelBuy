@@ -42,7 +42,7 @@ public class AuthenticationProviderJWT : AuthenticationStateProvider, ILoginServ
         return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
     }
 
-    private IEnumerable<Claim> ParseClaimsFromJWT(string token)
+    public IEnumerable<Claim> ParseClaimsFromJWT(string token)
     {
         var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
         var unserializedToken = jwtSecurityTokenHandler.ReadJwtToken(token);

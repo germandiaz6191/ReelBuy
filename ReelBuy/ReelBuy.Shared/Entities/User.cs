@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Resources;
 using Microsoft.AspNetCore.Identity;
 
@@ -38,4 +37,6 @@ public class User : IdentityUser
     public int ProfileId { get; set; }
 
     public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
+    public ICollection<Store> Stores { get; set; } = new List<Store>();
 }
