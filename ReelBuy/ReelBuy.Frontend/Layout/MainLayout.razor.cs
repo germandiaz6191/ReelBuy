@@ -25,31 +25,32 @@ public partial class MainLayout
     {
         Palette = new PaletteLight
         {
-            Primary = "rgb(74, 81, 94)",
-            Secondary = "rgb(63, 81, 181)",
-            Background = "rgb(245, 245, 245)",
-            Surface = "rgb(255, 255, 255)",
-            AppbarBackground = "rgb(74, 81, 94)",
-            AppbarText = "rgb(255, 255, 255)",
-            TextPrimary = "rgb(33, 33, 33)",
-            TextSecondary = "rgb(169, 169, 169)",
-            DrawerBackground = "rgb(238, 238, 238)",
-            DrawerText = "rgb(33, 33, 33)"
+            Primary = "rgb(34, 150, 243)",        // Azul vibrante para dar dinamismo
+            Secondary = "rgb(255, 87, 34)",         // Naranja fresco para contrastar
+            Background = "rgb(250, 250, 250)",      // Fondo muy claro para destacar elementos
+            Surface = "rgb(255, 255, 255)",         // Superficie limpia y minimalista
+            AppbarBackground = "rgb(34, 150, 243)", // Consistente con el color primario
+            AppbarText = "rgb(255, 255, 255)",      // Texto claro para visibilidad
+            TextPrimary = "rgb(33, 33, 33)",        // Texto principal oscuro para legibilidad
+            TextSecondary = "rgb(117, 117, 117)",   // Texto secundario en tono gris moderado
+            DrawerBackground = "rgb(245, 245, 245)",// Fondo suave para menús laterales
+            DrawerText = "rgb(33, 33, 33)"          // Texto oscuro para contraste
         },
         PaletteDark = new PaletteDark
         {
-            Primary = "rgb(74, 81, 94)",
-            Secondary = "rgb(255, 159, 64)",
-            Background = "rgb(18, 18, 18)",
-            Surface = "rgb(51, 51, 51)",
-            AppbarBackground = "rgb(74, 81, 94)",
+            Primary = "rgb(34, 150, 243)",
+            Secondary = "rgb(255, 87, 34)",
+            Background = "rgb(18, 18, 18)",         // Fondo oscuro para la versión dark
+            Surface = "rgb(34, 34, 34)",             // Superficie oscura pero con detalles
+            AppbarBackground = "rgb(34, 150, 243)",
             AppbarText = "rgb(255, 255, 255)",
             TextPrimary = "rgb(255, 255, 255)",
-            TextSecondary = "rgb(169, 169, 169)",
-            DrawerBackground = "rgb(30, 30, 30)",
+            TextSecondary = "rgb(189, 189, 189)",
+            DrawerBackground = "rgb(27, 27, 27)",
             DrawerText = "rgb(255, 255, 255)"
         }
     };
+
 
     private void DrawerToggle()
     {
