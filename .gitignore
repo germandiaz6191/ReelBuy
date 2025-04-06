@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/ReelBuy/ReelBuy.Frontend/App.razor.css

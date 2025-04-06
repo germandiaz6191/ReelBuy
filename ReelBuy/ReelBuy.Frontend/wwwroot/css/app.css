@@ -17,7 +17,7 @@ a, .btn-link {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 .content {
@@ -100,4 +100,50 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+
+.color-palette-surface {
+    background: var(--color-surface);
+}
+
+.color-palette-text-primary {
+    color: var(--color-text-primary);
+}
+
+.color-palette-text-secundary {
+    color: var(--color-text-secundary);
+}
+
+/* Apunta directamente al input del MudAutocomplete */
+/*
+.my-autocomplete .mud-input-slot.mud-input-root {
+    font-size: 0.75rem !important;
+    height: 30px !important;
+    padding: 2px 6px !important;
+}
+
+.my-autocomplete {
+    max-width: 220px;
+    font-size: 0.75rem;
+}
+
+.my-autocomplete input.mud-input-input {
+    font-size: 0.75rem !important;
+    height: 30px !important;
+    padding: 2px 6px !important;
+}
+
+ También baja el label
+    .my-autocomplete label {
+        font-size: 0.7rem !important;
+    }
+
+    .my-autocomplete .mud-input-label-inputcontrol {
+        transform: translate(0, 6px) scale(1) !important;  */ /* <-- baja el label al centro del input
+        font-size: 0.75rem !important;
+    }
+*/
+.principal-autocomplete label {
+    color: #fff !important;
+    background-color: transparent !important;
 }

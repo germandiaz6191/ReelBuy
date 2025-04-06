@@ -14,4 +14,8 @@ public class Reel
 
     public int ProductId { get; set; }
     public Product Product { get; set; } = null!;
+
+    public string? Title { get; set; }
+    public string? Thumbnail { get; set; }
+    public string? Link { get; set; }
 }

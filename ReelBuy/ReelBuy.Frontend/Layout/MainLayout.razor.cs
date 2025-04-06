@@ -10,13 +10,14 @@ namespace ReelBuy.Frontend.Layout;
 
 public partial class MainLayout
 {
-    private bool _drawerOpen = true;
+    private bool _drawerOpen = false;
     private string _icon = Icons.Material.Filled.DarkMode;
     private string? selectedText;
     private List<string> searchResults = new List<string>();
     private const string baseUrl = "api/products/search";
 
     private bool _darkMode { get; set; } = true;
+
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
@@ -31,8 +32,8 @@ public partial class MainLayout
             Surface = "rgb(255, 255, 255)",
             AppbarBackground = "rgb(74, 81, 94)",
             AppbarText = "rgb(255, 255, 255)",
-            TextPrimary = "rgb(33, 33, 33)",
-            TextSecondary = "rgb(169, 169, 169)",
+            TextPrimary = "rgb(169, 169, 169)",
+            TextSecondary = "rgb(33, 33, 33)",
             DrawerBackground = "rgb(238, 238, 238)",
             DrawerText = "rgb(33, 33, 33)"
         },
@@ -40,14 +41,21 @@ public partial class MainLayout
         {
             Primary = "rgb(74, 81, 94)",
             Secondary = "rgb(255, 159, 64)",
-            Background = "rgb(18, 18, 18)",
-            Surface = "rgb(51, 51, 51)",
-            AppbarBackground = "rgb(74, 81, 94)",
+            //Background = "rgb(18, 18, 18)",
+            Background = "rgb(219, 218, 216)", //page
+            //Surface = "rgb(51, 51, 51)",
+            Surface = "#fff",
+            //AppbarBackground = "rgb(74, 81, 94)",
+            AppbarBackground = "#460C61", //header
             AppbarText = "rgb(255, 255, 255)",
-            TextPrimary = "rgb(255, 255, 255)",
-            TextSecondary = "rgb(169, 169, 169)",
-            DrawerBackground = "rgb(30, 30, 30)",
-            DrawerText = "rgb(255, 255, 255)"
+            TextPrimary = "rgb(169, 169, 169)",
+            TextSecondary = "rgb(255, 255, 255)",
+            //DrawerBackground = "rgb(30, 30, 30)",
+            DrawerBackground = "#fff", //menu
+            //DrawerText = "rgb(255, 255, 255)"
+            DrawerText = "#460C61",
+            DrawerIcon = "#460C61",
+            SecondaryDarken = "#fff"
         }
     };
 
@@ -110,5 +118,23 @@ public partial class MainLayout
         }
 
         return responseHttp.Response?.Select(product => product.Name).ToList() ?? new List<string>();
+    }
+
+    private string BuildThemeCssVars()
+    {
+        Palette p = _darkMode ? CustomTheme.PaletteDark : CustomTheme.PaletteLight;
+
+        return $@"
+        --color-primary: {p.Primary};
+        --color-secondary: {p.Secondary};
+        --color-background: {p.Background};
+        --color-surface: {p.Surface};
+        --color-text-primary: {p.TextPrimary};
+        --color-text-secondary: {p.TextSecondary};
+        --color-appbar-background: {p.AppbarBackground};
+        --color-appbar-text: {p.AppbarText};
+        --color-drawer-background: {p.DrawerBackground};
+        --color-drawer-text: {p.DrawerText};
+    ";
     }
 }

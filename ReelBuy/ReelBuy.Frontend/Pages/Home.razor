@@ -1,14 +1,84 @@
 ﻿@page "/"
 
-<AuthorizeView Roles="Admin">
-    <Authorized>
-        <p>Estas autenticado y autorizado, @context.User.Identity?.Name</p>
-    </Authorized>
-    <NotAuthorized>
-        <p>No estas autorizado</p>
-    </NotAuthorized>
-</AuthorizeView>
+<div class="page-container">
+    <!--
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <p>Estas autenticado y autorizado, @context.User.Identity?.Name</p>
+        </Authorized>
+        <NotAuthorized>
+            <p>No estas autorizadossss</p>
+        </NotAuthorized>
+    </AuthorizeView>
+    -->
 
+    <!--
+    <h1>@Localizer["Title"]</h1>
+    <h2>@Localizer["Subtitle"]</h2>
+    -->
 
-<h1>@Localizer["Title"]</h1>
-<h2>@Localizer["Subtitle"]</h2>
+    <!-- Vista de reel ampliado (oculto inicialmente) -->
+    <div class="tiktok-container">
+        <!-- Video Principal (Grande) -->
+        @if (selectedReel != null)
+        {
+            <div class="main-reel color-palette-surface">
+                <video controls
+                       autoplay
+                       muted
+                       class="reel-video"
+                       src="@selectedReel.Link">
+                </video>
+            </div>
+        }
+   
+    </div>
+    <!-- Espacio flexible que empuja los videos hacia abajo -->
+    <div class="spacer"></div>
+    
+    
+    <div class="video-footer">
+        <!-- Pestaña toggle del footer -->
+        <div class="footer-toggle @(showFooter ? "" : "hidden")" @onclick="ToggleFooter">
+            @(showFooter ? "▼ Ocultar" : "▲ Mostrar carrusel")
+        </div>
+
+        @if (showFooter)
+        {
+            <!-- Controles del carrusel -->
+        <div class="video-rotator-wrapper color-palette-surface">
+            <!-- Botón izquierdo -->
+            <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(currentBatch == 0)">
+                &larr; <!-- Flecha izquierda -->
+            </button>
+            <!-- Contenedor principal -->
+            <div class="video-rotator-container">
+                <!-- Videos (contenido desplazable) -->
+                <div class="video-container">
+                @foreach (var video in currentDisplayVideos)
+                {
+                    <div class="video-thumbnail" @onclick="() => SelectReel(video)">
+                        <ReelBuy.Frontend.Pages.CardReel.CardReel Title="@video.Title" 
+                                 Thumbnail="@video.Thumbnail" 
+                                 Link="@video.Link" />
+                    </div>
+                }
+                </div>
+            </div>
+
+            <!-- Botón derecho -->
+            <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(!isLastBatch)">
+                &rarr; <!-- Flecha derecha -->
+            </button>
+         </div>
+        }
+     </div>
+      
+    
+    
+    <!-- Indicador de carga -->
+    @if (loading)
+    {
+        <p>Cargando más videos...</p>
+    }
+</div>
