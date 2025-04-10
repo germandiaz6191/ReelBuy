@@ -64,7 +64,7 @@ public partial class StoreForm
         context.PreventNavigation();
     }
 
-    private async Task<IEnumerable<City>> SearchCity(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<City>>> SearchCity => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -75,7 +75,7 @@ public partial class StoreForm
         return Cities!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
     private void CityChanged(City city)
     {

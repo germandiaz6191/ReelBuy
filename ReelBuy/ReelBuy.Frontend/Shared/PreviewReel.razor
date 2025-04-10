@@ -1,0 +1,33 @@
+@namespace ReelBuy.Frontend.Shared
+@using MudBlazor
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public string VideoUrl { get; set; } = string.Empty;
+
+    private void CloseDialog()
+    {
+        MudDialog.Close();
+    }
+}
+
+<MudDialog MaxWidth="MaxWidth.Medium" FullWidth="true">
+    <DialogContent>
+        <MudText Typo="Typo.h6" Class="mb-2">Previsualización del Reel</MudText>
+
+        @if (!string.IsNullOrWhiteSpace(VideoUrl))
+        {
+            <video width="100%" height="auto" controls autoplay muted>
+                <source src="@VideoUrl" type="video/mp4" />
+                Tu navegador no soporta la reproducción de video.
+            </video>
+        }
+        else
+        {
+            <MudText Color="Color.Error">No se pudo cargar el video.</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@CloseDialog" Color="Color.Primary">Cerrar</MudButton>
+    </DialogActions>
+</MudDialog>

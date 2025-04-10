@@ -83,7 +83,7 @@ public partial class Register
         selectedProfile = profile;
     }
 
-    private async Task<IEnumerable<Country>> SearchCountries(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<Country>>> SearchCountries => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -94,9 +94,9 @@ public partial class Register
         return countries!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
-    private async Task<IEnumerable<Profile>> SearchProfiles(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<Profile>>> SearchProfiles => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -107,7 +107,7 @@ public partial class Register
         return profiles!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
     private void ReturnAction()
     {

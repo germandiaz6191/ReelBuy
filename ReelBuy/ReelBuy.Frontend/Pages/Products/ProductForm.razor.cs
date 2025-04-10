@@ -7,6 +7,7 @@ using ReelBuy.Shared.Resources;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Frontend.Repositories;
 using MudBlazor;
+using System.Threading;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
@@ -20,8 +21,11 @@ public partial class ProductForm
     private Marketplace selectedMarketplace = new();
     private List<Marketplace>? marketplaces;
     private Product product = new();
+    private Store selectedStore = new();
+    private List<Store>? stores;
+    private string? reelBase64;
 
-     private string? reelUrl;
+    private string? reelUrl;
 
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
@@ -35,6 +39,7 @@ public partial class ProductForm
     protected override void OnInitialized()
     {
         editContext = new(Product);
+        product = Product;
     }
 
     protected override async Task OnInitializedAsync()
@@ -42,10 +47,14 @@ public partial class ProductForm
         await LoadStatusesAsync();
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
+        await LoadStoresAsync();
 
         selectedStatus = product!.Status!;
         selectedCategory = product!.Category!;
         selectedMarketplace = product!.Marketplace!;
+        selectedStore = product!.Store!;
+        reelUrl = product.Reels.FirstOrDefault()?.ReelUri;
+        reelBase64 = string.IsNullOrEmpty(product.Reels?.FirstOrDefault()?.ReelUri) ? string.Empty : product.Reels.FirstOrDefault()?.ReelUri;
     }
 
     private void StatusChanged(Status status)
@@ -63,7 +72,12 @@ public partial class ProductForm
         selectedMarketplace = marketplace;
     }
 
-    private async Task<IEnumerable<Status>> SearchStatuses(string searchText, CancellationToken cancellationToken)
+    private void StoreChanged(Store store)
+    {
+        selectedStore = store;
+    }
+
+    private Func<string, CancellationToken, Task<IEnumerable<Status>>> SearchStatuses => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -74,9 +88,9 @@ public partial class ProductForm
         return statuses!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
-    private async Task<IEnumerable<Category>> SearchCategories(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<Category>>> SearchCategories => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -86,10 +100,10 @@ public partial class ProductForm
 
         return categories!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
-            .ToList();
-    }
+        .ToList();
+    };
 
-    private async Task<IEnumerable<Marketplace>> SearchMarketplaces(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<Marketplace>>> SearchMarketplaces => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -100,7 +114,20 @@ public partial class ProductForm
         return marketplaces!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
+
+    private Func<string, CancellationToken, Task<IEnumerable<Store>>> SearchStores => async (searchText, cancellationToken) =>
+    {
+        await Task.Delay(5);
+        if (string.IsNullOrWhiteSpace(searchText))
+        {
+            return stores!;
+        }
+
+        return stores!
+            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+    };
 
     private async Task LoadStatusesAsync()
     {
@@ -138,17 +165,29 @@ public partial class ProductForm
         marketplaces = responseHttp.Response;
     }
 
+    private async Task LoadStoresAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Store>>("/api/stores/combo");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        stores = responseHttp.Response;
+    }
+
     private async Task SaveProductAsync()
     {
-        product!.Status = selectedStatus;
         product!.StatusId = selectedStatus.Id;
-        product!.Category = selectedCategory;
         product!.CategoryId = selectedCategory.Id;
-        product!.Marketplace = selectedMarketplace;
         product!.MarketplaceId = selectedMarketplace.Id;
         product!.Name = Product.Name;
-        
-        var responseHttp = await Repository.PutAsync("/api/products", product!);
+        product!.StoreId = selectedStore.Id;
+
+        product!.Reels.Add(CreateReel());
+
+        var responseHttp = await Repository.PostAsync("/api/Products/CreateProduct", product!);
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
@@ -156,8 +195,14 @@ public partial class ProductForm
             return;
         }
 
-        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
-        NavigationManager.NavigateTo("/");
+        Return();
+        Snackbar.Add(Localizer["RecordCreatedOk"], Severity.Success);
+    }
+
+    private void Return()
+    {
+        FormPostedSuccessfully = true;
+        NavigationManager.NavigateTo("/products");
     }
 
     public bool FormPostedSuccessfully { get; set; } = false;
@@ -187,11 +232,20 @@ public partial class ProductForm
 
         context.PreventNavigation();
     }
-    
-    private void ReelSelected(string videoBase64)
+
+    private void ReelSelected(string _reelUri)
     {
-        product!.ReelsBase64 = videoBase64;
-        reelUrl = null;
+        reelUrl = _reelUri;
     }
 
+    private Reel CreateReel()
+    {
+        var reel = new Reel
+        {
+            Name = product.Name + "-reel-product",
+            ProductId = product!.Id,
+            ReelUri = reelUrl!
+        };
+        return reel;
+    }
 }

@@ -38,6 +38,7 @@ public class DataContext : IdentityDbContext<User>
         modelBuilder.Entity<Reputation>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Reel>().HasIndex(i => i.Name).IsUnique();
         modelBuilder.Entity<Favorite>().HasIndex(i => i.Name);
+  
 
         // Configuración de relaciones
         modelBuilder.Entity<Product>()
@@ -65,16 +66,33 @@ public class DataContext : IdentityDbContext<User>
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Favorite>()
-        .HasOne(f => f.User)
-        .WithMany(u => u.Favorites)
-        .HasForeignKey(f => f.UserId)
-        .OnDelete(DeleteBehavior.Cascade);
+            .HasKey(f => new { f.UserId, f.ProductId });
 
-        // Configuración de la relación con Product
+        modelBuilder.Entity<Favorite>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.Favorites)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // ok
+
+    // Configuración de la relación con Product
+
         modelBuilder.Entity<Favorite>()
             .HasOne(f => f.Product)
             .WithMany(p => p.Favorites)
             .HasForeignKey(f => f.ProductId)
+            .OnDelete(DeleteBehavior.Restrict); // <--- evita el conflicto
+
+        modelBuilder.Entity<Store>()
+            .HasOne(i => i.User)
+            .WithMany(i => i.Stores)
+            .HasForeignKey(i => i.UserId)    
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Store>()
+            .HasOne(i => i.City)
+            .WithMany(i => i.Stores)
+            .HasForeignKey(i => i.CityId)    
+            .OnDelete(DeleteBehavior.Restrict);    
+            
     }
 }

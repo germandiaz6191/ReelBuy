@@ -54,7 +54,7 @@ public partial class ReputationsIndex
         loading = false;
     }
 
-    private async Task<TableData<Reputation>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, CancellationToken, Task<TableData<Reputation>>> LoadListAsync => async (state, cancellationToken) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -81,7 +81,7 @@ public partial class ReputationsIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {

@@ -5,11 +5,11 @@ namespace ReelBuy.Frontend.Pages.CardReel;
 public partial class CardReel
 {
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
     [Parameter]
-    public string Thumbnail { get; set; }
+    public string? Thumbnail { get; set; }
 
     [Parameter]
-    public string Link { get; set; }
+    public string? Link { get; set; }
 }

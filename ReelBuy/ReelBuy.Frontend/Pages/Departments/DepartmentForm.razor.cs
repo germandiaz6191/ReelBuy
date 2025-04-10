@@ -17,7 +17,7 @@ public partial class DepartmentForm
     protected override void OnInitialized()
     {
         editContext = new(Department);
-        
+
         if (Department.CountryId != null && Department.CountryId != 0)
         {
             var countryId = Department.CountryId;
@@ -64,7 +64,7 @@ public partial class DepartmentForm
         context.PreventNavigation();
     }
 
-    private async Task<IEnumerable<Country>> SearchCountries(string searchText, CancellationToken cancellationToken)
+    private Func<string, CancellationToken, Task<IEnumerable<Country>>> SearchCountries => async (searchText, cancellationToken) =>
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText))
@@ -75,7 +75,7 @@ public partial class DepartmentForm
         return Countries!
             .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
-    }
+    };
 
     private void CountryChanged(Country country)
     {

@@ -1,26 +1,21 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
-using ReelBuy.Frontend.Layout;
 using ReelBuy.Frontend.Repositories;
-using ReelBuy.Frontend.Shared;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
+using System.Collections.Generic;
 
 namespace ReelBuy.Frontend.Pages;
 
 public partial class Home
 {
-    // (Layout as MainLayout)!.PageWrapperClass = "custom-override my-page-style";
-    // (Layout as MainLayout)!.PageWrapperStyle = "padding: 1rem 0;";
-
     private List<Reel> dummyReels = new();
-    private List<Reel> allFetchedReels = new();
-    private List<Reel> currentDisplayVideos = new();
+    private List<Product> allFetchedReels = new();
+    private List<Product> currentDisplayVideos = new();
     private int totalRecords = 0;
 
-    private const string baseUrl = "api/stores";
+    private const string baseUrl = "api/products";
 
     private Reel? selectedReel = null;
 
@@ -39,18 +34,25 @@ public partial class Home
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
 
+    [Parameter, SupplyParameterFromQuery] public string Filter { get; set; } = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         loading = true;
+        await LoadProductsAsync();
         await LoadTotalRecordsAsync();
         loading = false;
     }
 
     private async Task LoadTotalRecordsAsync()
     {
-        // Simula carga desde API (reemplaza con tu lógica real)
-        //var newReels = await FetchVideosFromApi(currentBatch * BatchSize, BatchSize);
+        loading = true;
         var url = $"{baseUrl}/totalRecordsPaginated";
+
+        if (!string.IsNullOrWhiteSpace(Filter))
+        {
+            url += $"?filter={Filter}";
+        }
 
         var responseHttp = await Repository.GetAsync<int>(url);
         if (responseHttp.Error)
@@ -60,69 +62,100 @@ public partial class Home
             return;
         }
 
-        Reel reel = new Reel
+        totalRecords = responseHttp.Response;
+        loading = false;
+    }
+
+    private async Task LoadProductsAsync()
+    {
+        // Simula carga desde API (reemplaza con tu lógica real)
+        List<Product> newReels = await FetchVideosFromApi(currentBatch, BatchSize);
+
+        /* Reel reel = new Reel
+         {
+             Title = "Video 1",
+             Thumbnail = "https://via.placeholder.com/150",
+             Link = "#"
+         };
+
+         Reel reel2 = new Reel
+         {
+             Title = "Video 2",
+             Thumbnail = "https://via.placeholder.com/150",
+             Link = "#"
+         };
+
+         Reel reel3 = new Reel
+         {
+             Title = "Video 3",
+             Thumbnail = "https://via.placeholder.com/150",
+             Link = "#"
+         };
+
+         Reel reel4 = new Reel
+         {
+             Title = "Video 4",
+             Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
+             Link = "#"
+         };
+
+         Reel reel5 = new Reel
+         {
+             Title = "Video 5",
+             Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
+             Link = "#"
+         };
+
+         dummyReels.Add(reel);
+         dummyReels.Add(reel2);
+         dummyReels.Add(reel3);
+         dummyReels.Add(reel4);
+         dummyReels.Add(reel5);
+
+         var newReels = dummyReels;
+        */
+
+        if (newReels.Count == 0)
         {
-            Title = "Video 1",
-            Thumbnail = "https://via.placeholder.com/150",
-            Link = "#"
-        };
-
-        Reel reel2 = new Reel
-        {
-            Title = "Video 2",
-            Thumbnail = "https://via.placeholder.com/150",
-            Link = "#"
-        };
-
-        Reel reel3 = new Reel
-        {
-            Title = "Video 3",
-            Thumbnail = "https://via.placeholder.com/150",
-            Link = "#"
-        };
-
-        Reel reel4 = new Reel
-        {
-            Title = "Video 4",
-            Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
-            Link = "#"
-        };
-
-        Reel reel5 = new Reel
-        {
-            Title = "Video 5",
-            Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
-            Link = "#"
-        };
-
-        dummyReels.Add(reel);
-        dummyReels.Add(reel2);
-        dummyReels.Add(reel3);
-        dummyReels.Add(reel4);
-        dummyReels.Add(reel5);
-
-        var newReels = dummyReels;
+            return;
+        }
 
         allFetchedReels.AddRange(newReels);
         UpdateDisplayVideos();
-        Console.WriteLine("-----AA----------- " + newReels.Count);
-        Console.WriteLine("------EE---------- " + BatchSize);
-        isLastBatch = newReels.Count < BatchSize; // ¿Es el último lote?
+        isLastBatch = newReels.Count < BatchSize;
+    }
 
-        totalRecords = responseHttp.Response;
+    private async Task<List<Product>> FetchVideosFromApi(int currentBatch, int batchSize)
+    {
+        int page = currentBatch + 1;
+        int pageSize = batchSize;
+        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
+
+        if (!string.IsNullOrWhiteSpace(Filter))
+        {
+            url += $"&filter={Filter}";
+        }
+
+        var responseHttp = await Repository.GetAsync<List<Product>>(url);
+        if (responseHttp.Response == null || responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return new List<Product>();
+        }
+
+        return responseHttp.Response;
     }
 
     private async Task FetchVideoBatch()
     {
-        // Simula carga desde API (reemplaza con tu lógica real)
-        //var newReels = await FetchVideosFromApi(currentBatch * BatchSize, BatchSize);
-        var newReels = dummyReels;
+        await Task.Delay(5);
+        var newReels = await FetchVideosFromApi(currentBatch * BatchSize, BatchSize);
 
         allFetchedReels.AddRange(newReels);
         UpdateDisplayVideos();
-        Console.WriteLine("-----CC----------- " + newReels.Count);
-        Console.WriteLine("------DD---------- " + BatchSize);
-        isLastBatch = newReels.Count < BatchSize; // ¿Es el último lote?
+
+        isLastBatch = newReels.Count < BatchSize;
     }
 
     private void UpdateDisplayVideos()

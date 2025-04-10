@@ -7,9 +7,14 @@ namespace ReelBuy.Frontend.Shared;
 
 public partial class ConfirmDialog : ComponentBase
 {
-    [CascadingParameter] private MudDialogInstance MudDialog { get; set; } = null!;
-    [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
-    [Parameter] public string Message { get; set; } = null!;
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Inject]
+    private IStringLocalizer<Literals> Localizer { get; set; } = null!;
+
+    [Parameter]
+    public string Message { get; set; } = null!;
 
     private void Accept()
     {
@@ -18,6 +23,6 @@ public partial class ConfirmDialog : ComponentBase
 
     private void Cancel()
     {
-        MudDialog.Close(DialogResult.Cancel());
+        MudDialog.Cancel();
     }
 }

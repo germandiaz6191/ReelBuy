@@ -1,4 +1,5 @@
-﻿using ReelBuy.Shared.Resources;
+﻿using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Resources;
 using System.ComponentModel.DataAnnotations;
 
 namespace ReelBuy.Shared.DTOs;
@@ -15,4 +16,7 @@ public class StoreDTO
     [Display(Name = "Country", ResourceType = typeof(Literals))]
     [Range(1, int.MaxValue, ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public int? CityId { get; set; }
+
+    public string UserId { get; set; } = null!;
+
 }

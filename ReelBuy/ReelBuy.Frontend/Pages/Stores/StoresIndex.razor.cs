@@ -10,7 +10,7 @@ using System.Net;
 
 namespace ReelBuy.Frontend.Pages.Stores;
 
-[Authorize(Roles = "Seller")]
+[Authorize(Roles = "Admin,Seller")]
 public partial class StoresIndex
 {
     private List<Store>? Stores { get; set; }
@@ -56,7 +56,7 @@ public partial class StoresIndex
         loading = false;
     }
 
-    private async Task<TableData<Store>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, CancellationToken, Task<TableData<Store>>> LoadListAsync => async (state, cancellationToken) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -83,7 +83,7 @@ public partial class StoresIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {

@@ -1,4 +1,6 @@
-﻿<MudDialog>
+﻿@inject IJSRuntime JS
+
+<MudDialog>
     <DialogContent>
         <StoreForm @ref="storeForm" Store="store" Cities="cities" OnValidSubmit="CreateAsync" ReturnAction="Return" />
     </DialogContent>

@@ -110,7 +110,8 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
         {
             City = city,
             CityId = city.Id,
-            Name = storeDTO.Name
+            Name = storeDTO.Name,
+            UserId = storeDTO.UserId,
         };
 
         _context.Add(store);
@@ -123,7 +124,7 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
                 Result = store
             };
         }
-        catch (DbUpdateException)
+        catch (DbUpdateException dbE) 
         {
             return new ActionResponse<Store>
             {

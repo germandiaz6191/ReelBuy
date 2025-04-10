@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using MudBlazor;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Frontend.Services;
@@ -42,6 +43,13 @@ public partial class Login
             var message = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
+        }
+
+        if (!string.IsNullOrEmpty(responseHttp.Response!.Token))
+        {
+            var userInformation = LoginService.ParseClaimsFromJWT(responseHttp.Response!.Token);
+            var userID = userInformation.FirstOrDefault(x => x.Type == "UserId")?.Value;
+            await JS.InvokeVoidAsync("localStorage.setItem", "UserId", userID);
         }
 
         await LoginService.LoginAsync(responseHttp.Response!.Token);

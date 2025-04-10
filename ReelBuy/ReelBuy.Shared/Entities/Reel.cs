@@ -11,11 +11,8 @@ public class Reel
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
-
     public int ProductId { get; set; }
-    public Product Product { get; set; } = null!;
+    public Product? Product { get; set; }
+    public string ReelUri { get; set; } = null!;
 
-    public string? Title { get; set; }
-    public string? Thumbnail { get; set; }
-    public string? Link { get; set; }
 }

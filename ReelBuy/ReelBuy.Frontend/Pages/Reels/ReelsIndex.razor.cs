@@ -54,7 +54,7 @@ public partial class ReelsIndex
         loading = false;
     }
 
-    private async Task<TableData<Reel>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, CancellationToken, Task<TableData<Reel>>> LoadListAsync => async (state, cancellationToken) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -81,7 +81,7 @@ public partial class ReelsIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {
@@ -146,5 +146,26 @@ public partial class ReelsIndex
         await LoadTotalRecordsAsync();
         await table.ReloadServerData();
         Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
+
+    private async Task ShowReelModalAsync(string? videoUrl)
+    {
+        if (string.IsNullOrWhiteSpace(videoUrl))
+            return;
+
+        var parameters = new DialogParameters
+        {
+            ["VideoUrl"] = videoUrl,
+            ["Label"] = Localizer["Reel"]
+        };
+
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        };
+
+        await DialogService.ShowAsync(typeof(ReelBuy.Frontend.Shared.PreviewReel), "Previsualización", parameters, options);
     }
 }

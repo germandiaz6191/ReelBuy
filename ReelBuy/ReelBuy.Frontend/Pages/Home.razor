@@ -18,7 +18,7 @@
     -->
 
     <!-- Vista de reel ampliado (oculto inicialmente) -->
-    <div class="tiktok-container">
+    <div class="reel-home-container">
         <!-- Video Principal (Grande) -->
         @if (selectedReel != null)
         {
@@ -27,7 +27,7 @@
                        autoplay
                        muted
                        class="reel-video"
-                       src="@selectedReel.Link">
+                       src="data:video/mp4;base64,@selectedReel.ReelUri">
                 </video>
             </div>
         }
@@ -57,11 +57,15 @@
                 <div class="video-container">
                 @foreach (var video in currentDisplayVideos)
                 {
-                    <div class="video-thumbnail" @onclick="() => SelectReel(video)">
-                        <ReelBuy.Frontend.Pages.CardReel.CardReel Title="@video.Title" 
-                                 Thumbnail="@video.Thumbnail" 
-                                 Link="@video.Link" />
-                    </div>
+                            var firstReel = video.Reels?.FirstOrDefault();
+                            if (firstReel is not null)
+                            {
+                                <div class="video-thumbnail" @onclick="@(() => SelectReel(firstReel))">
+                                    <ReelBuy.Frontend.Pages.CardReel.CardReel Title="@video.Name"
+                                                                              Thumbnail="@video.Name"
+                                                                              Link="@firstReel.ReelUri" />
+                                </div>
+                            }
                 }
                 </div>
             </div>

@@ -23,7 +23,7 @@
                              Label=@Localizer["PrincipalSearchAProducts"]
                              Adornment="Adornment.End"
                              AdornmentIcon="@Icons.Material.Filled.Search"
-                             Value="selectedText"
+                             @bind-Value="selectedText"
                              SearchFunc="SearchProduct"
                              Variant="Variant.Outlined"
                              Class="principal-autocomplete"

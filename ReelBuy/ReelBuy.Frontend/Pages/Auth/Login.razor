@@ -1,4 +1,5 @@
-﻿<MudDialog>
+﻿@inject IJSRuntime JS
+<MudDialog>
     <DialogContent>
         <EditForm Model="loginDTO" OnValidSubmit="LoginAsync">
             <DataAnnotationsValidator />

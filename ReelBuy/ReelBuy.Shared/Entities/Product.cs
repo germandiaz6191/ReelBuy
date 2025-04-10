@@ -13,12 +13,13 @@ public class Product
     public string Name { get; set; } = null!;
 
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
-    public string? ReelsBase64 { get; set; }
     public int StatusId { get; set; }
-    public Status Status { get; set; } = null!;
+    public Status? Status { get; set; }
     public int MarketplaceId { get; set; }
-    public Marketplace Marketplace { get; set; } = null!;
+    public Marketplace? Marketplace { get; set; }
     public int CategoryId { get; set; }
-    public Category Category { get; set; } = null!;
+    public Category? Category { get; set; }
     public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+    public int StoreId { get; set; }
+    public Store? Store { get; set; }
 }

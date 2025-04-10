@@ -70,7 +70,7 @@ public partial class MainLayout
         _icon = _darkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
     }
 
-    private async Task<IEnumerable<String>> SearchProduct(string searchText, CancellationToken cancellationToken)
+    private async Task<IEnumerable<string>> SearchProduct(string searchText, CancellationToken cancellationToken)
     {
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length <= 3)

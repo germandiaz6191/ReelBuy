@@ -14,10 +14,10 @@ public partial class InputReel
 
     [Parameter] public string? Label { get; set; }
     [Parameter] public string? ReelURL { get; set; }
+    [Parameter] public string? ReelBase64 { get; set; }
     [Parameter] public EventCallback<string> ReelSelected { get; set; }
 
     const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
-
 
     protected override void OnParametersSet()
     {
@@ -25,6 +25,11 @@ public partial class InputReel
         if (string.IsNullOrWhiteSpace(Label))
         {
             Label = Localizer["Reel"];
+        }
+        if (!string.IsNullOrEmpty(ReelBase64))
+        {
+            reelBase64 = ReelBase64;
+            ReelURL = null;
         }
     }
 

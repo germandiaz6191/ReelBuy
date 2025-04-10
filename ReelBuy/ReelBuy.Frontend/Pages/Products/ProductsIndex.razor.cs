@@ -58,7 +58,7 @@ public partial class ProductsIndex
         loading = false;
     }
 
-    private async Task<TableData<Product>> LoadListAsync(TableState state, CancellationToken cancellationToken)
+    private Func<TableState, CancellationToken, Task<TableData<Product>>> LoadListAsync => async (state, cancellationToken) =>
     {
         int page = state.Page + 1;
         int pageSize = state.PageSize;
@@ -85,7 +85,7 @@ public partial class ProductsIndex
             Items = responseHttp.Response,
             TotalItems = totalRecords
         };
-    }
+    };
 
     private async Task SetFilterValue(string value)
     {
