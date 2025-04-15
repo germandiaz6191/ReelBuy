@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -17,6 +18,7 @@ public partial class ReelCreate
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
 
+    [Authorize(Roles = "Admin,Seller")]
     private async Task CreateAsync()
     {
         var responseHttp = await Repository.PostAsync("/api/reels", reel);

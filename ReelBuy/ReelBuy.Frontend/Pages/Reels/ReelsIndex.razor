@@ -18,11 +18,15 @@ else
         <ToolBarContent>
             <div class="d-flex justify-content-between">
                 <MudText Typo="Typo.h6" Class="me-4"> @Localizer["Reels"]</MudText>
-                <MudButton Variant="Variant.Outlined"
-                           EndIcon="@Icons.Material.Filled.Add"
-                           Color="Color.Info" OnClick="@(() => ShowModalAsync())">
-                    @Localizer["New"]
-                </MudButton>
+                <AuthorizeView Roles="Admin,Seller">
+                    <Authorized>
+                        <MudButton Variant="Variant.Outlined"
+                               EndIcon="@Icons.Material.Filled.Add"
+                               Color="Color.Info" OnClick="@(() => ShowModalAsync())">
+                            @Localizer["New"]
+                        </MudButton>
+                    </Authorized>
+                </AuthorizeView>
             </div>
             <MudSpacer />
             <FilterComponent ApplyFilter="SetFilterValue" />
@@ -35,26 +39,30 @@ else
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
             <MudTd>
-                <MudTooltip Text="@Localizer["Edit"]">
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Warning"
-                               OnClick="@(() => ShowModalAsync(context.Id, true))">
-                        <MudIcon Icon="@Icons.Material.Filled.Edit" />
-                    </MudButton>
-                </MudTooltip>
-                <MudTooltip Text="@Localizer["Delete"]">
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Error"
-                               OnClick="@(() => DeleteAsync(@context))">
-                        <MudIcon Icon="@Icons.Material.Filled.Delete" />
-                    </MudButton>
-                </MudTooltip>
+                <AuthorizeView Roles="Admin,Seller" Context="authContext">
+                    <Authorized>
+                        <MudTooltip Text="@Localizer["Edit"]">
+                            <MudButton Variant="Variant.Filled"
+                                   Color="Color.Warning"
+                                   OnClick="@(() => ShowModalAsync(context.Id, true))">
+                                <MudIcon Icon="@Icons.Material.Filled.Edit" />
+                            </MudButton>
+                        </MudTooltip>
+                        <MudTooltip Text="@Localizer["Delete"]">
+                            <MudButton Variant="Variant.Filled"
+                                   Color="Color.Error"
+                                   OnClick="@(() => DeleteAsync(@context))">
+                                <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                            </MudButton>
+                        </MudTooltip>
+                    </Authorized>
+                </AuthorizeView>
             </MudTd>
             <MudTd>
                 <MudTooltip Text="@Localizer["Preview"]">
                     <MudButton Variant="Variant.Filled"
-                               Color="Color.Primary"
-                               OnClick="@(() => ShowReelModalAsync(context.ReelUri))">
+                           Color="Color.Primary"
+                           OnClick="@(() => ShowReelModalAsync(context.ReelUri))">
                         <MudIcon Icon="@Icons.Material.Filled.PlayArrow" />
                     </MudButton>
                 </MudTooltip>
@@ -65,9 +73,9 @@ else
         </NoRecordsContent>
         <PagerContent>
             <MudTablePager RowsPerPageString=@Localizer["RecordsNumber"]
-                           PageSizeOptions="pageSizeOptions"
-                           AllItemsText=@Localizer["All"]
-                           InfoFormat="@infoFormat" />
+                       PageSizeOptions="pageSizeOptions"
+                       AllItemsText=@Localizer["All"]
+                       InfoFormat="@infoFormat" />
         </PagerContent>
     </MudTable>
 }

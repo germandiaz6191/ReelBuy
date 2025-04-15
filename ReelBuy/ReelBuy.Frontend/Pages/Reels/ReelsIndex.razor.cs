@@ -6,8 +6,10 @@ using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ReelBuy.Frontend.Pages.Reels;
+
 
 public partial class ReelsIndex
 {
@@ -115,6 +117,7 @@ public partial class ReelsIndex
         }
     }
 
+    [Authorize(Roles = "Admin,Seller")]
     private async Task DeleteAsync(Reel reel)
     {
         var parameters = new DialogParameters

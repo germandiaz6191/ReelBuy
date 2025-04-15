@@ -8,7 +8,6 @@ using ReelBuy.Shared.Entities;
 namespace ReelBuy.Backend.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 public class ReelsController : GenericController<Reel>
 {
@@ -61,10 +60,46 @@ public class ReelsController : GenericController<Reel>
     [HttpGet("totalRecordsPaginated")]
     public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
-        var action = await _reelsUnitOfWork.GetTotalRecordsAsync(pagination);
-        if (action.WasSuccess)
+        var response = await _reelsUnitOfWork.GetTotalRecordsAsync(pagination);
+        if (response.WasSuccess)
         {
-            return Ok(action.Result);
+            return Ok(response.Result);
+        }
+        return BadRequest();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Seller")]
+    [HttpPost]
+    public override async Task<IActionResult> PostAsync(Reel model)
+    {
+        var response = await base.PostAsync(model);
+        if (response is OkObjectResult)
+        {
+            return response;
+        }
+        return BadRequest();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Seller")]
+    [HttpPut]
+    public override async Task<IActionResult> PutAsync(Reel model)
+    {
+        var response = await base.PutAsync(model);
+        if (response is OkObjectResult)
+        {
+            return response;
+        }
+        return BadRequest();
+    }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin,Seller")]
+    [HttpDelete("{id}")]
+    public override async Task<IActionResult> DeleteAsync(int id)
+    {
+        var response = await base.DeleteAsync(id);
+        if (response is NoContentResult)
+        {
+            return response;
         }
         return BadRequest();
     }

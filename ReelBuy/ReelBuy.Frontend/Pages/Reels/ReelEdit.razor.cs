@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
@@ -41,6 +42,7 @@ public partial class ReelEdit
         }
     }
 
+    [Authorize(Roles = "Admin,Seller")]
     private async Task EditAsync()
     {
         var responseHttp = await Repository.PutAsync("api/reels", reel);
