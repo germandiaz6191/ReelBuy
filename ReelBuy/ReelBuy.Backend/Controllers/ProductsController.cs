@@ -9,7 +9,6 @@ using ReelBuy.Shared.Entities;
 namespace ReelBuy.Backend.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [Route("api/[controller]")]
 public class ProductsController : GenericController<Product>
 {
@@ -114,6 +113,7 @@ public class ProductsController : GenericController<Product>
     }
 
     [HttpPost("CreateProduct")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateProduct([FromBody] Product model)
     {
         if (model.Reels.Any())

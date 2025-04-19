@@ -60,9 +60,32 @@ public partial class ProductsIndex
 
     private Func<TableState, CancellationToken, Task<TableData<Product>>> LoadListAsync => async (state, cancellationToken) =>
     {
+        if (user == null)
+        {
+            await LoadUserAsyc();
+        }
+
+        // Obtener las tiendas del usuario
+        var storesResponse = await Repository.GetAsync<List<Store>>($"/api/stores/user/{user!.Id}");
+        if (storesResponse.Error)
+        {
+            var message = await storesResponse.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return new TableData<Product> { Items = [], TotalItems = 0 };
+        }
+
+        var userStores = storesResponse.Response;
+        if (userStores == null || !userStores.Any())
+        {
+            Snackbar.Add(Localizer["NoStoresFound"], Severity.Info);
+            return new TableData<Product> { Items = [], TotalItems = 0 };
+        }
+
+        // Obtener los productos de las tiendas del usuario
         int page = state.Page + 1;
         int pageSize = state.PageSize;
-        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
+        var storeIds = string.Join(",", userStores.Select(s => s.Id));
+        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}&storeIds={storeIds}";
 
         if (!string.IsNullOrWhiteSpace(Filter))
         {
@@ -80,9 +103,21 @@ public partial class ProductsIndex
         {
             return new TableData<Product> { Items = [], TotalItems = 0 };
         }
+
+        // Incluir las relaciones necesarias
+        var products = responseHttp.Response;
+        foreach (var product in products)
+        {
+            product.Store = userStores.FirstOrDefault(s => s.Id == product.StoreId);
+            if (product.Store != null)
+            {
+                product.Store.Products = products.Where(p => p.StoreId == product.StoreId).ToList();
+            }
+        }
+
         return new TableData<Product>
         {
-            Items = responseHttp.Response,
+            Items = products,
             TotalItems = totalRecords
         };
     };

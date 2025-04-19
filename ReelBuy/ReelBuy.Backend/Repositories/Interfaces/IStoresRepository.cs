@@ -19,4 +19,6 @@ public interface IStoresRepository
     Task<ActionResponse<Store>> AddAsync(StoreDTO storeDTO);
 
     Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO);
+
+    Task<ActionResponse<IEnumerable<Store>>> GetStoresByUserAsync(string userId);
 }

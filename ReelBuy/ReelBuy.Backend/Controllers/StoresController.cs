@@ -20,6 +20,17 @@ public class StoresController : GenericController<Store>
         _storesUnitOfWork = storesUnitOfWork;
     }
 
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetStoresByUserAsync(string userId)
+    {
+        var response = await _storesUnitOfWork.GetStoresByUserAsync(userId);
+        if (response.WasSuccess)
+        {
+            return Ok(response.Result);
+        }
+        return NotFound(response.Message);
+    }
+
     [HttpGet("combo")]
     public async Task<IActionResult> GetComboAsync()
     {

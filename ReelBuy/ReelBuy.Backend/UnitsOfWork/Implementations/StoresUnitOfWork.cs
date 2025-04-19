@@ -28,4 +28,6 @@ public class StoresUnitOfWork : GenericUnitOfWork<Store>, IStoresUnitOfWork
     public async Task<ActionResponse<Store>> AddAsync(StoreDTO storeDTO) => await _storesRepository.AddAsync(storeDTO);
 
     public async Task<ActionResponse<Store>> UpdateAsync(StoreDTO storeDTO) => await _storesRepository.UpdateAsync(storeDTO);
+
+    public async Task<ActionResponse<IEnumerable<Store>>> GetStoresByUserAsync(string userId) => await _storesRepository.GetStoresByUserAsync(userId);
 }

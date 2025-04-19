@@ -194,4 +194,28 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
             };
         }
     }
+
+    public async Task<ActionResponse<IEnumerable<Store>>> GetStoresByUserAsync(string userId)
+    {
+        var stores = await _context.Stores
+            .Include(s => s.Products)
+            .Where(s => s.UserId == userId)
+            .OrderBy(s => s.Name)
+            .ToListAsync();
+
+        if (!stores.Any())
+        {
+            return new ActionResponse<IEnumerable<Store>>
+            {
+                WasSuccess = false,
+                Message = "ERR001"
+            };
+        }
+
+        return new ActionResponse<IEnumerable<Store>>
+        {
+            WasSuccess = true,
+            Result = stores
+        };
+    }
 }
