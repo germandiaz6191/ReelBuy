@@ -111,6 +111,7 @@ public class ProductsController : GenericController<Product>
     }
 
     [HttpPost("CreateProduct")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateProduct([FromBody] Product model)
     {
         if (model.Reels.Any())
