@@ -11,7 +11,7 @@ public class Product
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
-
+    public string Description { get; set; } = null!;
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
     public int StatusId { get; set; }
     public Status? Status { get; set; }

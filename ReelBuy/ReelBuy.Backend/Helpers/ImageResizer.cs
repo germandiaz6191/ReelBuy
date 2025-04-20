@@ -1,62 +1,37 @@
-﻿using ReelBuy.Backend.Helpers;
-using System.Drawing;
-using System.Drawing.Imaging;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Formats.Jpeg;
 using System.IO;
 
-namespace Orders.Backend.Helpers
+namespace ReelBuy.Backend.Helpers
 {
     public class ImageResizer : IImageResizer
     {
         public byte[] ResizeImage(byte[] imageBytes, int maxWidth, int maxHeight, int quality)
         {
-            using (var ms = new MemoryStream(imageBytes))
+            using (var image = Image.Load(imageBytes))
             {
-                using (var originalImage = new Bitmap(ms))
+                // Calcular nueva dimensión si la imagen excede las dimensiones máximas
+                if (image.Width > maxWidth || image.Height > maxHeight)
                 {
-                    int newWidth = originalImage.Width;
-                    int newHeight = originalImage.Height;
+                    var ratioX = (float)maxWidth / image.Width;
+                    var ratioY = (float)maxHeight / image.Height;
+                    var ratio = Math.Min(ratioX, ratioY);
 
-                    // Calcular nueva dimensión si la imagen excede las dimensiones máximas
-                    if (newWidth > maxWidth || newHeight > maxHeight)
-                    {
-                        float ratioX = (float)maxWidth / originalImage.Width;
-                        float ratioY = (float)maxHeight / originalImage.Height;
-                        float ratio = Math.Min(ratioX, ratioY);
+                    var newWidth = (int)(image.Width * ratio);
+                    var newHeight = (int)(image.Height * ratio);
 
-                        newWidth = (int)(originalImage.Width * ratio);
-                        newHeight = (int)(originalImage.Height * ratio);
-                    }
+                    image.Mutate(x => x.Resize(newWidth, newHeight));
+                }
 
-                    // Crear la imagen redimensionada
-                    var resizedImage = new Bitmap(originalImage, new Size(newWidth, newHeight));
-
-                    // Convertir la imagen a un byte array en formato JPEG con calidad ajustada
-                    using (var outputMs = new MemoryStream())
-                    {
-                        // Establecer la calidad de la imagen JPEG
-                        var jpegEncoder = GetEncoder(ImageFormat.Jpeg);
-                        var encoderParameters = new EncoderParameters(1);
-                        encoderParameters.Param[0] = new EncoderParameter(Encoder.Quality, quality);
-
-                        resizedImage.Save(outputMs, jpegEncoder, encoderParameters);
-                        return outputMs.ToArray();
-                    }
+                // Convertir la imagen a un byte array en formato JPEG con calidad ajustada
+                using (var ms = new MemoryStream())
+                {
+                    var encoder = new JpegEncoder { Quality = quality };
+                    image.Save(ms, encoder);
+                    return ms.ToArray();
                 }
             }
-        }
-
-        // Obtener el encoder para el formato de imagen
-        private ImageCodecInfo GetEncoder(ImageFormat format)
-        {
-            var codecs = ImageCodecInfo.GetImageDecoders();
-            foreach (var codec in codecs)
-            {
-                if (codec.FormatID == format.Guid)
-                {
-                    return codec;
-                }
-            }
-            return null;
         }
     }
 }
