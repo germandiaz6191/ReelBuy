@@ -4,7 +4,6 @@ using MudBlazor;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
-using System.Collections.Generic;
 
 namespace ReelBuy.Frontend.Pages;
 
@@ -12,23 +11,28 @@ public partial class Home
 {
     private List<Reel> dummyReels = new();
     private List<Product> allFetchedReels = new();
-    private List<Product> currentDisplayVideos = new();
     private int totalRecords = 0;
+    private int totalPages = 0;
 
     private const string baseUrl = "api/products";
 
     private Reel? selectedReel = null;
 
-    private int currentBatch = 0;
+    private int CurrentBatch = 1;
+    private int CurrentVideoIndex = 0;
     private bool loading = false;
-    private bool isLastBatch = false;
 
     private bool showFooter = true;
 
     // Tamaños configurables
-    private const int BatchSize = 10; // Videos por consulta
+    private const int BatchSize = 2; // Videos por consulta
 
-    private const int DisplaySize = 4; // Videos a mostrar
+    // Rotador automatico
+    private bool isTransitioning = false;
+
+    private Timer? autoRotationTimer;
+
+    private int rotationInterval = 60000; // 60 segundos
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -41,7 +45,15 @@ public partial class Home
         loading = true;
         await LoadProductsAsync();
         await LoadTotalRecordsAsync();
+        CalculatePages();
+        // Iniciar rotación automática
+        //StartAutoRotation();
         loading = false;
+    }
+
+    private void CalculatePages()
+    {
+        totalPages = (int)Math.Ceiling((double)totalRecords / BatchSize);
     }
 
     private async Task LoadTotalRecordsAsync()
@@ -69,51 +81,7 @@ public partial class Home
     private async Task LoadProductsAsync()
     {
         // Simula carga desde API (reemplaza con tu lógica real)
-        List<Product> newReels = await FetchVideosFromApi(currentBatch, BatchSize);
-
-        /* Reel reel = new Reel
-         {
-             Title = "Video 1",
-             Thumbnail = "https://via.placeholder.com/150",
-             Link = "#"
-         };
-
-         Reel reel2 = new Reel
-         {
-             Title = "Video 2",
-             Thumbnail = "https://via.placeholder.com/150",
-             Link = "#"
-         };
-
-         Reel reel3 = new Reel
-         {
-             Title = "Video 3",
-             Thumbnail = "https://via.placeholder.com/150",
-             Link = "#"
-         };
-
-         Reel reel4 = new Reel
-         {
-             Title = "Video 4",
-             Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
-             Link = "#"
-         };
-
-         Reel reel5 = new Reel
-         {
-             Title = "Video 5",
-             Thumbnail = "https://www.youtube.com/watch?v=lgmW-HIrth8",
-             Link = "#"
-         };
-
-         dummyReels.Add(reel);
-         dummyReels.Add(reel2);
-         dummyReels.Add(reel3);
-         dummyReels.Add(reel4);
-         dummyReels.Add(reel5);
-
-         var newReels = dummyReels;
-        */
+        List<Product> newReels = await FetchVideosFromApi(CurrentBatch, BatchSize);
 
         if (newReels.Count == 0)
         {
@@ -121,13 +89,23 @@ public partial class Home
         }
 
         allFetchedReels.AddRange(newReels);
-        UpdateDisplayVideos();
-        isLastBatch = newReels.Count < BatchSize;
+        await SelectVideo(CurrentVideoIndex);
+    }
+
+    private async Task SelectVideo(int currentVideoIndex)
+    {
+        await Task.Delay(5);
+        var firstReel = allFetchedReels[currentVideoIndex]?.Reels?.FirstOrDefault();
+
+        if (firstReel != null)
+        {
+            SelectReel(firstReel);
+        }
     }
 
     private async Task<List<Product>> FetchVideosFromApi(int currentBatch, int batchSize)
     {
-        int page = currentBatch + 1;
+        int page = currentBatch;
         int pageSize = batchSize;
         var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
 
@@ -147,39 +125,74 @@ public partial class Home
         return responseHttp.Response;
     }
 
-    private async Task FetchVideoBatch()
-    {
-        await Task.Delay(5);
-        var newReels = await FetchVideosFromApi(currentBatch * BatchSize, BatchSize);
+    //private void UpdateDisplayVideos()
+    //{
+    //    currentDisplayVideos = allFetchedReels
+    //        .Skip(CurrentBatch * DisplaySize)
+    //        .Take(DisplaySize)
+    //        .ToList();
+    //}
 
-        allFetchedReels.AddRange(newReels);
-        UpdateDisplayVideos();
-
-        isLastBatch = newReels.Count < BatchSize;
-    }
-
-    private void UpdateDisplayVideos()
-    {
-        currentDisplayVideos = allFetchedReels
-            .Skip(currentBatch * DisplaySize)
-            .Take(DisplaySize)
-            .ToList();
-    }
-
+    //public async Task LoadNextBatch()
+    //{
+    //    Console.WriteLine("INGRESA");
+    //    currentVideoIndex++;
+    //    Console.WriteLine(currentBatch + 1);
+    //    Console.WriteLine((currentBatch + 1) * DisplaySize);
+    //    Console.WriteLine(allFetchedReels.Count);
+    //    if ((currentBatch + 1) * DisplaySize >= allFetchedReels.Count)
+    //    {
+    //        Console.WriteLine("LLAMADO");
+    //        Console.WriteLine((currentBatch + 1) * DisplaySize >= allFetchedReels.Count);
+    //        currentVideoIndex = 0;
+    //        await FetchVideoBatch(); // Carga nuevos 10 videos si es necesario
+    //    }
+    //    Console.WriteLine("CONTU");
+    //    currentBatch++;
+    //    await SelectVideo(currentVideoIndex);
+    //    Console.WriteLine("ACTUA");
+    //    UpdateDisplayVideos();
+    //}
     public async Task LoadNextBatch()
     {
-        if ((currentBatch + 1) * DisplaySize >= allFetchedReels.Count)
+        // Valida si no esta en el último video para la reproduccion automatica
+        if (IsOnLastVideo) return;
+
+        // 1. Avanzar al siguiente índice de video
+        CurrentVideoIndex++;
+
+        // 3. Verificar si necesitamos cargar más videos del backend
+        bool needsMoreVideos = CurrentVideoIndex >= allFetchedReels.Count;
+
+        // 4. Si estamos en el último video Y no hay más videos cargados
+        if (needsMoreVideos)
         {
-            await FetchVideoBatch(); // Carga nuevos 10 videos si es necesario
+            allFetchedReels = await FetchVideosFromApi(++CurrentBatch, BatchSize);
+            CurrentVideoIndex = 0;
         }
-        currentBatch++;
-        UpdateDisplayVideos();
+        // 6. Seleccionar el video actual
+        await SelectVideo(CurrentVideoIndex);
     }
 
-    public void LoadPreviousBatch()
+    public async Task LoadPreviousBatch()
     {
-        currentBatch = Math.Max(0, currentBatch - 1);
-        UpdateDisplayVideos();
+        // 1. Retroceder el índice
+        CurrentVideoIndex--;
+
+        // 2. Verificar si necesitamos cargar el batch anterior
+        bool isFirstVideoInBatch = CurrentVideoIndex < 0;
+        bool hasPreviousBatches = CurrentBatch > 1;
+
+        if (isFirstVideoInBatch)
+        {
+
+            allFetchedReels = await FetchVideosFromApi(--CurrentBatch, BatchSize);
+
+            // 4. Cambiar al batch anterior
+            CurrentVideoIndex = allFetchedReels.Count - 1; // Posición en el último video del batch anterior
+        }
+        // 6. Seleccionar el video actual
+        await SelectVideo(CurrentVideoIndex);
     }
 
     private void SelectReel(Reel reel)
@@ -191,5 +204,23 @@ public partial class Home
     private void ToggleFooter()
     {
         showFooter = !showFooter;
+    }
+
+    public bool IsOnLastVideo
+    {
+        get
+        {
+            // Calcular el índice global del video actual
+            return CurrentBatch == totalPages && (CurrentVideoIndex + 1) == allFetchedReels.Count;
+        }
+    }
+
+    private bool HasPreviousBatchLoaded
+    {
+        get
+        {
+            // Verificar si es el último video
+            return CurrentBatch <= 1 && CurrentVideoIndex <= 0;
+        }
     }
 }

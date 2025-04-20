@@ -18,26 +18,36 @@
     -->
 
     <!-- Vista de reel ampliado (oculto inicialmente) -->
-    <div class="reel-home-container">
+    <div class="main-reel-container">
+        <!-- Botón izquierdo -->
+        <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(HasPreviousBatchLoaded)">
+            &larr; <!-- Flecha izquierda -->
+        </button>
+
         <!-- Video Principal (Grande) -->
         @if (selectedReel != null)
         {
-            <div class="main-reel color-palette-surface">
+            <div class="main-reel color-palette-surface @(isTransitioning ? "fade-out" : "")">
                 <video controls
-                       autoplay
-                       muted
+                       autoplay="true"
                        class="reel-video"
-                       src="data:video/mp4;base64,@selectedReel.ReelUri">
+                       src="data:video/mp4;base64,@selectedReel.ReelUri"
+                       @onended="LoadNextBatch">
                 </video>
             </div>
         }
+
+        <!-- Botón derecho -->
+        <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(IsOnLastVideo)">
+            &rarr; <!-- Flecha derecha -->
+        </button>
    
     </div>
     <!-- Espacio flexible que empuja los videos hacia abajo -->
     <div class="spacer"></div>
     
     
-    <div class="video-footer">
+    @*  <div class="video-footer">
         <!-- Pestaña toggle del footer -->
         <div class="footer-toggle @(showFooter ? "" : "hidden")" @onclick="ToggleFooter">
             @(showFooter ? "▼ Ocultar" : "▲ Mostrar carrusel")
@@ -47,15 +57,11 @@
         {
             <!-- Controles del carrusel -->
         <div class="video-rotator-wrapper color-palette-surface">
-            <!-- Botón izquierdo -->
-            <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(currentBatch == 0)">
-                &larr; <!-- Flecha izquierda -->
-            </button>
             <!-- Contenedor principal -->
             <div class="video-rotator-container">
                 <!-- Videos (contenido desplazable) -->
                 <div class="video-container">
-                @foreach (var video in currentDisplayVideos)
+                        @foreach (var video in allFetchedReels)
                 {
                             var firstReel = video.Reels?.FirstOrDefault();
                             if (firstReel is not null)
@@ -68,15 +74,10 @@
                             }
                 }
                 </div>
-            </div>
-
-            <!-- Botón derecho -->
-            <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(!isLastBatch)">
-                &rarr; <!-- Flecha derecha -->
-            </button>
+            </div>            
          </div>
         }
-     </div>
+     </div>  *@
       
     
     

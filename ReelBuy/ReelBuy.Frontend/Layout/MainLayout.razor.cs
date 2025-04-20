@@ -48,8 +48,10 @@ public partial class MainLayout
             //AppbarBackground = "rgb(74, 81, 94)",
             AppbarBackground = "#460C61", //header
             AppbarText = "rgb(255, 255, 255)",
-            TextPrimary = "rgb(169, 169, 169)",
-            TextSecondary = "rgb(255, 255, 255)",
+            TextPrimary = "#460C61", //input text
+            TextSecondary = "#460C61", //titulos text
+            LinesInputs = "#460C61", //input line down
+            LinesDefault = "#fff", //input line whit back blue
             //DrawerBackground = "rgb(30, 30, 30)",
             DrawerBackground = "#fff", //menu
             //DrawerText = "rgb(255, 255, 255)"
@@ -135,6 +137,8 @@ public partial class MainLayout
         --color-appbar-text: {p.AppbarText};
         --color-drawer-background: {p.DrawerBackground};
         --color-drawer-text: {p.DrawerText};
+        --color-lines-inputs: {p.LinesInputs};
+        --color-lines-default: {p.LinesDefault};
     ";
     }
 }
