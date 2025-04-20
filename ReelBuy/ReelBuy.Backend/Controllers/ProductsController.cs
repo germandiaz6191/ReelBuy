@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;

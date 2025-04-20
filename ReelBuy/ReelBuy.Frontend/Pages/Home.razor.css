@@ -4,58 +4,30 @@
 
 .main-reel-container {
     display: flex;
+    flex-direction: column; /* Apila los elementos verticalmente */
     align-items: center;
-    justify-content: center;
-    gap: 20px; /* Espacio entre botones y video */
     max-width: 85vw;
     margin: 0 auto;
-    position: relative;
     background: var(--color-surface);
     padding-top: 20px;
 }
 
-/* Footer fijo */
-.video-footer {
-    position: fixed; /*empuja el footer a la parte inferior*/
-    left: 0; /*alinea a la izquierda*/
-    right: 0; /*alinea a la derecha para centrar el div*/
+/* Bloque vertical que contiene título + video + acciones */
+.video-vertical-stack {
     display: flex;
     flex-direction: column;
-    bottom: 0;
-    /*border-top: 1px solid #fff;*/
-    z-index: 100;
     align-items: center;
+    width: 100%;
+    gap: 10px; /* Espacio entre título, video e iconos */
 }
-/* CONTENEDOR PRINCIPAL */
-.video-rotator-wrapper {
+
+/* Contenedor horizontal para botones y video */
+.video-controls-container {
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 85vw;
-    padding-right: 20px;
-    padding-left: 20px;
-    /*box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.5);*/
-}
-
-/* CONTENEDOR DE VIDEOS (Área desplazable) */
-.video-rotator-container {
-    flex: 1;
-    text-align: center;
-    overflow-x: auto; /* Permite scroll horizontal */
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none; /* Firefox */
-    padding: 2px 0;
-}
-
-    .video-rotator-container::-webkit-scrollbar {
-        display: none; /* Chrome/Safari */
-    }
-
-/* CONTENEDOR FLEXIBLE INTERNO (para los videos) */
-.video-container {
-    display: inline-flex; /* Cambiado a inline-flex */
-    gap: 16px;
-    padding: 0 10px;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
 }
 
 /* BOTONES LATERALES */
@@ -90,13 +62,6 @@
     flex: 1; /* Ocupa todo el espacio disponible, empujando los videos abajo */
 }
 
-.pagination-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
 button {
     padding: 8px 16px;
     background: #007bff;
@@ -111,104 +76,12 @@ button {
         cursor: not-allowed;
     }
 
-/*VIDEO CENTRAL
- Contenedor principal */
-.tiktok-container {
-    display: flex;
-    flex-direction: column;
-    color: #fff;
-    justify-content: center;
-    align-items: center;
-}
-
 /* Video principal (60% de la pantalla) */
 .main-reel {
     flex: 1;
     max-width: 45vh; /* Mantiene el tamaño original del video */
 }
 
-.reel-video {
-    width: 100%;
-    height: 69vh;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* Lista horizontal de miniaturas (40% restante) */
-.reel-list-container {
-    flex: 1;
-    overflow: hidden;
-    padding: 10px 0;
-    background: #000;
-}
-
-.reel-list {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding: 0 10px;
-    scroll-snap-type: x mandatory;
-    height: 100%;
-}
-
-.reel-thumbnail {
-    scroll-snap-align: start;
-    flex: 0 0 120px;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-    .reel-thumbnail:hover {
-        transform: scale(1.05);
-    }
-
-    .reel-thumbnail img {
-        width: 100%;
-        height: 80px;
-        object-fit: cover;
-        border-radius: 4px;
-        border: 2px solid transparent;
-    }
-
-    .reel-thumbnail.active img {
-        border-color: #f00;
-    }
-
-    .reel-thumbnail p {
-        margin: 4px 0;
-        font-size: 12px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-/*FIN video CENTRAL*/
-
-.footer-toggle {
-    /*position: fixed;
-    bottom: calc(60px);
-    left: 50%;
-    transform: translateX(-50%);
-    */
-    background: #460c61;
-    text-align: center;
-    padding: 6px 14px;
-    border-radius: 12px 12px 0 0;
-    cursor: pointer;
-    /*z-index: 101;
-    font-size: 14px;*/
-    width: 85vw;
-    box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
-    transition: bottom 0.3s;
-}
-
-    /* Cuando el footer está oculto, bajamos la pestaña */
-    .footer-toggle.hidden {
-        bottom: 0;
-        border-radius: 12px;
-    }
-
-/* Agrega al final de Home.razor.css */
 .main-reel {
     transition: opacity 0.3s ease; /* Transición suave */
 }
@@ -217,8 +90,58 @@ button {
         opacity: 0; /* Efecto de desvanecimiento */
     }
 
-/* Opcional: Efecto para miniaturas activas */
-.video-thumbnail.active {
-    border: 2px solid #FF4757 !important;
-    transform: scale(1.05);
+.reel-video {
+    width: 100%;
+    height: 69vh;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.video-title {
+    width: 100%;
+    text-align: center;
+}
+
+/* Iconos (centrados debajo del video) */
+.video-actions {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+}
+
+.action-button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-button span {
+    font-size: 0.8rem;
+}
+
+/* Opcional: Efectos hover */
+.action-button:hover {
+    transform: scale(1.1);
+    opacity: 0.9;
+}
+
+.like-container {
+    display: flex;
+    align-items: center; /* Centra verticalmente */
+    gap: 4px; /* Espacio entre icono y número */
+    margin-right: 10px; /* Espacio respecto a otros elementos */
+}
+
+.like-count {
+    font-size: 0.9rem;
+    color: #fff; /* Color del texto (ajusta según tu tema) */
+    min-width: 20px; /* Evita saltos de línea */
+    text-align: center; /* Centra el número */
 }

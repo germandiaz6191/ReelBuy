@@ -17,70 +17,70 @@
     <h2>@Localizer["Subtitle"]</h2>
     -->
 
-    <!-- Vista de reel ampliado (oculto inicialmente) -->
+    <!-- Vista de reel ampliado -->
     <div class="main-reel-container">
-        <!-- Botón izquierdo -->
-        <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(HasPreviousBatchLoaded)">
-            &larr; <!-- Flecha izquierda -->
-        </button>
-
-        <!-- Video Principal (Grande) -->
-        @if (selectedReel != null)
-        {
-            <div class="main-reel color-palette-surface @(isTransitioning ? "fade-out" : "")">
-                <video controls
-                       autoplay="true"
-                       class="reel-video"
-                       src="data:video/mp4;base64,@selectedReel.ReelUri"
-                       @onended="LoadNextBatch">
-                </video>
+        <!-- Bloque VERTICAL: Título + Video + Acciones -->
+        <div class="video-vertical-stack">
+            <!-- Título encima del video -->
+            <div class="video-title">
+                <h6>@selectedReel?.Name</h6> <!-- Ajusta la propiedad según tu modelo -->
             </div>
-        }
 
-        <!-- Botón derecho -->
-        <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(IsOnLastVideo)">
-            &rarr; <!-- Flecha derecha -->
-        </button>
-   
+            <!-- Contenedor HORIZONTAL: Botones + Video -->
+            <div class="video-controls-container">
+                <!-- Botón izquierdo -->
+                <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(HasPreviousBatchLoaded)">
+                    &larr; <!-- Flecha izquierda -->
+                </button>
+
+                <!-- Video Principal (Grande) -->
+                @if (selectedReel != null)
+                {
+                    <div class="main-reel color-palette-surface @(isTransitioning ? "fade-out" : "")">
+                        <video controls
+                               autoplay="true"
+                               class="reel-video"
+                               src="data:video/mp4;base64,@selectedReel.ReelUri"
+                               @onended="LoadNextBatch">
+                        </video>
+                    </div>
+                }
+
+                <!-- Botón derecho -->
+                <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(IsOnLastVideo)">
+                    &rarr; <!-- Flecha derecha -->
+                </button>
+            </div>
+
+            <!-- Iconos debajo del video -->
+            <div class="video-actions">                
+                <div class="like-container">
+                    <MudIconButton @onclick="ToggleLike"
+                                   Icon="@(isLiked ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
+                                   Color="Color.Error"
+                                   Class="action-button" />
+                    @*<span class="like-count">@currentLikes</span>*@
+                    <MudText Typo="Typo.body2" Class="ml-2">23</MudText>
+                </div>
+                <div class="comment-container">
+                    <MudIconButton @onclick="ShowComments"
+                                   Icon="@Icons.Material.Filled.Comment"
+                                   Color="Color.Default"
+                                   Class="action-button" />
+                </div>
+                <div class="info-container">
+                    <MudIconButton @onclick="ShowInfo"
+                                   Icon="@Icons.Material.Filled.Info"
+                                   Color="Color.Default"
+                                   Class="action-button" />
+                </div>
+            </div>
+        </div>
+        
     </div>
     <!-- Espacio flexible que empuja los videos hacia abajo -->
     <div class="spacer"></div>
-    
-    
-    @*  <div class="video-footer">
-        <!-- Pestaña toggle del footer -->
-        <div class="footer-toggle @(showFooter ? "" : "hidden")" @onclick="ToggleFooter">
-            @(showFooter ? "▼ Ocultar" : "▲ Mostrar carrusel")
-        </div>
-
-        @if (showFooter)
-        {
-            <!-- Controles del carrusel -->
-        <div class="video-rotator-wrapper color-palette-surface">
-            <!-- Contenedor principal -->
-            <div class="video-rotator-container">
-                <!-- Videos (contenido desplazable) -->
-                <div class="video-container">
-                        @foreach (var video in allFetchedReels)
-                {
-                            var firstReel = video.Reels?.FirstOrDefault();
-                            if (firstReel is not null)
-                            {
-                                <div class="video-thumbnail" @onclick="@(() => SelectReel(firstReel))">
-                                    <ReelBuy.Frontend.Pages.CardReel.CardReel Title="@video.Name"
-                                                                              Thumbnail="@video.Name"
-                                                                              Link="@firstReel.ReelUri" />
-                                </div>
-                            }
-                }
-                </div>
-            </div>            
-         </div>
-        }
-     </div>  *@
-      
-    
-    
+        
     <!-- Indicador de carga -->
     @if (loading)
     {

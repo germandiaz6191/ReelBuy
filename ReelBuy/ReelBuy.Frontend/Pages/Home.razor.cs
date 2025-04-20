@@ -22,17 +22,13 @@ public partial class Home
     private int CurrentVideoIndex = 0;
     private bool loading = false;
 
-    private bool showFooter = true;
-
     // Tamaños configurables
     private const int BatchSize = 2; // Videos por consulta
 
     // Rotador automatico
     private bool isTransitioning = false;
 
-    private Timer? autoRotationTimer;
-
-    private int rotationInterval = 60000; // 60 segundos
+    private bool isLiked = false;
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -185,7 +181,6 @@ public partial class Home
 
         if (isFirstVideoInBatch)
         {
-
             allFetchedReels = await FetchVideosFromApi(--CurrentBatch, BatchSize);
 
             // 4. Cambiar al batch anterior
@@ -199,11 +194,6 @@ public partial class Home
     {
         selectedReel = reel;
         StateHasChanged(); // Forzar actualización de la UI
-    }
-
-    private void ToggleFooter()
-    {
-        showFooter = !showFooter;
     }
 
     public bool IsOnLastVideo
@@ -222,5 +212,17 @@ public partial class Home
             // Verificar si es el último video
             return CurrentBatch <= 1 && CurrentVideoIndex <= 0;
         }
+    }
+
+    private void ToggleLike()
+    {
+    }
+
+    private void ShowInfo()
+    {
+    }
+
+    private void ShowComments()
+    {
     }
 }
