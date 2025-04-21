@@ -5,6 +5,7 @@ using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Enums;
 
 namespace ReelBuy.Backend.Controllers;
 
@@ -90,9 +91,50 @@ public class ProductsController : GenericController<Product>
         return BadRequest();
     }
 
+    [HttpGet("paginatedApproved")]
+    public async Task<IActionResult> GetPaginateApprovedAsync([FromQuery] PaginationDTO pagination)
+    {
+        pagination.FilterStatus = (int)StatusProduct.Approved;
+        var response = await _productsUnitOfWork.GetAsync(pagination);
+        if (response.WasSuccess)
+        {
+            var currentReels = response.Result;
+            if (currentReels == null)
+            {
+                return Ok(currentReels);
+            }
+            foreach (Product reel in currentReels)
+            {
+                var reelItem = reel.Reels.FirstOrDefault();
+                if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+                {
+                    var pathUri = reelItem.ReelUri.Split("/").Last();
+                    var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+
+                    reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+                }
+            }
+
+            return Ok(currentReels);
+        }
+        return BadRequest();
+    }
+
     [HttpGet("totalRecordsPaginated")]
     public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
+        var action = await _productsUnitOfWork.GetTotalRecordsAsync(pagination);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest();
+    }
+
+    [HttpGet("totalRecordsPaginatedApproved")]
+    public async Task<IActionResult> GetTotalRecordsApprovedAsync([FromQuery] PaginationDTO pagination)
+    {
+        pagination.FilterStatus = (int)StatusProduct.Approved;
         var action = await _productsUnitOfWork.GetTotalRecordsAsync(pagination);
         if (action.WasSuccess)
         {

@@ -55,7 +55,7 @@ public partial class Home
     private async Task LoadTotalRecordsAsync()
     {
         loading = true;
-        var url = $"{baseUrl}/totalRecordsPaginated";
+        var url = $"{baseUrl}/totalRecordsPaginatedApproved";
 
         if (!string.IsNullOrWhiteSpace(Filter))
         {
@@ -103,7 +103,7 @@ public partial class Home
     {
         int page = currentBatch;
         int pageSize = batchSize;
-        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
+        var url = $"{baseUrl}/paginatedApproved/?page={page}&recordsnumber={pageSize}";
 
         if (!string.IsNullOrWhiteSpace(Filter))
         {

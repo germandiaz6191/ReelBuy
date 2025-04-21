@@ -4,6 +4,7 @@ using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Responses;
 
 namespace ReelBuy.Backend.Repositories.Implementations;
@@ -74,6 +75,11 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
             .Include(p => p.Store)
             .AsQueryable();
 
+        if (pagination.FilterStatus.HasValue)
+        {
+            queryable = queryable.Where(x => x.StatusId.Equals(pagination.FilterStatus));
+        }
+
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
             queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
@@ -92,6 +98,11 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination)
     {
         var queryable = _context.Products.AsQueryable();
+
+        if (pagination.FilterStatus.HasValue)
+        {
+            queryable = queryable.Where(x => x.StatusId.Equals(pagination.FilterStatus));
+        }
 
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
