@@ -42,8 +42,6 @@ public partial class Home
         await LoadProductsAsync();
         await LoadTotalRecordsAsync();
         CalculatePages();
-        // Iniciar rotación automática
-        //StartAutoRotation();
         loading = false;
     }
 
@@ -54,7 +52,6 @@ public partial class Home
 
     private async Task LoadTotalRecordsAsync()
     {
-        loading = true;
         var url = $"{baseUrl}/totalRecordsPaginatedApproved";
 
         if (!string.IsNullOrWhiteSpace(Filter))
@@ -71,7 +68,6 @@ public partial class Home
         }
 
         totalRecords = responseHttp.Response;
-        loading = false;
     }
 
     private async Task LoadProductsAsync()

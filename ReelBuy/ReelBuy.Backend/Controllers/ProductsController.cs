@@ -121,6 +121,7 @@ public class ProductsController : GenericController<Product>
     }
 
     [HttpGet("totalRecordsPaginated")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
         var action = await _productsUnitOfWork.GetTotalRecordsAsync(pagination);
