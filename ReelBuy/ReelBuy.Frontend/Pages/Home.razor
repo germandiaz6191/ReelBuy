@@ -16,8 +16,11 @@
     <h1>@Localizer["Title"]</h1>
     <h2>@Localizer["Subtitle"]</h2>
     -->
-
-    <ReelBuy.Frontend.Pages.Products_Pending.ProductsPending />
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <ReelBuy.Frontend.Pages.Products_Pending.ProductsPending />
+        </Authorized>
+    </AuthorizeView>
 
     <!-- Vista de reel ampliado -->
     <div class="main-reel-container">
@@ -58,7 +61,7 @@
             <div class="video-actions">                
                 <div class="like-container">
                     <MudIconButton @onclick="ToggleLike"
-                                   Icon="@(isLiked ? Icons.Material.Filled.Favorite : Icons.Material.Filled.FavoriteBorder)"
+                                   Icon="@(isLiked ? Icons.Material.TwoTone.ThumbUp : Icons.Material.Outlined.ThumbUp)"
                                    Color="Color.Error"
                                    Class="action-button" />
                     @*<span class="like-count">@currentLikes</span>*@

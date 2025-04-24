@@ -17,4 +17,6 @@ public interface IProductsRepository
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
 
     Task<ActionResponse<IEnumerable<Product>>> GetProductsByLikeAsync(PrincipalSearchDTO principalSearch);
+
+    Task<ActionResponse<int>> UpdateAsync(IEnumerable<Product> entities);
 }

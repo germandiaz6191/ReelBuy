@@ -11,6 +11,7 @@ public class Product
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
+
     public string Description { get; set; } = null!;
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
     public int StatusId { get; set; }
@@ -19,7 +20,7 @@ public class Product
     public Marketplace? Marketplace { get; set; }
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
-    public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+    public ICollection<Favorite>? Favorites { get; set; }
     public int StoreId { get; set; }
     public Store? Store { get; set; }
 }

@@ -137,4 +137,44 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
             Result = results
         };
     }
+
+    public async Task<ActionResponse<int>> UpdateAsync(IEnumerable<Product> entities)
+    {
+        try
+        {
+            foreach (var product in entities)
+            {
+                _context.Entry(product).State = EntityState.Modified;
+                _context.Entry(product).Reference(p => p.Store).IsModified = false;
+                _context.Entry(product).Reference(p => p.Category).IsModified = false;
+                _context.Entry(product).Reference(p => p.Store).IsModified = false;
+                _context.Entry(product).Collection(p => p.Reels).IsModified = false;
+                _context.Entry(product).Reference(p => p.Marketplace).IsModified = false;
+            }
+
+            _context.UpdateRange(entities);
+            await _context.SaveChangesAsync();
+            return new ActionResponse<int>
+            {
+                WasSuccess = true,
+                Result = entities.Count()
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<int>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new ActionResponse<int>
+            {
+                WasSuccess = false,
+                Message = ex.Message
+            };
+        }
+    }
 }

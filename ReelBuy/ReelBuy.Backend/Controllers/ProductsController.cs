@@ -178,4 +178,16 @@ public class ProductsController : GenericController<Product>
         }
         return BadRequest(action.Message);
     }
+
+    [HttpPut("UpdateProducts")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    public async Task<IActionResult> UpdateProducts([FromBody] List<Product> models)
+    {
+        var action = await _productsUnitOfWork.UpdateAsync(models);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest(action.Message);
+    }
 }

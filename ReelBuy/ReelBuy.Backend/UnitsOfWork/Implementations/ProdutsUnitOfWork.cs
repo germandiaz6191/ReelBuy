@@ -26,4 +26,6 @@ public class ProductsUnitOfWork : GenericUnitOfWork<Product>, IProductsUnitOfWor
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination) => await _productsRepository.GetTotalRecordsAsync(pagination);
 
     public async Task<ActionResponse<IEnumerable<Product>>> GetProductsByLikeAsync(PrincipalSearchDTO principalSearch) => await _productsRepository.GetProductsByLikeAsync(principalSearch);
+
+    public virtual async Task<ActionResponse<int>> UpdateAsync(IEnumerable<Product> models) => await _productsRepository.UpdateAsync(models);
 }
