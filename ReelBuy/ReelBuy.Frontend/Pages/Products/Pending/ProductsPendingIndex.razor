@@ -40,14 +40,14 @@ else
             <MudTd>
                 <MudTooltip Text="@Localizer["View"]">
                     <MudButton OnClick="@(() => ShowPreviewDialog(@context))">
-                            <MudIcon Icon="@Icons.Material.Filled.Visibility" />
+                                <MudIcon Icon="@Icons.Material.TwoTone.Visibility" />
                     </MudButton>
                 </MudTooltip>
             </MudTd>
             <MudTd>
 
 
-                <MudSelect Value="@context.StatusId" Placeholder="@Localizer["Status"]" AdornmentIcon="@Icons.Material.Filled.Check" AdornmentColor="Color.Primary"
+                    <MudSelect Value="@context.StatusId" Dense="true" Placeholder="@Localizer["Status"]" AdornmentIcon="@Icons.Material.Filled.Check" AdornmentColor="Color.Primary"
                            ValueChanged="EventCallback.Factory.Create<int>(this, value => OnStatusChanged(context, value))">
                     @foreach (var status in Statuses)
                     {
