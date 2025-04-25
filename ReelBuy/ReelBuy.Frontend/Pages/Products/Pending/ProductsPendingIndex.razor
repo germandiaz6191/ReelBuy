@@ -1,4 +1,4 @@
-﻿@page "/productspending"
+﻿@page "/products/pending"
 
 @if (loading)
 {
@@ -28,21 +28,19 @@ else
         </ToolBarContent>
         <HeaderContent>
             <MudTh>@Localizer["Product"]</MudTh>
-            <MudTh>@Localizer["Category"]</MudTh>
             <MudTh>@Localizer["Marketplace"]</MudTh>
+            <MudTh>@Localizer["Category"]</MudTh>
             <MudTh>@Localizer["Actions"]</MudTh>
             <MudTh>@Localizer["Status"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
-            <MudTd>@context.CategoryId</MudTd>
-            <MudTd>@context.MarketplaceId</MudTd>
+            <MudTd>@context.Marketplace?.Name</MudTd>
+            <MudTd>@context.Category?.Name</MudTd>
             <MudTd>
-                <MudTooltip Text="@Localizer["Delete"]">
-                    <MudButton Variant="Variant.Filled"
-                               Color="Color.Error"
-                               OnClick="@(() => DeleteAsync(@context))">
-                        <MudIcon Icon="@Icons.Material.Filled.Delete" />
+                <MudTooltip Text="@Localizer["View"]">
+                    <MudButton OnClick="@(() => ShowPreviewDialog(@context))">
+                            <MudIcon Icon="@Icons.Material.Filled.Visibility" />
                     </MudButton>
                 </MudTooltip>
             </MudTd>
@@ -68,6 +66,19 @@ else
                            InfoFormat="@infoFormat" />
         </PagerContent>
     </MudTable>
+
+    @if (isModalOpen)
+    {
+        <div class="modal-overlay">
+            <div class="modal-content">
+                <ReelBuy.Frontend.Pages.ViewReel.CardReel ReelData="selectedReel"
+                                                          OnInfo="ShowInfo"
+                                                          IsNextDisabled="true"
+                                                          IsPreviousDisabled="false" />
+                <MudButton OnClick="CloseModal">Close</MudButton>
+            </div>
+        </div>
+    }
 }
 
 

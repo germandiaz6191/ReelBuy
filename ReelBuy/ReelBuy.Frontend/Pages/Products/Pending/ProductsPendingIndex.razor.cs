@@ -1,15 +1,13 @@
-using System.Net;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.Resources;
-using ReelBuy.Frontend.Shared;
 using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Shared.Enums;
-using ReelBuy.Shared.DTOs;
+using ReelBuy.Frontend.Pages.ViewReel;
 
-namespace ReelBuy.Frontend.Pages.Products_Pending;
+namespace ReelBuy.Frontend.Pages.Products.Pending;
 
 public partial class ProductsPendingIndex
 {
@@ -23,6 +21,8 @@ public partial class ProductsPendingIndex
     private const string baseUrl = "api/products";
     private const string baseUrlStatuses = "api/statuses";
     private string infoFormat = "{first_item}-{last_item} => {all_items}";
+    private bool isModalOpen = false;
+    private Reel? selectedReel = null;
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -32,6 +32,7 @@ public partial class ProductsPendingIndex
 
     [Parameter, SupplyParameterFromQuery] public string Filter { get; set; } = string.Empty;
     [Parameter, SupplyParameterFromQuery] public int? FilterStatus { get; set; } = null;
+    [CascadingParameter] private MudDialogInstance MudDialog { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -142,37 +143,20 @@ public partial class ProductsPendingIndex
         Snackbar.Add(Localizer["RecordUpdateOk"], Severity.Success);
     }
 
-    private async Task DeleteAsync(Product product)
+    private async Task ShowPreviewDialog(Product product)
     {
-        var parameters = new DialogParameters
-            {
-                { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Product"], product.Name) }
-            };
-        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
-        var dialog = DialogService.Show<ConfirmDialog>(Localizer["Confirmation"], parameters, options);
-        var result = await dialog.Result;
-        if (result!.Canceled)
-        {
-            return;
-        }
+        selectedReel = product.Reels.FirstOrDefault();
+        isModalOpen = true;
+    }
 
-        var responseHttp = await Repository.DeleteAsync($"{baseUrl}/{product.Id}");
-        if (responseHttp.Error)
-        {
-            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
-            {
-                NavigationManager.NavigateTo("/products");
-            }
-            else
-            {
-                var message = await responseHttp.GetErrorMessageAsync();
-                Snackbar.Add(Localizer[message!], Severity.Error);
-            }
-            return;
-        }
-        await LoadTotalRecordsAsync();
-        await table.ReloadServerData();
-        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    private async Task CloseModal()
+    {
+        selectedReel = null;
+        isModalOpen = false;
+    }
+
+    private void ShowInfo()
+    {
     }
 
     private void OnStatusChanged(Product product, int newStatusId)

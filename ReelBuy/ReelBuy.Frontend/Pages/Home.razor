@@ -18,71 +18,19 @@
     -->
     <AuthorizeView Roles="Admin">
         <Authorized>
-            <ReelBuy.Frontend.Pages.Products_Pending.ProductsPending />
+            <ReelBuy.Frontend.Pages.Products.Pending.ProductsPending />
         </Authorized>
     </AuthorizeView>
 
     <!-- Vista de reel ampliado -->
-    <div class="main-reel-container">
-        <!-- Bloque VERTICAL: Título + Video + Acciones -->
-        <div class="video-vertical-stack">
-            <!-- Título encima del video -->
-            <div class="video-title">
-                <h6>@selectedReel?.Name</h6> <!-- Ajusta la propiedad según tu modelo -->
-            </div>
+    <ReelBuy.Frontend.Pages.ViewReel.CardReel ReelData="selectedReel"
+                                              OnNext="LoadNextBatch"
+                                              OnPrevious="LoadPreviousBatch"
+                                              OnLike="ToggleLike"
+                                              OnInfo="ShowInfo"
+                                              IsNextDisabled="IsOnLastVideo"
+                                              IsPreviousDisabled="HasPreviousBatchLoaded" />
 
-            <!-- Contenedor HORIZONTAL: Botones + Video -->
-            <div class="video-controls-container">
-                <!-- Botón izquierdo -->
-                <button class="carousel-control prev" @onclick="LoadPreviousBatch" disabled="@(HasPreviousBatchLoaded)">
-                    &larr; <!-- Flecha izquierda -->
-                </button>
-
-                <!-- Video Principal (Grande) -->
-                @if (selectedReel != null)
-                {
-                    <div class="main-reel color-palette-surface @(isTransitioning ? "fade-out" : "")">
-                        <video controls
-                               autoplay="true"
-                               class="reel-video"
-                               src="data:video/mp4;base64,@selectedReel.ReelUri"
-                               @onended="LoadNextBatch">
-                        </video>
-                    </div>
-                }
-
-                <!-- Botón derecho -->
-                <button class="carousel-control next" @onclick="LoadNextBatch" disabled="@(IsOnLastVideo)">
-                    &rarr; <!-- Flecha derecha -->
-                </button>
-            </div>
-
-            <!-- Iconos debajo del video -->
-            <div class="video-actions">                
-                <div class="like-container">
-                    <MudIconButton @onclick="ToggleLike"
-                                   Icon="@(isLiked ? Icons.Material.TwoTone.ThumbUp : Icons.Material.Outlined.ThumbUp)"
-                                   Color="Color.Error"
-                                   Class="action-button" />
-                    @*<span class="like-count">@currentLikes</span>*@
-                    <MudText Typo="Typo.body2" Class="ml-2">23</MudText>
-                </div>
-                <div class="comment-container">
-                    <MudIconButton @onclick="ShowComments"
-                                   Icon="@Icons.Material.Filled.Comment"
-                                   Color="Color.Default"
-                                   Class="action-button" />
-                </div>
-                <div class="info-container">
-                    <MudIconButton @onclick="ShowInfo"
-                                   Icon="@Icons.Material.Filled.Info"
-                                   Color="Color.Default"
-                                   Class="action-button" />
-                </div>
-            </div>
-        </div>
-        
-    </div>
     <!-- Espacio flexible que empuja los videos hacia abajo -->
     <div class="spacer"></div>
         

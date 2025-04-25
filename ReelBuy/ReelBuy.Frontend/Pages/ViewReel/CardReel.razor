@@ -1,0 +1,41 @@
+﻿<div class="main-reel-container">
+    <div class="video-vertical-stack">
+        <div class="video-title">
+            <h6>@ReelData?.Name</h6>
+        </div>
+
+        <div class="video-controls-container">
+            <button class="carousel-control prev"
+                    @onclick="OnPrevious"
+                    disabled="@IsPreviousDisabled">
+                &larr;
+            </button>
+
+            @if (ReelData != null)
+            {
+                <div class="main-reel color-palette-surface">
+                    <video controls autoplay class="reel-video"
+                           src="data:video/mp4;base64,@ReelData.ReelUri"
+                           @onended="OnNext">
+                    </video>
+                </div>
+            }
+
+            <button class="carousel-control next"
+                    @onclick="OnNext"
+                    disabled="@IsNextDisabled">
+                &rarr;
+            </button>
+        </div>
+
+        <div class="video-actions">
+            <MudIconButton Icon="@Icons.Material.Outlined.ThumbUp"
+                           @onclick="OnLike"
+                           Color="Color.Error"
+                           Class="action-button" />
+            <MudIconButton Icon="@Icons.Material.Filled.Comment" Color="Color.Default" Class="action-button" />
+            <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Default" Class="action-button"
+                           @onclick="OnInfo" />
+        </div>
+    </div>
+</div>

@@ -6,7 +6,7 @@ using ReelBuy.Frontend.Shared;
 using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Resources;
 
-namespace ReelBuy.Frontend.Pages.Products_Pending;
+namespace ReelBuy.Frontend.Pages.Products.Pending;
 
 public partial class ProductsPending
 {
