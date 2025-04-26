@@ -159,7 +159,7 @@ public partial class ProductsPendingIndex
     {
     }
 
-    private void OnStatusChanged(Product product, int newStatusId)
+    private async Task OnStatusChanged(Product product, int newStatusId)
     {
         product.StatusId = newStatusId;
         product.Favorites = null;

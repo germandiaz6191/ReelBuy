@@ -20,7 +20,7 @@ else
                 <MudButton Variant="Variant.Outlined"
                            EndIcon="@Icons.Material.Filled.Save"
                            Color="Color.Info" OnClick="@(() => UpdateProductsAsync())">
-                    @Localizer["Save"]
+                    @Localizer["Update"]
                 </MudButton>
             </div>
             <MudSpacer />
@@ -31,7 +31,8 @@ else
             <MudTh>@Localizer["Marketplace"]</MudTh>
             <MudTh>@Localizer["Category"]</MudTh>
             <MudTh>@Localizer["Actions"]</MudTh>
-            <MudTh>@Localizer["Status"]</MudTh>
+            <MudTh>@Localizer["StatusUpdate"]</MudTh>
+            <MudTh>@Localizer["MotiveReject"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
@@ -45,15 +46,25 @@ else
                 </MudTooltip>
             </MudTd>
             <MudTd>
-
-
-                    <MudSelect Value="@context.StatusId" Dense="true" Placeholder="@Localizer["Status"]" AdornmentIcon="@Icons.Material.Filled.Check" AdornmentColor="Color.Primary"
+                <MudSelect Value="@context.StatusId" Margin="Margin.Dense" Dense="true" Placeholder="@Localizer["Status"]" AdornmentIcon="@Icons.Material.Filled.Check" AdornmentColor="Color.Primary"
                            ValueChanged="EventCallback.Factory.Create<int>(this, value => OnStatusChanged(context, value))">
                     @foreach (var status in Statuses)
                     {
                         <MudSelectItem Value="@status.Id">@status.Name</MudSelectItem>
                     }
                 </MudSelect>
+            </MudTd>
+            <MudTd>
+                @if (context.StatusId == (int)ReelBuy.Shared.Enums.StatusProduct.Reject)
+                {
+                    <MudTextField @bind-Value="@context.MotiveReject" 
+                                  Variant="Variant.Outlined"
+                                  Immediate="true"
+                                  Placeholder="@Localizer["EnterComment"]"
+                                  Class="dense my-0"
+                                      FullWidth="true"/>
+                }
+                  
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>

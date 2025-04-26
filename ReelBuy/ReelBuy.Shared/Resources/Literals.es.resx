@@ -447,4 +447,25 @@
   <data name="PrincipalSearchNotFoundResults" xml:space="preserve">
     <value>No se encontrarón resultados</value>
   </data>
+  <data name="Buy" xml:space="preserve">
+    <value>Comprar</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Actualizar</value>
+  </data>
+  <data name="StatusUpdate" xml:space="preserve">
+    <value>Actualizar estado</value>
+  </data>
+  <data name="MotiveReject" xml:space="preserve">
+    <value>Motivo de rechazo</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Visualizar</value>
+  </data>
+  <data name="EnterComment" xml:space="preserve">
+    <value>Ingresar comentario</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
 </root>

@@ -106,6 +106,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Buy.
+        /// </summary>
+        public static string Buy {
+            get {
+                return ResourceManager.GetString("Buy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -268,6 +277,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Website URL.
         /// </summary>
         public static string Domain {
@@ -309,6 +327,15 @@ namespace ReelBuy.Shared.Resources {
         public static string EmailAlreadyExists {
             get {
                 return ResourceManager.GetString("EmailAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter Comment.
+        /// </summary>
+        public static string EnterComment {
+            get {
+                return ResourceManager.GetString("EnterComment", resourceCulture);
             }
         }
         
@@ -543,6 +570,15 @@ namespace ReelBuy.Shared.Resources {
         public static string MinLength {
             get {
                 return ResourceManager.GetString("MinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Motive Reject.
+        /// </summary>
+        public static string MotiveReject {
+            get {
+                return ResourceManager.GetString("MotiveReject", resourceCulture);
             }
         }
         
@@ -970,6 +1006,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Status Update.
+        /// </summary>
+        public static string StatusUpdate {
+            get {
+                return ResourceManager.GetString("StatusUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Store.
         /// </summary>
         public static string Store {
@@ -1006,6 +1051,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        public static string Update {
+            get {
+                return ResourceManager.GetString("Update", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User.
         /// </summary>
         public static string User {
@@ -1038,6 +1092,15 @@ namespace ReelBuy.Shared.Resources {
         public static string ValidEmail {
             get {
                 return ResourceManager.GetString("ValidEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View.
+        /// </summary>
+        public static string View {
+            get {
+                return ResourceManager.GetString("View", resourceCulture);
             }
         }
         

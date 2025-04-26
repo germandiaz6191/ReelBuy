@@ -9,7 +9,7 @@
     max-width: 85vw;
     margin: 0 auto;
     background: var(--color-surface);
-    padding-top: 20px;
+    padding-top: 15px;
 }
 
 /* Bloque vertical que contiene título + video + acciones */
@@ -18,7 +18,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    gap: 10px; /* Espacio entre título, video e iconos */
+    gap: 6px; /* Espacio entre título, video e iconos */
 }
 
 /* Contenedor horizontal para botones y video */
@@ -48,15 +48,15 @@
     justify-content: center;
 }
 
-    .carousel-control:hover:not(:disabled) {
-        background: #007bff;
-        transform: scale(1.1);
-    }
+.carousel-control:hover:not(:disabled) {
+    background: #007bff;
+    transform: scale(1.1);
+}
 
-    .carousel-control:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
+.carousel-control:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
 
 .spacer {
     flex: 1; /* Ocupa todo el espacio disponible, empujando los videos abajo */
@@ -71,10 +71,10 @@ button {
     cursor: pointer;
 }
 
-    button:disabled {
-        background: #cccccc;
-        cursor: not-allowed;
-    }
+button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
 
 /* Video principal (60% de la pantalla) */
 .main-reel {
@@ -86,9 +86,9 @@ button {
     transition: opacity 0.3s ease; /* Transición suave */
 }
 
-    .main-reel.fade-out {
-        opacity: 0; /* Efecto de desvanecimiento */
-    }
+.main-reel.fade-out {
+    opacity: 0; /* Efecto de desvanecimiento */
+}
 
 .reel-video {
     width: 100%;
@@ -99,15 +99,21 @@ button {
 
 .video-title {
     width: 100%;
+    height: 5vh;
     text-align: center;
+}
+
+.video-title h5 {
+    margin-bottom: 0;
 }
 
 /* Iconos (centrados debajo del video) */
 .video-actions {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 6px;
     width: 100%;
+    height: 5vh;
 }
 
 .action-button {

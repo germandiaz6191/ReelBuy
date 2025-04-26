@@ -39,4 +39,6 @@ public class User : IdentityUser
     public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
     public ICollection<Store> Stores { get; set; } = new List<Store>();
+
+    public ICollection<Comments> Comments { get; set; } = new List<Comments>();
 }

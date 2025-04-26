@@ -1,9 +1,20 @@
 ﻿<div class="main-reel-container">
     <div class="video-vertical-stack">
         <div class="video-title">
-            <h6>@ReelData?.Name</h6>
+            <h4>@ReelData?.Name</h4>
         </div>
-
+        <div class="video-actions">
+            <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer;" OnClick="OnInfo" Elevation="0">
+                <MudIcon Icon="@Icons.Material.TwoTone.PriceChange" Color="Color.Default" />
+                <MudText Class="ms-1" Typo="Typo.subtitle2">10,000.000</MudText>
+            </MudPaper>
+            <MudButton StartIcon="@Icons.Material.TwoTone.ShoppingCart"
+                        Color="Color.Primary"
+                       Variant="Variant.Filled"
+                        OnClick="OnInfo">
+                @Localizer["Buy"]
+            </MudButton>
+        </div>
         <div class="video-controls-container">
             <button class="carousel-control prev"
                     @onclick="OnPrevious"
@@ -29,13 +40,13 @@
         </div>
 
         <div class="video-actions">
-            <MudIconButton Icon="@Icons.Material.Outlined.ThumbUp"
-                           @onclick="OnLike"
-                           Color="Color.Error"
-                           Class="action-button" />
-            <MudIconButton Icon="@Icons.Material.Filled.Comment" Color="Color.Default" Class="action-button" />
-            <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Default" Class="action-button"
-                           @onclick="OnInfo" />
+            <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer;" OnClick="OnInfo" Elevation="0">
+                <MudIcon Icon="@Icons.Material.TwoTone.ThumbUp" Color="Color.Default" />
+                <MudText Class="ms-1" Typo="Typo.caption">10.000</MudText>
+            </MudPaper>
+            <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" />
+            <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" @onclick="OnInfo" />
+            <MudIconButton Icon="@Icons.Material.TwoTone.BookmarkAdded" Color="Color.Default" Class="action-button" @onclick="OnInfo" />
         </div>
     </div>
 </div>

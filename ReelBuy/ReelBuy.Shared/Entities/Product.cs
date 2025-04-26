@@ -21,6 +21,13 @@ public class Product
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
     public ICollection<Favorite>? Favorites { get; set; }
+    public ICollection<Comments>? Comments { get; set; }
     public int StoreId { get; set; }
     public Store? Store { get; set; }
+    public decimal Price { get; set; }
+    public int Likes { get; set; }
+
+    [Display(Name = "MotiveReject", ResourceType = typeof(Literals))]
+    [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+    public string? MotiveReject { get; set; }
 }

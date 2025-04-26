@@ -447,4 +447,25 @@
   <data name="PrincipalSearchNotFoundResults" xml:space="preserve">
     <value>No results found</value>
   </data>
+  <data name="Buy" xml:space="preserve">
+    <value>Buy</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="StatusUpdate" xml:space="preserve">
+    <value>Status Update</value>
+  </data>
+  <data name="MotiveReject" xml:space="preserve">
+    <value>Motive Reject</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="EnterComment" xml:space="preserve">
+    <value>Enter Comment</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
 </root>
