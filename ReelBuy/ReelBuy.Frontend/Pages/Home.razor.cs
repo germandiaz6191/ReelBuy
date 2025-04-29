@@ -9,14 +9,13 @@ namespace ReelBuy.Frontend.Pages;
 
 public partial class Home
 {
-    private List<Reel> dummyReels = new();
     private List<Product> allFetchedReels = new();
     private int totalRecords = 0;
     private int totalPages = 0;
 
     private const string baseUrl = "api/products";
 
-    private Reel? selectedReel = null;
+    private Product? selectedProduct = null;
 
     private int CurrentBatch = 1;
     private int CurrentVideoIndex = 0;
@@ -87,8 +86,7 @@ public partial class Home
     private async Task SelectVideo(int currentVideoIndex)
     {
         await Task.Delay(5);
-        var firstReel = allFetchedReels[currentVideoIndex]?.Reels?.FirstOrDefault();
-
+        var firstReel = allFetchedReels[currentVideoIndex];
         if (firstReel != null)
         {
             SelectReel(firstReel);
@@ -186,9 +184,9 @@ public partial class Home
         await SelectVideo(CurrentVideoIndex);
     }
 
-    private void SelectReel(Reel reel)
+    private void SelectReel(Product? product)
     {
-        selectedReel = reel;
+        selectedProduct = product;
         StateHasChanged(); // Forzar actualización de la UI
     }
 
@@ -208,17 +206,5 @@ public partial class Home
             // Verificar si es el último video
             return CurrentBatch <= 1 && CurrentVideoIndex <= 0;
         }
-    }
-
-    private void ToggleLike()
-    {
-    }
-
-    private void ShowInfo()
-    {
-    }
-
-    private void ShowComments()
-    {
     }
 }

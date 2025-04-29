@@ -4,7 +4,6 @@ using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
-using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Responses;
 
 namespace ReelBuy.Backend.Repositories.Implementations;

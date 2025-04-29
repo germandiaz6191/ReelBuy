@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Shared.Enums;
-using ReelBuy.Frontend.Pages.ViewReel;
 
 namespace ReelBuy.Frontend.Pages.Products.Pending;
 
@@ -22,7 +21,7 @@ public partial class ProductsPendingIndex
     private const string baseUrlStatuses = "api/statuses";
     private string infoFormat = "{first_item}-{last_item} => {all_items}";
     private bool isModalOpen = false;
-    private Reel? selectedReel = null;
+    private Product? selectedProduct = null;
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -145,13 +144,13 @@ public partial class ProductsPendingIndex
 
     private async Task ShowPreviewDialog(Product product)
     {
-        selectedReel = product.Reels.FirstOrDefault();
+        selectedProduct = product;
         isModalOpen = true;
     }
 
     private async Task CloseModal()
     {
-        selectedReel = null;
+        selectedProduct = null;
         isModalOpen = false;
     }
 

@@ -3,7 +3,7 @@
     <MudPaper Class="pa-4 d-flex align-center" Style="background-color: #fff3cd; border-left: 6px solid #ffa000; border-radius: 8px;">
         <MudIcon Icon="@Icons.Material.Filled.PendingActions" Color="Color.Warning" Size="Size.Large" Class="me-2" />
         <div>
-            <strong>@TotalRecords</strong> productos están <b>pendientes por aprobar</b>.
+            <strong>@TotalRecords</strong> @Localizer["ProductsPendingFirst"] <b>@Localizer["ProductsPendingSecond"]</b>.
         </div>
     </MudPaper>
 }

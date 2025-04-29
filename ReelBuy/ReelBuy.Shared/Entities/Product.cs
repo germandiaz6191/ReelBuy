@@ -25,9 +25,16 @@ public class Product
     public int StoreId { get; set; }
     public Store? Store { get; set; }
     public decimal Price { get; set; }
-    public int Likes { get; set; }
+    public int LikesGroup { get; set; }
+
+    public virtual ICollection<User>? LikedBy { get; set; }
 
     [Display(Name = "MotiveReject", ResourceType = typeof(Literals))]
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     public string? MotiveReject { get; set; }
+
+    public static implicit operator Product(int v)
+    {
+        throw new NotImplementedException();
+    }
 }

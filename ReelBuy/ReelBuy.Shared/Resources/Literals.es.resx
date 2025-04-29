@@ -468,4 +468,43 @@
   <data name="Description" xml:space="preserve">
     <value>Descripción</value>
   </data>
+  <data name="LikeHelp" xml:space="preserve">
+    <value>Haz clic para dar 'Me gusta'</value>
+  </data>
+  <data name="InfoHelp" xml:space="preserve">
+    <value>Haz clic para ver información del producto</value>
+  </data>
+  <data name="CommentHelp" xml:space="preserve">
+    <value>Haz clic para ver y comentar sobre el producto</value>
+  </data>
+  <data name="FavoriteHelp" xml:space="preserve">
+    <value>Haz clic agregar a tús favoritos</value>
+  </data>
+  <data name="ProductsPendingFirst" xml:space="preserve">
+    <value>productos están</value>
+  </data>
+  <data name="ProductsPendingSecond" xml:space="preserve">
+    <value>pendientes por aprobar</value>
+  </data>
+  <data name="DialogBuyDescription" xml:space="preserve">
+    <value>Estás a punto de ser redirigido a un enlace externo, presiona el botón Confirmar para ser redirigido</value>
+  </data>
+  <data name="DialogBuyTitle" xml:space="preserve">
+    <value>Confirmar redirección</value>
+  </data>
+  <data name="DialigFirstButton" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="DialigSecondButton" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DisFavoriteHelp" xml:space="preserve">
+    <value>Haz clic eliminarlo de tús favoritos</value>
+  </data>
+  <data name="UnlikeHelp" xml:space="preserve">
+    <value>Haz clic para quitar 'Me gusta'</value>
+  </data>
+  <data name="GeneralError" xml:space="preserve">
+    <value>Se genero un error realizando la acción</value>
+  </data>
 </root>

@@ -178,6 +178,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click to view and comment on the product.
+        /// </summary>
+        public static string CommentHelp {
+            get {
+                return ResourceManager.GetString("CommentHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Thank you for confirming your email, you can now log in to the system..
         /// </summary>
         public static string ConfirmedEmailMessage {
@@ -282,6 +291,51 @@ namespace ReelBuy.Shared.Resources {
         public static string Description {
             get {
                 return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirm.
+        /// </summary>
+        public static string DialigFirstButton {
+            get {
+                return ResourceManager.GetString("DialigFirstButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string DialigSecondButton {
+            get {
+                return ResourceManager.GetString("DialigSecondButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are about to be redirected to an external link, press the Confirm button to be redirected.
+        /// </summary>
+        public static string DialogBuyDescription {
+            get {
+                return ResourceManager.GetString("DialogBuyDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redirect confirmation.
+        /// </summary>
+        public static string DialogBuyTitle {
+            get {
+                return ResourceManager.GetString("DialogBuyTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click delete to your favorites.
+        /// </summary>
+        public static string DisFavoriteHelp {
+            get {
+                return ResourceManager.GetString("DisFavoriteHelp", resourceCulture);
             }
         }
         
@@ -412,6 +466,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click add to your favorites.
+        /// </summary>
+        public static string FavoriteHelp {
+            get {
+                return ResourceManager.GetString("FavoriteHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filter.
         /// </summary>
         public static string Filter {
@@ -435,6 +498,15 @@ namespace ReelBuy.Shared.Resources {
         public static string ForgottenYourPassword {
             get {
                 return ResourceManager.GetString("ForgottenYourPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error was generated while performing the action.
+        /// </summary>
+        public static string GeneralError {
+            get {
+                return ResourceManager.GetString("GeneralError", resourceCulture);
             }
         }
         
@@ -466,6 +538,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click to view product information.
+        /// </summary>
+        public static string InfoHelp {
+            get {
+                return ResourceManager.GetString("InfoHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last Name.
         /// </summary>
         public static string LastName {
@@ -489,6 +570,15 @@ namespace ReelBuy.Shared.Resources {
         public static string LengthField {
             get {
                 return ResourceManager.GetString("LengthField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to like.
+        /// </summary>
+        public static string LikeHelp {
+            get {
+                return ResourceManager.GetString("LikeHelp", resourceCulture);
             }
         }
         
@@ -781,6 +871,24 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to products are.
+        /// </summary>
+        public static string ProductsPendingFirst {
+            get {
+                return ResourceManager.GetString("ProductsPendingFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to pending approval.
+        /// </summary>
+        public static string ProductsPendingSecond {
+            get {
+                return ResourceManager.GetString("ProductsPendingSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Profile.
         /// </summary>
         public static string Profile {
@@ -1047,6 +1155,15 @@ namespace ReelBuy.Shared.Resources {
         public static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Click to unlike.
+        /// </summary>
+        public static string UnlikeHelp {
+            get {
+                return ResourceManager.GetString("UnlikeHelp", resourceCulture);
             }
         }
         

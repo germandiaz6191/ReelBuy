@@ -41,4 +41,6 @@ public class User : IdentityUser
     public ICollection<Store> Stores { get; set; } = new List<Store>();
 
     public ICollection<Comments> Comments { get; set; } = new List<Comments>();
+
+    public virtual ICollection<Product> Likes { get; set; } = new List<Product>();
 }

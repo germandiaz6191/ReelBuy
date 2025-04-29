@@ -87,6 +87,8 @@ builder.Services.AddScoped<IReelsUnitOfWork, ReelsUnitOfWork>();
 builder.Services.AddScoped<IReelsRepository, ReelsRepository>();
 builder.Services.AddScoped<IFavoritesUnitOfWork, FavoritesUnitOfWork>();
 builder.Services.AddScoped<IFavoritesRepository, FavoritesRepository>();
+builder.Services.AddScoped<ILikesUnitOfWork, LikesUnitOfWork>();
+builder.Services.AddScoped<ILikesRepository, LikesRepository>();
 
 builder.Services.AddIdentity<User, IdentityRole>(x =>
 {

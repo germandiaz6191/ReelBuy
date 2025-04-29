@@ -1,18 +1,216 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
+using MudBlazor;
+using ReelBuy.Frontend.Repositories;
+using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
+using System.Net;
 
 namespace ReelBuy.Frontend.Pages.ViewReel;
 
 public partial class CardReel
 {
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
-    [Parameter] public Reel? ReelData { get; set; }
+    [Inject] private IDialogService DialogService { get; set; } = null!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
+    [Inject] private IRepository Repository { get; set; } = null!;
+    [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Parameter] public Product ReelData { get; set; } = null!;
     [Parameter] public EventCallback OnNext { get; set; }
     [Parameter] public EventCallback OnPrevious { get; set; }
-    [Parameter] public EventCallback OnLike { get; set; }
-    [Parameter] public EventCallback OnInfo { get; set; }
     [Parameter] public bool IsNextDisabled { get; set; } = false;
     [Parameter] public bool IsPreviousDisabled { get; set; } = false;
+    protected Reel? FirstReel => ReelData?.Reels?.FirstOrDefault();
+
+    private const string baseUrlLikes = "api/likes";
+    private const string baseUrlFavorite = "api/favorites";
+    private bool IsLiked = false;
+    private bool IsFavorite = false;
+    private User? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUserAsync();
+        var foundFavorite = user?.Favorites.FirstOrDefault(f => f.ProductId == ReelData?.Id);
+        if (foundFavorite != null) { IsFavorite = true; }
+        var foundLike = user?.Likes.FirstOrDefault(f => f.Id == ReelData?.Id);
+        if (foundLike != null) { IsLiked = true; }
+    }
+
+    private string FormatNumber(int number)
+    {
+        if (number >= 1_000_000)
+            return (number / 1_000_000D).ToString("0.#") + "M";
+        if (number >= 1_000)
+            return (number / 1_000D).ToString("0.#") + "k";
+        return number.ToString();
+    }
+
+    private async Task LoadUserAsync()
+    {
+        var responseHttp = await Repository.GetAsync<User>($"/api/accounts");
+        if (responseHttp.Error)
+        {
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(messageError!, Severity.Error);
+            return;
+        }
+        user = responseHttp.Response;
+    }
+
+    private async Task OnInfoAsync(string? Description)
+    {
+        if (string.IsNullOrEmpty(Description))
+        {
+            return;
+        }
+
+        // Crea y muestra el diálogo
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
+
+        var parameters = new DialogParameters
+        {
+            { "Description", Description }
+        };
+
+        var dialog = DialogService.Show<RedirectDialog>("Confirmar redirección", parameters, options);
+        var result = await dialog.Result;
+
+        // Si el usuario confirma, redirige
+        if (result != null && !result.Canceled)
+        {
+            //if (Uri.IsWellFormedUriString(Description, UriKind.Absolute))
+            // NavigationManager.NavigateTo(Description, forceLoad: true);
+        }
+    }
+
+    private async Task OnBuyAsync(Product product)
+    {
+        var uriProduct = product.Marketplace?.Domain?.ToString();
+        // Crea y muestra el diálogo
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
+
+        var parameters = new DialogParameters
+        {
+            { "Description", Localizer["DialogBuyDescription"].Value },
+            { "DialigFirstButton", Localizer["DialigFirstButton"].Value },
+            { "DialigSecondButton", Localizer["DialigSecondButton"].Value }
+        };
+
+        var dialog = DialogService.Show<RedirectDialog>(Localizer["DialogBuyTitle"], parameters, options);
+        var result = await dialog.Result;
+
+        // Si el usuario confirma, redirige
+        if (result != null && !result.Canceled)
+        {
+            await JSRuntime.InvokeVoidAsync("window.open", $"https://{uriProduct}", "_blank");
+        }
+    }
+
+    private async Task OnLikeAsync(Product product)
+    {
+        if (IsLiked)
+        {
+            await DeleteLikeAsync(product);
+        }
+        else
+        {
+            await AddLikeAsync(product);
+        }
+        IsLiked = !IsLiked;
+    }
+
+    private async Task OnFavoriteAsync(Product product)
+    {
+        if (IsFavorite)
+        {
+            await DeleteLikeAsync(product);
+        }
+        else
+        {
+            await AddLikeAsync(product);
+        }
+        IsFavorite = !IsFavorite;
+    }
+
+    private async Task DeleteLikeAsync(Product product)
+    {
+        if (product == null)
+        {
+            var message = Localizer["GeneralError"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlLikes}/DeleteLikeAsync/{user?.Id}/{product?.Id}");
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+
+            return;
+        }
+        product.LikesGroup--;
+    }
+
+    private async Task AddLikeAsync(Product product)
+    {
+        if (user == null)
+        {
+            var message = Localizer["GeneralError"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        LikeDTO addLike = new LikeDTO { ProductId = product.Id, UserId = user.Id };
+        var responseHttp = await Repository.PostAsync($"{baseUrlLikes}/PostLikeAsync", addLike);
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+
+            return;
+        }
+        product.LikesGroup++;
+    }
+
+    private async Task DeleteFavoriteAsync()
+    {
+        var foundFavorite = user?.Favorites.FirstOrDefault(f => f.UserId == user?.Id);
+
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlFavorite}/DeleteLikeAsync/{foundFavorite?.Id}");
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+
+            return;
+        }
+        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
+
+    private async Task AddFavoriteAsync(Product product)
+    {
+        if (user == null)
+        {
+            var message = Localizer["FavoriteErrorUserNull"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        FavoriteDTO addFavorite = new FavoriteDTO { ProductId = product.Id, UserId = user.Id };
+        var responseHttp = await Repository.PostAsync($"{baseUrlFavorite}/full", addFavorite);
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+
+            return;
+        }
+        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+    }
 }

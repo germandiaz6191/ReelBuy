@@ -1,18 +1,18 @@
 ﻿<div class="main-reel-container">
     <div class="video-vertical-stack">
         <div class="video-title">
-            <h4>@ReelData?.Name</h4>
+            <h4>@FirstReel?.Name</h4>
         </div>
         <div class="video-actions">
-            <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer;" OnClick="OnInfo" Elevation="0">
+            <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer;" Elevation="0">
                 <MudIcon Icon="@Icons.Material.TwoTone.PriceChange" Color="Color.Default" />
-                <MudText Class="ms-1" Typo="Typo.subtitle2">10,000.000</MudText>
+                <MudText Class="ms-1" Typo="Typo.subtitle2">@ReelData?.Price.ToString("N2")</MudText>
             </MudPaper>
             <MudButton StartIcon="@Icons.Material.TwoTone.ShoppingCart"
                         Color="Color.Primary"
-                       Variant="Variant.Filled"
-                        OnClick="OnInfo">
-                @Localizer["Buy"]
+                        Variant="Variant.Filled"
+                       OnClick="@(() => OnBuyAsync(@ReelData))">
+                    @Localizer["Buy"]
             </MudButton>
         </div>
         <div class="video-controls-container">
@@ -26,7 +26,7 @@
             {
                 <div class="main-reel color-palette-surface">
                     <video controls autoplay class="reel-video"
-                           src="data:video/mp4;base64,@ReelData.ReelUri"
+                           src="data:video/mp4;base64,@FirstReel?.ReelUri"
                            @onended="OnNext">
                     </video>
                 </div>
@@ -40,13 +40,21 @@
         </div>
 
         <div class="video-actions">
-            <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer;" OnClick="OnInfo" Elevation="0">
-                <MudIcon Icon="@Icons.Material.TwoTone.ThumbUp" Color="Color.Default" />
-                <MudText Class="ms-1" Typo="Typo.caption">10.000</MudText>
-            </MudPaper>
-            <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" />
-            <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" @onclick="OnInfo" />
-            <MudIconButton Icon="@Icons.Material.TwoTone.BookmarkAdded" Color="Color.Default" Class="action-button" @onclick="OnInfo" />
+            <MudTooltip Text="@(IsLiked ? Localizer["UnlikeHelp"] : Localizer["LikeHelp"])" Placement="Placement.Bottom">
+                <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer; height: 100%;" Elevation="0">
+                    <MudIconButton Icon="@(IsLiked ? Icons.Material.TwoTone.ThumbUp : Icons.Material.Outlined.ThumbUp)" Color="@(IsLiked ? Color.Primary : Color.Default)" OnClick="@(() => OnLikeAsync(@ReelData))" Size="Size.Small" />
+                    <MudText Class="ms-1" Typo="Typo.caption"><MudText Class="ms-1" Typo="Typo.caption">@FormatNumber(ReelData?.LikesGroup ?? 0)</MudText></MudText>
+                </MudPaper>
+            </MudTooltip>
+            <MudTooltip Text="@Localizer["InfoHelp"]" Placement="Placement.Bottom">
+                <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" />
+            </MudTooltip>
+            <MudTooltip Text="@Localizer["CommentHelp"]" Placement="Placement.Bottom">
+                <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" />
+            </MudTooltip>
+            <MudTooltip Text="@(IsFavorite ? Localizer["DisFavoriteHelp"] : Localizer["FavoriteHelp"])" Placement="Placement.Bottom">
+                <MudIconButton Icon="@(IsFavorite ? Icons.Material.TwoTone.BookmarkAdded : Icons.Material.Outlined.BookmarkAdded)" Color="@(IsFavorite ? Color.Primary : Color.Default)" Class="action-button" OnClick="@(() => OnFavoriteAsync(@ReelData))" />
+            </MudTooltip>
         </div>
     </div>
 </div>
