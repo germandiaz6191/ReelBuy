@@ -43,17 +43,9 @@ public partial class ProductEdit
 
     private async Task EditAsync()
     {
-        var responseHttp = await Repository.PutAsync("api/products", product);
-
-        if (responseHttp.Error)
-        {
-            var messageError = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(messageError!, Severity.Error);
-            return;
-        }
-
-        Return();
-        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
+        // El formulario ya maneja la limpieza de entidades relacionadas y el envío
+        // Solo necesitamos asegurarnos de que el producto tenga el Id correcto
+        product!.Id = Id;
     }
 
     private void Return()

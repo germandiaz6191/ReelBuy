@@ -510,4 +510,7 @@
   <data name="RequiredAuthentication" xml:space="preserve">
     <value>You need an account to perform this action. Please log in or sign up!</value>
   </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
 </root>

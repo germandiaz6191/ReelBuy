@@ -7,15 +7,12 @@ using ReelBuy.Shared.Resources;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Frontend.Repositories;
 using MudBlazor;
-using System.Threading;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
 public partial class ProductForm
 {
     private EditContext editContext = null!;
-    private Status selectedStatus = new();
-    private List<Status>? statuses;
     private Category selectedCategory = new();
     private List<Category>? categories;
     private Marketplace selectedMarketplace = new();
@@ -24,7 +21,6 @@ public partial class ProductForm
     private Store selectedStore = new();
     private List<Store>? stores;
     private string? reelBase64;
-
     private string? reelUrl;
 
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -44,22 +40,15 @@ public partial class ProductForm
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadStatusesAsync();
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
 
-        selectedStatus = product!.Status!;
         selectedCategory = product!.Category!;
         selectedMarketplace = product!.Marketplace!;
         selectedStore = product!.Store!;
         reelUrl = product.Reels.FirstOrDefault()?.ReelUri;
         reelBase64 = string.IsNullOrEmpty(product.Reels?.FirstOrDefault()?.ReelUri) ? string.Empty : product.Reels.FirstOrDefault()?.ReelUri;
-    }
-
-    private void StatusChanged(Status status)
-    {
-        selectedStatus = status;
     }
 
     private void CategoryChanged(Category category)
@@ -76,19 +65,6 @@ public partial class ProductForm
     {
         selectedStore = store;
     }
-
-    private Func<string, CancellationToken, Task<IEnumerable<Status>>> SearchStatuses => async (searchText, cancellationToken) =>
-    {
-        await Task.Delay(5);
-        if (string.IsNullOrWhiteSpace(searchText))
-        {
-            return statuses!;
-        }
-
-        return statuses!
-            .Where(c => c.Name.Contains(searchText, StringComparison.InvariantCultureIgnoreCase))
-            .ToList();
-    };
 
     private Func<string, CancellationToken, Task<IEnumerable<Category>>> SearchCategories => async (searchText, cancellationToken) =>
     {
@@ -129,18 +105,6 @@ public partial class ProductForm
             .ToList();
     };
 
-    private async Task LoadStatusesAsync()
-    {
-        var responseHttp = await Repository.GetAsync<List<Status>>("/api/statuses/combo");
-        if (responseHttp.Error)
-        {
-            var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
-        }
-        statuses = responseHttp.Response;
-    }
-
     private async Task LoadCategoriesAsync()
     {
         var responseHttp = await Repository.GetAsync<List<Category>>("/api/categories/combo");
@@ -179,24 +143,42 @@ public partial class ProductForm
 
     private async Task SaveProductAsync()
     {
-        product!.StatusId = selectedStatus.Id;
         product!.CategoryId = selectedCategory.Id;
         product!.MarketplaceId = selectedMarketplace.Id;
         product!.Name = Product.Name;
+        product!.Description = Product.Description;
+        product!.Price = Product.Price;
         product!.StoreId = selectedStore.Id;
 
-        product!.Reels.Add(CreateReel());
+        // Limpiar las entidades relacionadas para evitar errores de validación
+        product!.Category = null;
+        product!.Marketplace = null;
+        product!.Store = null;
+        product!.Status = null;
+        product!.Favorites = null;
+        product!.Comments = null;
+        product!.LikedBy = null;
 
-        var responseHttp = await Repository.PostAsync("/api/Products/CreateProduct", product!);
+        if(product.Id == 0)
+        {
+            product!.Reels.Add(CreateReel());
+        }
+       
+        // Determinar si es creación o edición basado en el Id
+        var responseHttp = product.Id == 0
+            ? await Repository.PostAsync("/api/products", product!)
+            : await Repository.PutAsync("/api/products", product!);
+
         if (responseHttp.Error)
         {
             var message = await responseHttp.GetErrorMessageAsync();
+            Return();
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
 
         Return();
-        Snackbar.Add(Localizer["RecordCreatedOk"], Severity.Success);
+        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
     }
 
     private void Return()

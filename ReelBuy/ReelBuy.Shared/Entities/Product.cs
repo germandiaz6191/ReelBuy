@@ -12,7 +12,16 @@ public class Product
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Name { get; set; } = null!;
 
+    [Display(Name = "Description", ResourceType = typeof(Literals))]
+    [MaxLength(500, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+    [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Description { get; set; } = null!;
+
+    [Display(Name = "Price", ResourceType = typeof(Literals))]
+    [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
+    [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0")]
+    public decimal Price { get; set; }
+
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
     public int StatusId { get; set; }
     public Status? Status { get; set; }
@@ -24,7 +33,6 @@ public class Product
     public ICollection<Comments>? Comments { get; set; }
     public int StoreId { get; set; }
     public Store? Store { get; set; }
-    public decimal Price { get; set; }
     public int LikesGroup { get; set; }
 
     public virtual ICollection<User>? LikedBy { get; set; }

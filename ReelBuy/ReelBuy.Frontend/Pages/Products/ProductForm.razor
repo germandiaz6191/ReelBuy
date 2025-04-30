@@ -6,21 +6,20 @@
                   @bind-Value="@Product.Name"
                   For="@(() => Product.Name)"
                   Class="mb-4" />     
-   
-    <MudCardContent>
-        <MudAutocomplete T="Status"
-            Label=@Localizer["Status"]
-            Placeholder=@Localizer["SelectAStatus"]
-            SearchFunc="SearchStatuses"
-            Value="selectedStatus"
-            ValueChanged="StatusChanged"
-            ToStringFunc="@(e=> e==null?null : $"{e.Name}")">
-            <ItemTemplate Context="itemContext">
-                @itemContext.Name
-            </ItemTemplate>
-        </MudAutocomplete>
-    </MudCardContent>
 
+    <MudTextField Label="@Localizer["Description"]"
+                  @bind-Value="@Product.Description"
+                  For="@(() => Product.Description)"
+                  Class="mb-4"
+                  Lines="3" />     
+
+    <MudNumericField Label="@Localizer["Price"]"
+                     @bind-Value="@Product.Price"
+                     For="@(() => Product.Price)"
+                     Class="mb-4"
+                     Adornment="Adornment.Start"
+                     AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
+   
     <MudCardContent>
         <MudAutocomplete T="Category"
             Label=@Localizer["Category"]

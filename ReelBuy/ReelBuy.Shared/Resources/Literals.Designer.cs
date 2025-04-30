@@ -1238,5 +1238,14 @@ namespace ReelBuy.Shared.Resources {
                 return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Price.
+        /// </summary>
+        public static string Price {
+            get {
+                return ResourceManager.GetString("Price", resourceCulture);
+            }
+        }
     }
 }
