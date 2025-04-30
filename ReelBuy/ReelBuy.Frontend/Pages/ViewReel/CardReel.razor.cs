@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using MudBlazor;
@@ -17,6 +18,7 @@ public partial class CardReel
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private AuthenticationStateProvider? AuthenticationStateProvider { get; set; }
     [Parameter] public Product ReelData { get; set; } = null!;
     [Parameter] public EventCallback OnNext { get; set; }
     [Parameter] public EventCallback OnPrevious { get; set; }
@@ -111,6 +113,22 @@ public partial class CardReel
 
     private async Task OnLikeAsync(Product product)
     {
+        if (AuthenticationStateProvider == null)
+        {
+            var message = Localizer["RequiredAuthentication"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            var message = Localizer["RequiredAuthentication"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
         if (IsLiked)
         {
             await DeleteLikeAsync(product);
@@ -124,6 +142,22 @@ public partial class CardReel
 
     private async Task OnFavoriteAsync(Product product)
     {
+        if (AuthenticationStateProvider == null)
+        {
+            var message = Localizer["RequiredAuthentication"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        {
+            var message = Localizer["RequiredAuthentication"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
         if (IsFavorite)
         {
             await DeleteLikeAsync(product);

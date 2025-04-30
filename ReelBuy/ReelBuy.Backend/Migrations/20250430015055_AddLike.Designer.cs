@@ -12,8 +12,8 @@ using ReelBuy.Backend.Data;
 namespace ReelBuy.Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250428201528_AddLikes")]
-    partial class AddLikes
+    [Migration("20250430015055_AddLike")]
+    partial class AddLike
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,21 +156,6 @@ namespace ReelBuy.Backend.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("ProductUser", b =>
-                {
-                    b.Property<string>("LikedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("LikesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("LikedById", "LikesId");
-
-                    b.HasIndex("LikesId");
-
-                    b.ToTable("UserProductLikes", (string)null);
                 });
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Category", b =>
@@ -615,6 +600,21 @@ namespace ReelBuy.Backend.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("UserProductLikes", b =>
+                {
+                    b.Property<string>("LikedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LikesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LikedById", "LikesId");
+
+                    b.HasIndex("LikesId");
+
+                    b.ToTable("UserProductLikes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -662,21 +662,6 @@ namespace ReelBuy.Backend.Migrations
                     b.HasOne("ReelBuy.Shared.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProductUser", b =>
-                {
-                    b.HasOne("ReelBuy.Shared.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("LikedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ReelBuy.Shared.Entities.Product", null)
-                        .WithMany()
-                        .HasForeignKey("LikesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -823,6 +808,21 @@ namespace ReelBuy.Backend.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("UserProductLikes", b =>
+                {
+                    b.HasOne("ReelBuy.Shared.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("LikedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ReelBuy.Shared.Entities.Product", null)
+                        .WithMany()
+                        .HasForeignKey("LikesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Category", b =>

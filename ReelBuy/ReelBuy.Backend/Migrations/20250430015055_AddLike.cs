@@ -5,7 +5,7 @@
 namespace ReelBuy.Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class AddLikes : Migration
+    public partial class AddLike : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,13 +30,13 @@ namespace ReelBuy.Backend.Migrations
                         column: x => x.LikedById,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_UserProductLikes_Products_LikesId",
                         column: x => x.LikesId,
                         principalTable: "Products",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

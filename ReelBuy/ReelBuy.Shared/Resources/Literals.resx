@@ -507,4 +507,7 @@
   <data name="GeneralError" xml:space="preserve">
     <value>An error was generated while performing the action</value>
   </data>
+  <data name="RequiredAuthentication" xml:space="preserve">
+    <value>You need an account to perform this action. Please log in or sign up!</value>
+  </data>
 </root>

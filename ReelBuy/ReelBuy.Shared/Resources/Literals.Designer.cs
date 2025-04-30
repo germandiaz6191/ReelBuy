@@ -997,6 +997,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You need an account to perform this action. Please log in or sign up!.
+        /// </summary>
+        public static string RequiredAuthentication {
+            get {
+                return ResourceManager.GetString("RequiredAuthentication", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field {0} is required..
         /// </summary>
         public static string RequiredField {

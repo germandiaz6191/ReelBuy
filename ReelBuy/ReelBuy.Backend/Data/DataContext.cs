@@ -114,9 +114,20 @@ public class DataContext : IdentityDbContext<User>
             .HasForeignKey(i => i.CityId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<User>()  // intermedia de forma implicita
+        modelBuilder.Entity<User>() //intermedia de forma implicita
             .HasMany(f => f.Likes)
             .WithMany(u => u.LikedBy)
-            .UsingEntity(j => j.ToTable("UserProductLikes"));
+            .UsingEntity<Dictionary<string, object>>(
+                "UserProductLikes",
+                j => j
+                    .HasOne<Product>()
+                    .WithMany()
+                    .HasForeignKey("LikesId")
+                    .OnDelete(DeleteBehavior.Restrict),
+                j => j
+                    .HasOne<User>()
+                    .WithMany()
+                    .HasForeignKey("LikedById")
+                    .OnDelete(DeleteBehavior.Restrict));
     }
 }
