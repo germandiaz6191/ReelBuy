@@ -1,4 +1,10 @@
-﻿<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
+﻿@using ReelBuy.Shared.Enums
+@using ReelBuy.Shared.Resources
+@using ReelBuy.Shared.Entities
+@using ReelBuy.Frontend.Repositories
+@using MudBlazor
+
+<NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
 <EditForm EditContext="editContext" OnValidSubmit="SaveProductAsync">
     <DataAnnotationsValidator />
@@ -20,6 +26,56 @@
                      Adornment="Adornment.Start"
                      AdornmentIcon="@Icons.Material.Filled.AttachMoney" />
    
+    <MudCardContent>
+        @if (ShowStatusSelect && Product.Id != 0)
+        {
+            <MudSelect T="int" Label="@Localizer["Status"]" 
+                      @bind-Value="@Product.StatusId"
+                      For="@(() => Product.StatusId)"
+                      AnchorOrigin="Origin.BottomCenter"
+                      Class="mb-4"
+                      TextChanged="@((string _) => StateHasChanged())"
+                      Text="@(statuses?.FirstOrDefault(s => s.Id == Product.StatusId)?.Name ?? string.Empty)">
+                @if (statuses != null)
+                {
+                    @if (IsStatusApproved)
+                    {
+                        var inactiveStatus = statuses.FirstOrDefault(s => s.Id == (int)StatusProduct.Inactive);
+                        if (inactiveStatus != null)
+                        {
+                            <MudSelectItem T="int" Value="@inactiveStatus.Id">@inactiveStatus.Name</MudSelectItem>
+                        }
+                    }
+                    else
+                    {
+                        @foreach (var status in statuses)
+                        {
+                            <MudSelectItem T="int" Value="@status.Id">@status.Name</MudSelectItem>
+                        }
+                    }
+                }
+            </MudSelect>
+        }
+        else
+        {
+            <MudTextField Label="@Localizer["Status"]"
+                         Value="@(statuses?.FirstOrDefault(s => s.Id == Product.StatusId)?.Name ?? string.Empty)"
+                         ReadOnly="true"
+                         Class="mb-4" />
+            
+            @if (ShowActivateButton)
+            {
+                <MudButton Variant="Variant.Filled"
+                          Color="Color.Success"
+                          OnClick="ActivateProductAsync"
+                          StartIcon="@Icons.Material.Filled.PowerSettingsNew"
+                          Class="mb-4">
+                    @Localizer["Activate"]
+                </MudButton>
+            }
+        }
+    </MudCardContent>
+
     <MudCardContent>
         <MudAutocomplete T="Category"
             Label=@Localizer["Category"]

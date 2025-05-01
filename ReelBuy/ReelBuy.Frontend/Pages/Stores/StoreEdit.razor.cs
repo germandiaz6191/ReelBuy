@@ -33,7 +33,8 @@ public partial class StoreEdit
         {
             CityId = store!.City!.Id,
             Id = store.Id,
-            Name = store.Name
+            Name = store.Name,
+            UserId = store.UserId
         };
         var responseHttp = await Repository.PutAsync("api/stores/full", storeDTO);
 

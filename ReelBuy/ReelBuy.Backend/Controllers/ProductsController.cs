@@ -190,4 +190,16 @@ public class ProductsController : GenericController<Product>
         }
         return BadRequest(action.Message);
     }
+
+    [HttpPut]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public override async Task<IActionResult> PutAsync(Product model)
+    {
+        var response = await base.PutAsync(model);
+        if (response is OkObjectResult)
+        {
+            return response;
+        }
+        return BadRequest();
+    }
 }

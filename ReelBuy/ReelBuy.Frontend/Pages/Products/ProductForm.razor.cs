@@ -7,6 +7,7 @@ using ReelBuy.Shared.Resources;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Frontend.Repositories;
 using MudBlazor;
+using ReelBuy.Shared.Enums;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
@@ -20,8 +21,19 @@ public partial class ProductForm
     private Product product = new();
     private Store selectedStore = new();
     private List<Store>? stores;
+    private List<Status>? statuses;
     private string? reelBase64;
     private string? reelUrl;
+
+
+    // Propiedades para manejar el estado del producto
+    private bool IsStatusPending => Product.StatusId == (int)StatusProduct.Pending;
+    private bool IsStatusApproved => Product.StatusId == (int)StatusProduct.Approved;
+    private bool IsStatusInactive => Product.StatusId == (int)StatusProduct.Inactive;
+    private bool IsStatusReject => Product.StatusId == (int)StatusProduct.Reject;
+    
+    private bool ShowStatusSelect => !IsStatusPending && !IsStatusInactive && !IsStatusReject;
+    private bool ShowActivateButton => IsStatusInactive;
 
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
@@ -40,6 +52,7 @@ public partial class ProductForm
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadStatusesAsync();
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
@@ -49,6 +62,19 @@ public partial class ProductForm
         selectedStore = product!.Store!;
         reelUrl = product.Reels.FirstOrDefault()?.ReelUri;
         reelBase64 = string.IsNullOrEmpty(product.Reels?.FirstOrDefault()?.ReelUri) ? string.Empty : product.Reels.FirstOrDefault()?.ReelUri;
+    }
+
+    private async Task LoadStatusesAsync()
+    {
+        var responseHttp = await Repository.GetAsync<List<Status>>("api/statuses");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+        statuses = responseHttp.Response;
+        StateHasChanged();
     }
 
     private void CategoryChanged(Category category)
@@ -150,6 +176,16 @@ public partial class ProductForm
         product!.Price = Product.Price;
         product!.StoreId = selectedStore.Id;
 
+        // Si el producto está inactivo y se está activando, cambiar a estado pendiente
+        if (product.StatusId == (int)StatusProduct.Inactive && Product.StatusId != (int)StatusProduct.Inactive) 
+        {
+            product.StatusId = (int)StatusProduct.Pending; 
+        }
+        else
+        {
+            product.StatusId = Product.StatusId;
+        }
+
         // Limpiar las entidades relacionadas para evitar errores de validación
         product!.Category = null;
         product!.Marketplace = null;
@@ -229,5 +265,11 @@ public partial class ProductForm
             ReelUri = reelUrl!
         };
         return reel;
+    }
+
+    private async Task ActivateProductAsync()
+    {
+        Product.StatusId = (int)StatusProduct.Pending;
+        await SaveProductAsync();
     }
 }
