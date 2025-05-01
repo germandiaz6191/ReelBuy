@@ -176,4 +176,70 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
             };
         }
     }
+
+    public override async Task<ActionResponse<Product>> UpdateAsync(Product entity)
+    {
+        try
+        {
+            var currentProduct = await _context.Products
+                .Include(p => p.Reels)
+                .Include(p => p.Status)
+                .Include(p => p.Category)
+                .Include(p => p.Marketplace)
+                .Include(p => p.Favorites)
+                .Include(p => p.Store)
+                .FirstOrDefaultAsync(p => p.Id == entity.Id);
+
+            if (currentProduct == null)
+            {
+                return new ActionResponse<Product>
+                {
+                    WasSuccess = false,
+                    Message = "ERR001"
+                };
+            }
+
+            // Actualizar propiedades básicas
+            currentProduct.Name = entity.Name;
+            currentProduct.Description = entity.Description;
+            currentProduct.Price = entity.Price;
+            currentProduct.StatusId = entity.StatusId;
+            currentProduct.CategoryId = entity.CategoryId;
+            currentProduct.MarketplaceId = entity.MarketplaceId;
+            currentProduct.StoreId = entity.StoreId;
+            currentProduct.MotiveReject = entity.MotiveReject;
+
+            // No modificar las relaciones
+            _context.Entry(currentProduct).Reference(p => p.Store).IsModified = false;
+            _context.Entry(currentProduct).Reference(p => p.Category).IsModified = false;
+            _context.Entry(currentProduct).Reference(p => p.Marketplace).IsModified = false;
+            _context.Entry(currentProduct).Collection(p => p.Reels).IsModified = false;
+            _context.Entry(currentProduct).Collection(p => p.Favorites).IsModified = false;
+            _context.Entry(currentProduct).Collection(p => p.Comments).IsModified = false;
+            _context.Entry(currentProduct).Collection(p => p.LikedBy).IsModified = false;
+
+            await _context.SaveChangesAsync();
+            return new ActionResponse<Product>
+            {
+                WasSuccess = true,
+                Result = currentProduct
+            };
+        }
+        catch (DbUpdateException)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = "ERR003"
+            };
+        }
+        catch (Exception ex)
+        {
+            return new ActionResponse<Product>
+            {
+                WasSuccess = false,
+                Message = ex.Message
+            };
+        }
+    }
 }
