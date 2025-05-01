@@ -499,7 +499,7 @@
     <value>Cancelar</value>
   </data>
   <data name="DisFavoriteHelp" xml:space="preserve">
-    <value>Haz clic eliminarlo de tús favoritos</value>
+    <value>Haz clic para eliminar el producto de tús favoritos</value>
   </data>
   <data name="UnlikeHelp" xml:space="preserve">
     <value>Haz clic para quitar 'Me gusta'</value>

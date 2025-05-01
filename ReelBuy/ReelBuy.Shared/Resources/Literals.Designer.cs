@@ -331,7 +331,7 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click delete to your favorites.
+        ///   Looks up a localized string similar to Click to remove the product from your favorites.
         /// </summary>
         public static string DisFavoriteHelp {
             get {
@@ -826,6 +826,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Price.
+        /// </summary>
+        public static string Price {
+            get {
+                return ResourceManager.GetString("Price", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search products....
         /// </summary>
         public static string PrincipalSearchAProducts {
@@ -1236,15 +1245,6 @@ namespace ReelBuy.Shared.Resources {
         public static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to Price.
-        /// </summary>
-        public static string Price {
-            get {
-                return ResourceManager.GetString("Price", resourceCulture);
             }
         }
     }
