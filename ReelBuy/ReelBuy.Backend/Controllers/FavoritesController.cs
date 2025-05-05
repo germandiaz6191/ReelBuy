@@ -48,6 +48,17 @@ public class FavoritesController : GenericController<Favorite>
         return NotFound(response.Message);
     }
 
+    [HttpGet("{userId}/{productId}")]
+    public async Task<IActionResult> GetFavoriteAsync(string userId, int productId)
+    {
+        var action = await _favoritesUnitOfWork.GetAsync(userId, productId);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return BadRequest();
+    }
+
     [HttpGet("paginated")]
     public override async Task<IActionResult> GetAsync(PaginationDTO pagination)
     {

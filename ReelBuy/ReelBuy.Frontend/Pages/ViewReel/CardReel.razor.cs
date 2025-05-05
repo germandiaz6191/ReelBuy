@@ -30,15 +30,16 @@ public partial class CardReel
     private const string baseUrlFavorite = "api/favorites";
     private bool IsLiked = false;
     private bool IsFavorite = false;
-    private User? user;
+    private Favorite? favorite;
+    private bool IsAuthenticate = false;
+    private string? Identity = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        if (ReelData == null) { return; }
         await LoadUserAsync();
-        var foundFavorite = user?.Favorites.FirstOrDefault(f => f.ProductId == ReelData?.Id);
-        if (foundFavorite != null) { IsFavorite = true; }
-        var foundLike = user?.Likes.FirstOrDefault(f => f.Id == ReelData?.Id);
-        if (foundLike != null) { IsLiked = true; }
+
+        await Task.WhenAll(LoadFavoriteByUserAsync(), LoadLikeByUserAsync());
     }
 
     private string FormatNumber(int number)
@@ -52,14 +53,45 @@ public partial class CardReel
 
     private async Task LoadUserAsync()
     {
-        var responseHttp = await Repository.GetAsync<User>($"/api/accounts");
+        if (AuthenticationStateProvider == null)
+        {
+            Console.WriteLine("AUTENTICACIONNNN");
+            return;
+        }
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user != null && user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            IsAuthenticate = true;
+            Identity = user.FindFirst(c => c.Type == "UserId")?.Value;
+        }
+    }
+
+    private async Task LoadLikeByUserAsync()
+    {
+        var responseHttp = await Repository.GetAsync<bool>($"{baseUrlLikes}/{Identity}/{ReelData?.Id}");
         if (responseHttp.Error)
         {
             var messageError = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(messageError!, Severity.Error);
             return;
         }
-        user = responseHttp.Response;
+        IsLiked = responseHttp.Response;
+    }
+
+    private async Task LoadFavoriteByUserAsync()
+    {
+        var responseHttp = await Repository.GetAsync<Favorite>($"{baseUrlFavorite}/{Identity}/{ReelData?.Id}");
+
+        if (responseHttp.Error || responseHttp.Response == null)
+        {
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(messageError!, Severity.Error);
+            return;
+        }
+        favorite = responseHttp.Response;
+        IsFavorite = responseHttp?.Response.Id != 0;
     }
 
     private async Task OnInfoAsync(string? Description)
@@ -113,16 +145,7 @@ public partial class CardReel
 
     private async Task OnLikeAsync(Product product)
     {
-        if (AuthenticationStateProvider == null)
-        {
-            var message = Localizer["RequiredAuthentication"];
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
-        }
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity == null || !user.Identity.IsAuthenticated)
+        if (!IsAuthenticate)
         {
             var message = Localizer["RequiredAuthentication"];
             Snackbar.Add(Localizer[message!], Severity.Error);
@@ -142,29 +165,20 @@ public partial class CardReel
 
     private async Task OnFavoriteAsync(Product product)
     {
-        if (AuthenticationStateProvider == null)
+        if (Identity == null)
         {
-            var message = Localizer["RequiredAuthentication"];
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
-        }
-        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity == null || !user.Identity.IsAuthenticated)
-        {
-            var message = Localizer["RequiredAuthentication"];
+            var message = Localizer["GeneralError"];
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
 
         if (IsFavorite)
         {
-            await DeleteLikeAsync(product);
+            await DeleteFavoriteAsync();
         }
         else
         {
-            await AddLikeAsync(product);
+            await AddFavoriteAsync(product);
         }
         IsFavorite = !IsFavorite;
     }
@@ -178,7 +192,7 @@ public partial class CardReel
             return;
         }
 
-        var responseHttp = await Repository.DeleteAsync($"{baseUrlLikes}/DeleteLikeAsync/{user?.Id}/{product?.Id}");
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlLikes}/DeleteLikeAsync/{Identity}/{product?.Id}");
 
         if (responseHttp.Error)
         {
@@ -192,13 +206,13 @@ public partial class CardReel
 
     private async Task AddLikeAsync(Product product)
     {
-        if (user == null)
+        if (Identity == null)
         {
             var message = Localizer["GeneralError"];
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
-        LikeDTO addLike = new LikeDTO { ProductId = product.Id, UserId = user.Id };
+        LikeDTO addLike = new LikeDTO { ProductId = product.Id, UserId = Identity };
         var responseHttp = await Repository.PostAsync($"{baseUrlLikes}/PostLikeAsync", addLike);
 
         if (responseHttp.Error)
@@ -213,9 +227,9 @@ public partial class CardReel
 
     private async Task DeleteFavoriteAsync()
     {
-        var foundFavorite = user?.Favorites.FirstOrDefault(f => f.UserId == user?.Id);
+        var foundFavorite = favorite?.Id;
 
-        var responseHttp = await Repository.DeleteAsync($"{baseUrlFavorite}/DeleteLikeAsync/{foundFavorite?.Id}");
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlFavorite}/{foundFavorite}");
 
         if (responseHttp.Error)
         {
@@ -224,19 +238,18 @@ public partial class CardReel
 
             return;
         }
-        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
     }
 
     private async Task AddFavoriteAsync(Product product)
     {
-        if (user == null)
+        if (Identity == null)
         {
             var message = Localizer["FavoriteErrorUserNull"];
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
-        FavoriteDTO addFavorite = new FavoriteDTO { ProductId = product.Id, UserId = user.Id };
-        var responseHttp = await Repository.PostAsync($"{baseUrlFavorite}/full", addFavorite);
+        FavoriteDTO addFavorite = new FavoriteDTO { ProductId = product.Id, UserId = Identity };
+        var responseHttp = await Repository.PostAsync<FavoriteDTO, Favorite>($"{baseUrlFavorite}/full", addFavorite);
 
         if (responseHttp.Error)
         {
@@ -245,6 +258,7 @@ public partial class CardReel
 
             return;
         }
-        Snackbar.Add(Localizer["RecordDeletedOk"], Severity.Success);
+
+        favorite = responseHttp.Response;
     }
 }

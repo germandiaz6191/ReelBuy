@@ -71,7 +71,11 @@ public class DataContext : IdentityDbContext<User>
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Favorite>()
-            .HasKey(f => new { f.UserId, f.ProductId });
+            .HasKey(f => f.Id);
+
+        modelBuilder.Entity<Favorite>()
+            .HasIndex(f => new { f.UserId, f.ProductId })
+            .IsUnique();
 
         modelBuilder.Entity<Favorite>()
             .HasOne(f => f.User)
@@ -86,6 +90,10 @@ public class DataContext : IdentityDbContext<User>
             .WithMany(p => p.Favorites)
             .HasForeignKey(f => f.ProductId)
             .OnDelete(DeleteBehavior.Restrict); // <--- evita el conflicto
+
+        modelBuilder.Entity<Favorite>()
+        .Property(f => f.Id)
+        .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Comments>()
             .HasKey(f => new { f.UserId, f.ProductId });

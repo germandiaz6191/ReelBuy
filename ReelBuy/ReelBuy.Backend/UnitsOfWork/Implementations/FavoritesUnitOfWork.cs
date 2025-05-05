@@ -1,5 +1,4 @@
-﻿using ReelBuy.Backend.Repositories.Implementations;
-using ReelBuy.Backend.Repositories.Interfaces;
+﻿using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Responses;
@@ -18,6 +17,8 @@ public class FavoritesUnitOfWork : GenericUnitOfWork<Favorite>, IFavoritesUnitOf
     public override async Task<ActionResponse<IEnumerable<Favorite>>> GetAsync() => await _favoritesRepository.GetAsync();
 
     public override async Task<ActionResponse<Favorite>> GetAsync(int id) => await _favoritesRepository.GetAsync(id);
+
+    public virtual async Task<ActionResponse<Favorite>> GetAsync(string userId, int productId) => await _favoritesRepository.GetAsync(userId, productId);
 
     public async Task<IEnumerable<Favorite>> GetComboAsync() => await _favoritesRepository.GetComboAsync();
 

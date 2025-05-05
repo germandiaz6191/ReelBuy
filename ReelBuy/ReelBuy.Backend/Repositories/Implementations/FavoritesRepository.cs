@@ -50,6 +50,18 @@ public class FavoritesRepository : GenericRepository<Favorite>, IFavoritesReposi
         };
     }
 
+    public async Task<ActionResponse<Favorite>> GetAsync(string userId, int productId)
+    {
+        var product = await _context.Favorites
+                                .FirstOrDefaultAsync(f => f.UserId == userId && f.ProductId == productId);
+
+        return new ActionResponse<Favorite>
+        {
+            WasSuccess = true,
+            Result = product ?? new Favorite()
+        };
+    }
+
     public async Task<IEnumerable<Favorite>> GetComboAsync()
     {
         return await _context.Favorites

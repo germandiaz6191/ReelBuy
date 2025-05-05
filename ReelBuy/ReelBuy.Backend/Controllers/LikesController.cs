@@ -17,6 +17,17 @@ public class LikesController : ControllerBase
         _likesUnitOfWork = likesUnitOfWork;
     }
 
+    [HttpGet("{userId}/{productId}")]
+    public async Task<IActionResult> GetLikeAsync(string userId, int productId)
+    {
+        var action = await _likesUnitOfWork.GetAsync(userId, productId);
+        if (action.WasSuccess)
+        {
+            return Ok(action.Result);
+        }
+        return NotFound(action.Message);
+    }
+
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpPost("PostLikeAsync")]
     public async Task<IActionResult> PostAsync(LikeDTO model)

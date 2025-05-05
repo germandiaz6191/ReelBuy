@@ -16,11 +16,27 @@ public class LikesRepository : ILikesRepository
         _context = context;
     }
 
+    public async Task<ActionResponse<bool>> GetAsync(string userId, int productId)
+    {
+        var product = await _context.Users
+                                .Where(u => u.Id == userId)
+                                .SelectMany(u => u.Likes)
+                                .AnyAsync(p => p.Id == productId);
+
+        return new ActionResponse<bool>
+        {
+            WasSuccess = true,
+            Result = product
+        };
+    }
+
     public async Task<ActionResponse<int>> AddAsync(LikeDTO dto)
     {
         try
         {
-            var product = await _context.Products.FindAsync(dto.ProductId);
+            var product = await _context.Products
+                                    .Include(p => p.LikedBy)
+                                    .FirstOrDefaultAsync(p => p.Id == dto.ProductId);
             if (product == null)
             {
                 return new ActionResponse<int>

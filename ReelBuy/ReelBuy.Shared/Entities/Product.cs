@@ -35,7 +35,7 @@ public class Product
     public Store? Store { get; set; }
     public int LikesGroup { get; set; }
 
-    public virtual ICollection<User>? LikedBy { get; set; }
+    public virtual ICollection<User>? LikedBy { get; set; } = new List<User>();
 
     [Display(Name = "MotiveReject", ResourceType = typeof(Literals))]
     [MaxLength(200, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]

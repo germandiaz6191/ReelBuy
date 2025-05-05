@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReelBuy.Backend.Data;
 
@@ -11,9 +12,11 @@ using ReelBuy.Backend.Data;
 namespace ReelBuy.Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250501224347_GenerateIdentityFavorites")]
+    partial class GenerateIdentityFavorites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -277,31 +280,24 @@ namespace ReelBuy.Backend.Migrations
 
             modelBuilder.Entity("ReelBuy.Shared.Entities.Favorite", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "ProductId");
 
                     b.HasIndex("Name");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("UserId", "ProductId")
-                        .IsUnique();
 
                     b.ToTable("Favorites");
                 });
