@@ -47,7 +47,7 @@
                 </MudPaper>
             </MudTooltip>
             <MudTooltip Text="@Localizer["InfoHelp"]" Placement="Placement.Bottom">
-                <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" />
+                <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" OnClick="@(() => OnInfoAsync(@ReelData))" />
             </MudTooltip>
             <MudTooltip Text="@Localizer["CommentHelp"]" Placement="Placement.Bottom">
                 <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" />

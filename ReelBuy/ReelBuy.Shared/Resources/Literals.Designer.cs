@@ -331,6 +331,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string DialogDescriptionTitle {
+            get {
+                return ResourceManager.GetString("DialogDescriptionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to remove the product from your favorites.
         /// </summary>
         public static string DisFavoriteHelp {

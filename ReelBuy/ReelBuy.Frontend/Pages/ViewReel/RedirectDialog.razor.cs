@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using MudBlazor;
 
 namespace ReelBuy.Frontend.Pages.ViewReel;
@@ -10,4 +9,6 @@ public partial class RedirectDialog
     [Parameter] public string Description { get; set; } = string.Empty;
     [Parameter] public string DialigFirstButton { get; set; } = null!;
     [Parameter] public string DialigSecondButton { get; set; } = null!;
+    [Parameter] public bool DialigShowButton { get; set; } = false;
+    [Parameter] public bool DialigShowIcon { get; set; } = false;
 }

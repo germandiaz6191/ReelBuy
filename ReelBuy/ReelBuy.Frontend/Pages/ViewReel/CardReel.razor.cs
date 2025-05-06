@@ -130,7 +130,9 @@ public partial class CardReel
         {
             { "Description", Localizer["DialogBuyDescription"].Value },
             { "DialigFirstButton", Localizer["DialigFirstButton"].Value },
-            { "DialigSecondButton", Localizer["DialigSecondButton"].Value }
+            { "DialigSecondButton", Localizer["DialigSecondButton"].Value },
+            { "DialigShowButton", true },
+            { "DialigShowIcon", true }
         };
 
         var dialog = DialogService.Show<RedirectDialog>(Localizer["DialogBuyTitle"], parameters, options);
@@ -260,5 +262,25 @@ public partial class CardReel
         }
 
         favorite = responseHttp.Response;
+    }
+
+    private async Task OnInfoAsync(Product product)
+    {
+        var description = product.Description;
+        //description = "<p><strong>Precio especial:</strong> $9.99</p><p>Envío gratis por tiempo limitado.</p>";
+        // Crea y muestra el diálogo
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge, };
+
+        var parameters = new DialogParameters
+        {
+            { "Description", description },
+            { "DialigFirstButton", Localizer["DialigFirstButton"].Value },
+            { "DialigSecondButton", Localizer["DialigSecondButton"].Value },
+            { "DialigShowButton", false },
+            { "DialigShowIcon", false }
+        };
+
+        var dialog = DialogService.Show<RedirectDialog>(Localizer["DialogDescriptionTitle"], parameters, options);
+        var result = await dialog.Result;
     }
 }

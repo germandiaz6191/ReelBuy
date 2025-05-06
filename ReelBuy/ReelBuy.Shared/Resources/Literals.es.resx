@@ -513,4 +513,7 @@
   <data name="Price" xml:space="preserve">
     <value>Precio</value>
   </data>
+  <data name="DialogDescriptionTitle" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
 </root>
