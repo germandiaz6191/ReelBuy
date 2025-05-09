@@ -35,7 +35,8 @@ public partial class MainLayout
             TextPrimary = "rgb(169, 169, 169)",
             TextSecondary = "rgb(33, 33, 33)",
             DrawerBackground = "rgb(238, 238, 238)",
-            DrawerText = "rgb(33, 33, 33)"
+            DrawerText = "rgb(33, 33, 33)",
+            SecondaryDarken = "#f8f9fa" //comments
         },
         PaletteDark = new PaletteDark
         {
@@ -57,7 +58,7 @@ public partial class MainLayout
             //DrawerText = "rgb(255, 255, 255)"
             DrawerText = "#460C61",
             DrawerIcon = "#460C61",
-            SecondaryDarken = "#fff"
+            SecondaryDarken = "#f8f9fa" //comments
         }
     };
 
@@ -139,6 +140,8 @@ public partial class MainLayout
         --color-drawer-text: {p.DrawerText};
         --color-lines-inputs: {p.LinesInputs};
         --color-lines-default: {p.LinesDefault};
+        --color-secondary-darken: {p.SecondaryDarken};
+
     ";
     }
 }

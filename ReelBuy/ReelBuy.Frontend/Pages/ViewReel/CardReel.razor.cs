@@ -7,7 +7,7 @@ using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
-using System.Net;
+using System.Collections.Generic;
 
 namespace ReelBuy.Frontend.Pages.ViewReel;
 
@@ -24,15 +24,43 @@ public partial class CardReel
     [Parameter] public EventCallback OnPrevious { get; set; }
     [Parameter] public bool IsNextDisabled { get; set; } = false;
     [Parameter] public bool IsPreviousDisabled { get; set; } = false;
+    [Parameter, SupplyParameterFromQuery] public string? Filter { get; set; } = null;
     protected Reel? FirstReel => ReelData?.Reels?.FirstOrDefault();
+
+    private Breakpoint _breakpoint;
+    private bool IsMobile => _breakpoint < Breakpoint.Md;
+    private string DrawerWidth => IsMobile ? "100vw" : "350px";
+    private string DrawerClass => IsMobile ? "p-4" : "p-3";
 
     private const string baseUrlLikes = "api/likes";
     private const string baseUrlFavorite = "api/favorites";
+    private const string baseUrlComments = "api/comments";
     private bool IsLiked = false;
     private bool IsFavorite = false;
     private Favorite? favorite;
     private bool IsAuthenticate = false;
     private string? Identity = string.Empty;
+    private bool ShowComments { get; set; } = false;
+    private string NewComment { get; set; } = string.Empty;
+    private const int PageSize = 100;
+    private int Page = 0;
+    private bool _loadingMore = false;
+    private bool _showMoreComments = true;
+
+    //public class CommentModel
+    //{
+    //    public string User { get; set; }
+    //    public string Message { get; set; }
+    //}
+
+    //private List<CommentModel> Comments = new()
+    //{
+    //    new CommentModel { User = "usuario", Message = "mensaj" },
+    //    new CommentModel { User = "usuario", Message = "mensaj 222" },
+    //    new CommentModel { User = "usuario", Message = "otro mensaje" }
+    //};
+
+    private List<Comments> Comments = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -40,6 +68,11 @@ public partial class CardReel
         await LoadUserAsync();
 
         await Task.WhenAll(LoadFavoriteByUserAsync(), LoadLikeByUserAsync());
+    }
+
+    private void OnBreakpointChanged(Breakpoint breakpoint)
+    {
+        _breakpoint = breakpoint;
     }
 
     private string FormatNumber(int number)
@@ -55,7 +88,6 @@ public partial class CardReel
     {
         if (AuthenticationStateProvider == null)
         {
-            Console.WriteLine("AUTENTICACIONNNN");
             return;
         }
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -282,5 +314,89 @@ public partial class CardReel
 
         var dialog = DialogService.Show<RedirectDialog>(Localizer["DialogDescriptionTitle"], parameters, options);
         var result = await dialog.Result;
+    }
+
+    private async Task OnCommentsAsync()
+    {
+        Console.WriteLine(ShowComments);
+        ShowComments = !ShowComments;
+        Console.WriteLine(ShowComments);
+        if (ShowComments)
+        {
+            Page = 0;
+            await GetComments(ReelData, Page);
+        }
+    }
+
+    private async Task LoadMoreCommentsAsync()
+    {
+        if (_loadingMore || !_showMoreComments) return;
+
+        _loadingMore = true;
+
+        await GetComments(ReelData, Page);
+
+        _loadingMore = false;
+    }
+
+    private async Task GetComments(Product product, int page)
+    {
+        int currentPage = page + 1;
+        Filter = product.Id.ToString();
+        var url = $"{baseUrlComments}/paginatedByProduct/?page={currentPage}&recordsnumber={PageSize}&filter={Filter}";
+
+        var responseHttp = await Repository.GetAsync<List<Comments>>(url);
+        if (responseHttp.Response == null || responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
+        var newComments = responseHttp.Response;
+        Page = page;
+
+        if (newComments?.Any() == true)
+        {
+            Comments.AddRange(newComments);
+        }
+        else
+        {
+            _showMoreComments = false;
+        }
+    }
+
+    private async Task SendCommentAsync()
+    {
+        if (Identity == null)
+        {
+            var message = Localizer["GeneralError"];
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
+        CommetDTO addComment = new CommetDTO
+        {
+            ProductId = ReelData.Id,
+            UserId = Identity,
+            Description = NewComment,
+            RegistrationDate = DateTime.UtcNow,
+        };
+
+        var responseHttp = await Repository.PostAsync<CommetDTO, Comments>($"{baseUrlComments}/full", addComment);
+
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+
+            return;
+        }
+
+        var getComment = responseHttp.Response;
+        if (getComment != null)
+        {
+            Comments.Add(getComment);
+        }
     }
 }

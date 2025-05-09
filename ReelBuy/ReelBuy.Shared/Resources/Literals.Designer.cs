@@ -718,6 +718,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No comments yet.
+        /// </summary>
+        public static string NoComments {
+            get {
+                return ResourceManager.GetString("NoComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No records to show....
         /// </summary>
         public static string NoRecords {
@@ -997,6 +1006,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Registration date.
+        /// </summary>
+        public static string RegistrationDate {
+            get {
+                return ResourceManager.GetString("RegistrationDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reputation.
         /// </summary>
         public static string Reputation {
@@ -1065,6 +1083,15 @@ namespace ReelBuy.Shared.Resources {
         public static string Score {
             get {
                 return ResourceManager.GetString("Score", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desplázate para ver más comentarios....
+        /// </summary>
+        public static string ScrollToLoadComments {
+            get {
+                return ResourceManager.GetString("ScrollToLoadComments", resourceCulture);
             }
         }
         
@@ -1186,6 +1213,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comments.
+        /// </summary>
+        public static string TitleComments {
+            get {
+                return ResourceManager.GetString("TitleComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to unlike.
         /// </summary>
         public static string UnlikeHelp {
@@ -1245,6 +1281,15 @@ namespace ReelBuy.Shared.Resources {
         public static string View {
             get {
                 return ResourceManager.GetString("View", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Write a comment.
+        /// </summary>
+        public static string WriteComment {
+            get {
+                return ResourceManager.GetString("WriteComment", resourceCulture);
             }
         }
         

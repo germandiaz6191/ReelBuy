@@ -516,4 +516,19 @@
   <data name="DialogDescriptionTitle" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="RegistrationDate" xml:space="preserve">
+    <value>Registration date</value>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>No comments yet</value>
+  </data>
+  <data name="WriteComment" xml:space="preserve">
+    <value>Write a comment</value>
+  </data>
+  <data name="TitleComments" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="ScrollToLoadComments" xml:space="preserve">
+    <value>Desplázate para ver más comentarios...</value>
+  </data>
 </root>

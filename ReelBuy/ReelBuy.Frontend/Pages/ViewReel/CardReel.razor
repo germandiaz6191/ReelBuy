@@ -1,4 +1,6 @@
-﻿<div class="main-reel-container">
+﻿<MudBreakpointProvider OnBreakpointChanged="OnBreakpointChanged" />
+
+<div class="main-reel-container">
     <div class="video-vertical-stack">
         <div class="video-title">
             <h4>@FirstReel?.Name</h4>
@@ -50,7 +52,7 @@
                 <MudIconButton Icon="@Icons.Material.TwoTone.Info" Color="Color.Default" Class="action-button" OnClick="@(() => OnInfoAsync(@ReelData))" />
             </MudTooltip>
             <MudTooltip Text="@Localizer["CommentHelp"]" Placement="Placement.Bottom">
-                <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" />
+                <MudIconButton Icon="@Icons.Material.TwoTone.Comment" Color="Color.Default" Class="action-button" OnClick="@(() => OnCommentsAsync())" />
             </MudTooltip>
             <MudTooltip Text="@(IsFavorite ? Localizer["DisFavoriteHelp"] : Localizer["FavoriteHelp"])" Placement="Placement.Bottom">
                 <MudIconButton Icon="@(IsFavorite ? Icons.Material.TwoTone.BookmarkAdded : Icons.Material.Outlined.BookmarkAdded)" Color="@(IsFavorite ? Color.Primary : Color.Default)" Class="action-button" OnClick="@(() => OnFavoriteAsync(@ReelData))" />
@@ -58,3 +60,81 @@
         </div>
     </div>
 </div>
+
+@if (ShowComments)
+{
+    <!-- Drawer lateral o pantalla completa en móviles -->
+<MudDrawer Anchor="Anchor.Right"
+           Open="@ShowComments"
+           Elevation="10"
+           Variant="DrawerVariant.Temporary"
+           Width="@DrawerWidth"
+           Class="custom-drawer-width"
+           ClipMode="DrawerClipMode.Always"
+               OpenChanged="OnCommentsAsync
+">
+
+        <MudDrawerHeader Class="d-flex align-items-center justify-between px-4 py-2">
+            <MudIconButton Icon="@Icons.Material.Filled.Close"
+                           Color="Color.Default"
+                           OnClick="@(() => OnCommentsAsync())" />
+            <MudText Typo="Typo.h6" Class="ms-2">@Localizer["TitleComments"]</MudText>
+        </MudDrawerHeader>
+
+    <MudDrawerContent>
+        <MudPaper Class="p-4 mt-4" Elevation="2" Style="border-radius: 12px;">
+             @if (Comments != null && Comments.Any())
+            {
+                    @for (int i = 0; i < Comments.Count; i++)
+                    {
+                        var comment = Comments[i];
+                        bool isEven = i % 2 == 0;
+                        var alignmentClass = isEven ? "comment-left text-start" : "comment-right text-end ms-auto";
+                        var bgClass = isEven ? "bg-surface" : "bg-alternate";
+
+                        <MudPaper Class=@($"pa-2 my-2 {alignmentClass} {bgClass}") Elevation="1" Style="border-radius: 8px;">
+                            <div class="d-flex justify-between align-items-start">
+                                <MudText Typo="Typo.subtitle2" Color="Color.Primary">@comment.User.FullName</MudText>
+                                <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ms-auto text-end">
+                                    @comment.RegistrationDate.ToLocalTime().ToString("g")
+                                </MudText>
+                            </div>
+
+                            <MudText Typo="Typo.body2" Class="mt-1">@comment.Description</MudText>
+                        </MudPaper>
+                    }
+            }
+            else
+            {
+                    <MudText Typo="Typo.caption" Color="Color.Secondary">@Localizer["NoComments"]</MudText>
+            } 
+
+            <MudDivider Class="my-3" />
+
+            <MudTextField @bind-Value="NewComment"
+                              Label="@Localizer["WriteComment"]"
+                          Variant="Variant.Outlined"
+                          Lines="3"
+                          FullWidth="true"
+                          Adornment="Adornment.End"
+                          AdornmentIcon="@Icons.Material.Filled.Send"
+                          OnAdornmentClick="SendCommentAsync" />
+
+        </MudPaper>
+            @if (_showMoreComments && Comments != null && Comments.Any())
+            {
+                <div class="text-muted small text-center my-3 d-flex justify-center align-center gap-2">
+                    <MudIcon Icon="@Icons.Material.Filled.ArrowDownward"
+                             Size="Size.Small"
+                             Class="@(_loadingMore ? "rotate-icon" : "")" />
+                    <MudButton Variant="Variant.Text"
+                               Color="Color.Primary"
+                               OnClick="LoadMoreCommentsAsync"
+                               Disabled="@_loadingMore">
+                        @_loadingMore ? @Localizer["LoadingComments"] : @Localizer["LoadMoreComments"]
+                    </MudButton>
+                </div>
+            }
+    </MudDrawerContent>
+</MudDrawer>
+}

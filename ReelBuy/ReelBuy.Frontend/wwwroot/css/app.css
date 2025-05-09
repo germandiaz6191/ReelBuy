@@ -140,3 +140,44 @@ code {
     width: 90%;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
 }
+
+.custom-drawer-width {
+    --mud-drawer-width: 500px !important;
+}
+
+@media (max-width: 600px) {
+    .custom-drawer-width {
+        --mud-drawer-width: 100vw !important;
+    }
+}
+
+.comment-left {
+    align-self: flex-start;
+    max-width: 70%;
+}
+
+.comment-right {
+    align-self: flex-end;
+    max-width: 70%;
+}
+
+.bg-surface {
+    background-color: var(--color-secondary-darken) !important;
+}
+
+.bg-alternate {
+    background-color: var(--color-surface) !important;
+}
+.rotate-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
