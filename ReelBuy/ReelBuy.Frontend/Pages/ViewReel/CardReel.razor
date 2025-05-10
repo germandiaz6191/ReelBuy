@@ -91,16 +91,55 @@
                         bool isEven = i % 2 == 0;
                         var alignmentClass = isEven ? "comment-left text-start" : "comment-right text-end ms-auto";
                         var bgClass = isEven ? "bg-surface" : "bg-alternate";
+                        bool isConfirming = ConfirmingCommentId == comment.Id;
 
                         <MudPaper Class=@($"pa-2 my-2 {alignmentClass} {bgClass}") Elevation="1" Style="border-radius: 8px;">
-                            <div class="d-flex justify-between align-items-start">
-                                <MudText Typo="Typo.subtitle2" Color="Color.Primary">@comment.User.FullName</MudText>
-                                <MudText Typo="Typo.caption" Color="Color.Secondary" Class="ms-auto text-end">
-                                    @comment.RegistrationDate.ToLocalTime().ToString("g")
-                                </MudText>
-                            </div>
+                            @if (isConfirming) //acciones para confirmar
+                            {
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <MudText Typo="Typo.body2" Color="Color.Error">@Localizer["ConfirmDeleteInline"]</MudText>
+                                    <div>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Check"
+                                                       Color="Color.Success"
+                                                       Size="Size.Small"
+                                                       OnClick="() => OnDeleteCommentAsync(comment)" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Close"
+                                                       Color="Color.Secondary"
+                                                       Size="Size.Small"
+                                                       OnClick="CancelDelete" />
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                // lista de comentarios
+                                <div class="d-flex justify-content-between align-items-start w-100">
+                                    @if (!isEven && Identity != null && comment.User.Id == Identity)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error"
+                                                       Size="Size.Small"
+                                                       OnClick="() => ConfirmingCommentId = comment.Id" />
+                                    }
 
-                            <MudText Typo="Typo.body2" Class="mt-1">@comment.Description</MudText>
+                                    <div class="@((isEven ? "text-start" : "text-end")) ms-2 me-2 flex-grow-1">
+                                        <MudText Typo="Typo.subtitle2" Color="Color.Primary">@comment.User.FullName</MudText>
+                                        <MudText Typo="Typo.overline" Color="Color.Secondary" Class="ms-1" Style="font-size: 0.7rem;">
+                                            @comment.RegistrationDate.ToLocalTime().ToString("dd MMM yyyy")
+                                        </MudText>
+                                    </div>
+
+                                    @if (isEven && Identity != null && comment.User.Id == Identity)
+                                    {
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                                                       Color="Color.Error"
+                                                       Size="Size.Small"
+                                                       OnClick="() => ConfirmingCommentId = comment.Id" />
+                                    }
+                                </div>
+
+                                <MudText Typo="Typo.body2" Class="mt-1">@comment.Description</MudText>
+                            }
                         </MudPaper>
                     }
             }
@@ -131,7 +170,7 @@
                                Color="Color.Primary"
                                OnClick="LoadMoreCommentsAsync"
                                Disabled="@_loadingMore">
-                        @_loadingMore ? @Localizer["LoadingComments"] : @Localizer["LoadMoreComments"]
+                        @(_loadingMore ? @Localizer["LoadingComments"] : @Localizer["LoadMoreComments"])
                     </MudButton>
                 </div>
             }

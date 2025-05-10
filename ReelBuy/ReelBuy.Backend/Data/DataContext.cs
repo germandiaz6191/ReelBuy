@@ -96,7 +96,7 @@ public class DataContext : IdentityDbContext<User>
         .ValueGeneratedOnAdd();
 
         modelBuilder.Entity<Comments>()
-            .HasKey(f => new { f.UserId, f.ProductId });
+            .HasKey(f => f.Id);
 
         modelBuilder.Entity<Comments>()
             .HasOne(f => f.User)

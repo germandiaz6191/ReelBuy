@@ -531,4 +531,10 @@
   <data name="ScrollToLoadComments" xml:space="preserve">
     <value>Desplázate para ver más comentarios...</value>
   </data>
+  <data name="LoadingComments" xml:space="preserve">
+    <value>Loading more comments...</value>
+  </data>
+  <data name="LoadMoreComments" xml:space="preserve">
+    <value>Show more comments</value>
+  </data>
 </root>

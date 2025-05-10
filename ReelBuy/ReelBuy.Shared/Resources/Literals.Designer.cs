@@ -592,6 +592,24 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading more comments....
+        /// </summary>
+        public static string LoadingComments {
+            get {
+                return ResourceManager.GetString("LoadingComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show more comments.
+        /// </summary>
+        public static string LoadMoreComments {
+            get {
+                return ResourceManager.GetString("LoadMoreComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Login.
         /// </summary>
         public static string Login {

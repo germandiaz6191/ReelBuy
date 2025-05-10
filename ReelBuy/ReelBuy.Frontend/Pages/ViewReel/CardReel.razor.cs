@@ -7,7 +7,6 @@ using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
-using System.Collections.Generic;
 
 namespace ReelBuy.Frontend.Pages.ViewReel;
 
@@ -42,6 +41,7 @@ public partial class CardReel
     private string? Identity = string.Empty;
     private bool ShowComments { get; set; } = false;
     private string NewComment { get; set; } = string.Empty;
+    private int? ConfirmingCommentId { get; set; }
     private const int PageSize = 100;
     private int Page = 0;
     private bool _loadingMore = false;
@@ -65,6 +65,7 @@ public partial class CardReel
     protected override async Task OnParametersSetAsync()
     {
         if (ReelData == null) { return; }
+        Comments = new();
         await LoadUserAsync();
 
         await Task.WhenAll(LoadFavoriteByUserAsync(), LoadLikeByUserAsync());
@@ -334,6 +335,7 @@ public partial class CardReel
 
         _loadingMore = true;
 
+        Comments = new();
         await GetComments(ReelData, Page);
 
         _loadingMore = false;
@@ -354,7 +356,7 @@ public partial class CardReel
         }
 
         var newComments = responseHttp.Response;
-        Page = page;
+        Page = currentPage;
 
         if (newComments?.Any() == true)
         {
@@ -396,7 +398,26 @@ public partial class CardReel
         var getComment = responseHttp.Response;
         if (getComment != null)
         {
+            NewComment = string.Empty;
             Comments.Add(getComment);
         }
+    }
+
+    private void CancelDelete()
+    {
+        ConfirmingCommentId = null;
+    }
+
+    private async Task OnDeleteCommentAsync(Comments comment)
+    {
+        var responseHttp = await Repository.DeleteAsync($"{baseUrlComments}/{comment.Id}");
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
+        Comments.Remove(comment);
     }
 }
