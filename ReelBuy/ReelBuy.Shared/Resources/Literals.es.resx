@@ -537,4 +537,7 @@
   <data name="LoadMoreComments" xml:space="preserve">
     <value>Cargar más comentarios</value>
   </data>
+  <data name="LoadingReels" xml:space="preserve">
+    <value>Cargando reels...</value>
+  </data>
 </root>

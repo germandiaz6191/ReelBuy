@@ -43,7 +43,7 @@
 
         <div class="video-actions">
             <MudTooltip Text="@(IsLiked ? Localizer["UnlikeHelp"] : Localizer["LikeHelp"])" Placement="Placement.Bottom">
-                <MudPaper Class="d-flex align-items-center px-2 py-1" Style="cursor: pointer; height: 100%;" Elevation="0">
+                <MudPaper Class="d-flex align-items-end px-2 py-1" Style="cursor: pointer; height: 40px;" Elevation="0">
                     <MudIconButton Icon="@(IsLiked ? Icons.Material.TwoTone.ThumbUp : Icons.Material.Outlined.ThumbUp)" Color="@(IsLiked ? Color.Primary : Color.Default)" OnClick="@(() => OnLikeAsync(@ReelData))" Size="Size.Small" />
                     <MudText Class="ms-1" Typo="Typo.caption"><MudText Class="ms-1" Typo="Typo.caption">@FormatNumber(ReelData?.LikesGroup ?? 0)</MudText></MudText>
                 </MudPaper>
@@ -121,7 +121,7 @@
                                                        Size="Size.Small"
                                                        OnClick="() => ConfirmingCommentId = comment.Id" />
                                     }
-
+                                    
                                     <div class="@((isEven ? "text-start" : "text-end")) ms-2 me-2 flex-grow-1">
                                         <MudText Typo="Typo.subtitle2" Color="Color.Primary">@comment.User.FullName</MudText>
                                         <MudText Typo="Typo.overline" Color="Color.Secondary" Class="ms-1" Style="font-size: 0.7rem;">
@@ -160,6 +160,7 @@
                           OnAdornmentClick="SendCommentAsync" />
 
         </MudPaper>
+            
             @if (_showMoreComments && Comments != null && Comments.Any())
             {
                 <div class="text-muted small text-center my-3 d-flex justify-center align-center gap-2">

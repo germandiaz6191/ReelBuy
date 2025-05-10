@@ -47,19 +47,6 @@ public partial class CardReel
     private bool _loadingMore = false;
     private bool _showMoreComments = true;
 
-    //public class CommentModel
-    //{
-    //    public string User { get; set; }
-    //    public string Message { get; set; }
-    //}
-
-    //private List<CommentModel> Comments = new()
-    //{
-    //    new CommentModel { User = "usuario", Message = "mensaj" },
-    //    new CommentModel { User = "usuario", Message = "mensaj 222" },
-    //    new CommentModel { User = "usuario", Message = "otro mensaje" }
-    //};
-
     private List<Comments> Comments = new();
 
     protected override async Task OnParametersSetAsync()
@@ -103,6 +90,11 @@ public partial class CardReel
 
     private async Task LoadLikeByUserAsync()
     {
+        if (!IsAuthenticate)
+        {
+            return;
+        }
+
         var responseHttp = await Repository.GetAsync<bool>($"{baseUrlLikes}/{Identity}/{ReelData?.Id}");
         if (responseHttp.Error)
         {
@@ -115,6 +107,11 @@ public partial class CardReel
 
     private async Task LoadFavoriteByUserAsync()
     {
+        if (!IsAuthenticate)
+        {
+            return;
+        }
+
         var responseHttp = await Repository.GetAsync<Favorite>($"{baseUrlFavorite}/{Identity}/{ReelData?.Id}");
 
         if (responseHttp.Error || responseHttp.Response == null)
@@ -200,9 +197,9 @@ public partial class CardReel
 
     private async Task OnFavoriteAsync(Product product)
     {
-        if (Identity == null)
+        if (!IsAuthenticate)
         {
-            var message = Localizer["GeneralError"];
+            var message = Localizer["RequiredAuthentication"];
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
@@ -319,11 +316,10 @@ public partial class CardReel
 
     private async Task OnCommentsAsync()
     {
-        Console.WriteLine(ShowComments);
         ShowComments = !ShowComments;
-        Console.WriteLine(ShowComments);
         if (ShowComments)
         {
+            Comments = new();
             Page = 0;
             await GetComments(ReelData, Page);
         }
@@ -335,7 +331,6 @@ public partial class CardReel
 
         _loadingMore = true;
 
-        Comments = new();
         await GetComments(ReelData, Page);
 
         _loadingMore = false;
@@ -346,7 +341,7 @@ public partial class CardReel
         int currentPage = page + 1;
         Filter = product.Id.ToString();
         var url = $"{baseUrlComments}/paginatedByProduct/?page={currentPage}&recordsnumber={PageSize}&filter={Filter}";
-
+        
         var responseHttp = await Repository.GetAsync<List<Comments>>(url);
         if (responseHttp.Response == null || responseHttp.Error)
         {
@@ -354,10 +349,9 @@ public partial class CardReel
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
-
+        
         var newComments = responseHttp.Response;
         Page = currentPage;
-
         if (newComments?.Any() == true)
         {
             Comments.AddRange(newComments);

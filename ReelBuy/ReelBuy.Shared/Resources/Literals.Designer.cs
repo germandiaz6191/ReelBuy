@@ -601,6 +601,15 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading reels....
+        /// </summary>
+        public static string LoadingReels {
+            get {
+                return ResourceManager.GetString("LoadingReels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show more comments.
         /// </summary>
         public static string LoadMoreComments {

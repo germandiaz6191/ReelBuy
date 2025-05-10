@@ -1,5 +1,29 @@
 ﻿@page "/"
 
+<!-- Indicador de carga -->
+@if (loading)
+{
+    <div style="position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(255, 255, 255, 0.8);
+                z-index: 9999;"
+         class="d-flex flex-column justify-center align-center">
+
+        <MudProgressCircular Indeterminate="true"
+                             Color="Color.Primary"
+                             Size="Size.Large" />
+
+        <MudText Typo="Typo.subtitle2"
+                 Color="Color.Primary"
+                 Class="mt-3">
+            @Localizer["LoadingReels"]
+        </MudText>
+    </div>
+}
+
 <div class="page-container">
     <!--
     <AuthorizeView Roles="Admin">
@@ -32,9 +56,4 @@
     <!-- Espacio flexible que empuja los videos hacia abajo -->
     <div class="spacer"></div>
         
-    <!-- Indicador de carga -->
-    @if (loading)
-    {
-        <p>Cargando más videos...</p>
-    }
 </div>

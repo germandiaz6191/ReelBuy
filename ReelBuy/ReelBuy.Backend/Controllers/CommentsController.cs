@@ -64,6 +64,7 @@ public class CommentsController : GenericController<Comments>
         return BadRequest();
     }
 
+    [AllowAnonymous]
     [HttpGet("paginatedByProduct")]
     public async Task<IActionResult> GetCommentsByProductAsync([FromQuery] PaginationDTO pagination)
     {
