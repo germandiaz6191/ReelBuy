@@ -16,12 +16,14 @@ public class ProductsController : GenericController<Product>
     private readonly IProductsUnitOfWork _productsUnitOfWork;
     private readonly IFileStorage _fileStorage;
     private readonly IGenericUnitOfWork<Product> _unit;
+    private readonly IUsersUnitOfWork _usersUnitOfWork;
 
-    public ProductsController(IGenericUnitOfWork<Product> unit, IProductsUnitOfWork productsUnitOfWork, IFileStorage fileStorage) : base(unit)
+    public ProductsController(IGenericUnitOfWork<Product> unit, IProductsUnitOfWork productsUnitOfWork, IFileStorage fileStorage, IUsersUnitOfWork usersUnitOfWork) : base(unit)
     {
         _unit = unit;
         _productsUnitOfWork = productsUnitOfWork;
         _fileStorage = fileStorage;
+        _usersUnitOfWork = usersUnitOfWork;
     }
 
     [HttpGet("combo")]
@@ -64,31 +66,74 @@ public class ProductsController : GenericController<Product>
     }
 
     [HttpGet("paginated")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public override async Task<IActionResult> GetAsync(PaginationDTO pagination)
     {
-        var response = await _productsUnitOfWork.GetAsync(pagination);
-        if (response.WasSuccess)
+        // Determinar si el usuario es administrador
+        bool isAdmin = User.IsInRole("Admin");
+
+        // Si no es administrador, filtrar solo por sus tiendas
+        if (!isAdmin && !string.IsNullOrEmpty(pagination.StoreIds))
         {
-            var currentReels = response.Result;
-            if (currentReels == null)
+            // La lógica de filtrado de tiendas se maneja en el frontend
+            var response = await _productsUnitOfWork.GetAsync(pagination);
+            if (response.WasSuccess)
             {
+                var currentReels = response.Result;
+                if (currentReels == null)
+                {
+                    return Ok(currentReels);
+                }
+                foreach (Product reel in currentReels)
+                {
+                    var reelItem = reel.Reels.FirstOrDefault();
+                    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+                    {
+                        var pathUri = reelItem.ReelUri.Split("/").Last();
+                        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+
+                        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+                    }
+                }
+
                 return Ok(currentReels);
             }
-            foreach (Product reel in currentReels)
-            {
-                var reelItem = reel.Reels.FirstOrDefault();
-                if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
-                {
-                    var pathUri = reelItem.ReelUri.Split("/").Last();
-                    var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
-
-                    reelItem.ReelUri = Convert.ToBase64String(reelBytes);
-                }
-            }
-
-            return Ok(currentReels);
+            return BadRequest();
         }
-        return BadRequest();
+        else if (isAdmin)
+        {
+            // Si es administrador, permitir ver todos los productos
+            // Limpiar el filtro de tiendas para permitir ver todos los productos
+            pagination.StoreIds = null;
+            var response = await _productsUnitOfWork.GetAsync(pagination);
+            if (response.WasSuccess)
+            {
+                var currentReels = response.Result;
+                if (currentReels == null)
+                {
+                    return Ok(currentReels);
+                }
+                foreach (Product reel in currentReels)
+                {
+                    var reelItem = reel.Reels.FirstOrDefault();
+                    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+                    {
+                        var pathUri = reelItem.ReelUri.Split("/").Last();
+                        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+
+                        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+                    }
+                }
+
+                return Ok(currentReels);
+            }
+            return BadRequest();
+        }
+        else
+        {
+            // Si no especificó tiendas y no es admin, no mostrar resultados
+            return Ok(new List<Product>());
+        }
     }
 
     [HttpGet("paginatedApproved")]
@@ -121,9 +166,18 @@ public class ProductsController : GenericController<Product>
     }
 
     [HttpGet("totalRecordsPaginated")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> GetTotalRecordsAsync([FromQuery] PaginationDTO pagination)
     {
+        // Determinar si el usuario es administrador
+        bool isAdmin = User.IsInRole("Admin");
+        
+        // Si es administrador, permitir ver el total de todos los productos
+        if (isAdmin)
+        {
+            pagination.StoreIds = null; // Limpiar filtro de tiendas para ver todo
+        }
+        
         var action = await _productsUnitOfWork.GetTotalRecordsAsync(pagination);
         if (action.WasSuccess)
         {
@@ -195,8 +249,62 @@ public class ProductsController : GenericController<Product>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public override async Task<IActionResult> PutAsync(Product model)
     {
+        // Verificar si el usuario es administrador o si el producto pertenece a una de sus tiendas
+        bool isAdmin = User.IsInRole("Admin");
+         var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
+        string userId = currentUser.Id;
+        
+        if (!isAdmin)
+        {
+            // Obtener el producto actual para verificar a qué tienda pertenece
+            var currentProduct = await _productsUnitOfWork.GetAsync(model.Id);
+            if (!currentProduct.WasSuccess || currentProduct.Result == null)
+            {
+                return NotFound("Producto no encontrado");
+            }
+            
+            // Verificar si la tienda pertenece al usuario
+            if (currentProduct.Result.Store?.UserId != userId)
+            {
+                return Forbid("No tienes permiso para editar este producto");
+            }
+        }
+        
         var response = await base.PutAsync(model);
         if (response is OkObjectResult)
+        {
+            return response;
+        }
+        return BadRequest();
+    }
+    
+    [HttpDelete("{id}")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public override async Task<IActionResult> DeleteAsync(int id)
+    {
+        // Verificar si el usuario es administrador o si el producto pertenece a una de sus tiendas
+        bool isAdmin = User.IsInRole("Admin");
+        var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
+        string userId = currentUser.Id;
+        
+        if (!isAdmin)
+        {
+            // Obtener el producto actual para verificar a qué tienda pertenece
+            var currentProduct = await _productsUnitOfWork.GetAsync(id);
+            if (!currentProduct.WasSuccess || currentProduct.Result == null)
+            {
+                return NotFound("Producto no encontrado");
+            }
+            
+            // Verificar si la tienda pertenece al usuario
+            if (currentProduct.Result.Store?.UserId != userId)
+            {
+                return Forbid("No tienes permiso para eliminar este producto");
+            }
+        }
+        
+        var response = await base.DeleteAsync(id);
+        if (response is NoContentResult)
         {
             return response;
         }

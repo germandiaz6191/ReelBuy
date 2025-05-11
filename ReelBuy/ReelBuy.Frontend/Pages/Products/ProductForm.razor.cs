@@ -8,6 +8,7 @@ using ReelBuy.Shared.Entities;
 using ReelBuy.Frontend.Repositories;
 using MudBlazor;
 using ReelBuy.Shared.Enums;
+using ReelBuy.Frontend.Shared;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
@@ -24,6 +25,7 @@ public partial class ProductForm
     private List<Status>? statuses;
     private string? reelBase64;
     private string? reelUrl;
+    private RichTextEditor? richTextEditor;
 
 
     // Propiedades para manejar el estado del producto
@@ -43,25 +45,51 @@ public partial class ProductForm
     [EditorRequired, Parameter] public Product Product { get; set; } = null!;
     [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
+    [Parameter] public EventCallback SaveCallback { get; set; }
+    [Parameter] public bool ShowMessage { get; set; } = true;
 
     protected override void OnInitialized()
     {
         editContext = new(Product);
         product = Product;
+        
+        // Asegúrese de que la descripción tenga un valor significativo
+        if (string.IsNullOrEmpty(product.Description) || product.Description == "<p>&nbsp;</p>")
+        {
+            product.Description = "";
+        }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadStatusesAsync();
+        Console.WriteLine($"ProductForm.OnInitializedAsync - Product.Id: {Product.Id}, Product.Description: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
+        
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
-
-        selectedCategory = product!.Category!;
-        selectedMarketplace = product!.Marketplace!;
-        selectedStore = product!.Store!;
-        reelUrl = product.Reels.FirstOrDefault()?.ReelUri;
-        reelBase64 = string.IsNullOrEmpty(product.Reels?.FirstOrDefault()?.ReelUri) ? string.Empty : product.Reels.FirstOrDefault()?.ReelUri;
+        await LoadStatusesAsync();
+        
+        if (Product.Id == 0)
+        {
+            Product.StatusId = (int)StatusProduct.Pending;
+        }
+        
+        editContext = new EditContext(Product);
+        
+        if (Product.CategoryId > 0 && categories != null)
+        {
+            selectedCategory = categories.FirstOrDefault(c => c.Id == Product.CategoryId) ?? new Category();
+        }
+        
+        if (Product.MarketplaceId > 0 && marketplaces != null)
+        {
+            selectedMarketplace = marketplaces.FirstOrDefault(c => c.Id == Product.MarketplaceId) ?? new Marketplace();
+        }
+        
+        if (Product.StoreId > 0 && stores != null)
+        {
+            selectedStore = stores.FirstOrDefault(c => c.Id == Product.StoreId) ?? new Store();
+        }
     }
 
     private async Task LoadStatusesAsync()
@@ -167,54 +195,147 @@ public partial class ProductForm
         stores = responseHttp.Response;
     }
 
-    private async Task SaveProductAsync()
+    // Método que responde a cambios en la descripción desde el editor
+    private void OnDescriptionChanged(string newContent)
     {
-        product!.CategoryId = selectedCategory.Id;
-        product!.MarketplaceId = selectedMarketplace.Id;
-        product!.Name = Product.Name;
-        product!.Description = Product.Description;
-        product!.Price = Product.Price;
-        product!.StoreId = selectedStore.Id;
-
-        // Si el producto está inactivo y se está activando, cambiar a estado pendiente
-        if (product.StatusId == (int)StatusProduct.Inactive && Product.StatusId != (int)StatusProduct.Inactive) 
+        Console.WriteLine($"OnDescriptionChanged - Nuevo contenido: {(newContent?.Length > 20 ? newContent?.Substring(0, 20) + "..." : newContent)}");
+        
+        // No guardar el contenido si es sólo un espacio en blanco
+        if (newContent != "<p>&nbsp;</p>")
         {
-            product.StatusId = (int)StatusProduct.Pending; 
+            Product.Description = newContent;
         }
         else
         {
-            product.StatusId = Product.StatusId;
+            Product.Description = "";
         }
+        
+        editContext?.Validate();
+    }
 
-        // Limpiar las entidades relacionadas para evitar errores de validación
-        product!.Category = null;
-        product!.Marketplace = null;
-        product!.Store = null;
-        product!.Status = null;
-        product!.Favorites = null;
-        product!.Comments = null;
-        product!.LikedBy = null;
-
-        if(product.Id == 0)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && Product.Id > 0)
         {
-            product!.Reels.Add(CreateReel());
+            Console.WriteLine($"ProductForm.OnAfterRenderAsync - firstRender: {firstRender}, Product.Id: {Product.Id}");
+            Console.WriteLine($"ProductForm.OnAfterRenderAsync - Description: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
+            
+            // Si el producto ya tiene un ID, aseguramos que la descripción se carga en el editor
+            if (richTextEditor != null && !string.IsNullOrWhiteSpace(Product.Description))
+            {
+                // Dar más tiempo para que el editor y su elemento DOM se inicialice completamente
+                await Task.Delay(800);
+                
+                try
+                {
+                    await richTextEditor.SetHTML(Product.Description);
+                    Console.WriteLine("ProductForm.OnAfterRenderAsync - Se ha establecido el HTML en el editor");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ProductForm.OnAfterRenderAsync - Error al establecer HTML: {ex.Message}");
+                    
+                    // Intentar nuevamente después de un tiempo adicional
+                    await Task.Delay(500);
+                    try
+                    {
+                        await richTextEditor.SetHTML(Product.Description);
+                        Console.WriteLine("ProductForm.OnAfterRenderAsync - Se ha establecido el HTML en el segundo intento");
+                    }
+                    catch (Exception ex2)
+                    {
+                        Console.WriteLine($"ProductForm.OnAfterRenderAsync - Error en segundo intento: {ex2.Message}");
+                    }
+                }
+            }
         }
-       
-        // Determinar si es creación o edición basado en el Id
-        var responseHttp = product.Id == 0
-            ? await Repository.PostAsync("/api/products", product!)
-            : await Repository.PutAsync("/api/products", product!);
+    }
 
-        if (responseHttp.Error)
+    private async Task SaveProductAsync()
+    {
+        try
         {
-            var message = await responseHttp.GetErrorMessageAsync();
-            Return();
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
+            Console.WriteLine("SaveProductAsync iniciado");
+            
+            // Obtener el contenido HTML del editor y asignarlo a la descripción del producto
+            string editorContent = "";
+            
+            try
+            {
+                if (richTextEditor != null)
+                {
+                    editorContent = await richTextEditor.GetHTML();
+                    Console.WriteLine($"Contenido obtenido del editor: {(editorContent?.Length > 10 ? editorContent?.Substring(0, 10) + "..." : editorContent)}");
+                }
+                else 
+                {
+                    Console.WriteLine("richTextEditor es null");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener HTML del editor: {ex.Message}");
+                // Continuar con el proceso de guardado incluso si falla la obtención del contenido
+            }
+            
+            // Verificar si el contenido es significativo (no solo un espacio en blanco)
+            if (!string.IsNullOrWhiteSpace(editorContent) && 
+                editorContent != "<p>&nbsp;</p>" && 
+                editorContent != "<p></p>")
+            {
+                Product.Description = editorContent;
+            }
+            else 
+            {
+                Console.WriteLine("Editor content is empty or just whitespace");
+                Product.Description = ""; // Guardar como cadena vacía en lugar de espacio en blanco
+            }
+            
+            Console.WriteLine($"Category ID: {selectedCategory?.Id}, Marketplace ID: {selectedMarketplace?.Id}, Store ID: {selectedStore?.Id}");
+            
+            // Asignar IDs de relaciones
+            Product.CategoryId = selectedCategory?.Id ?? 0;
+            Product.MarketplaceId = selectedMarketplace?.Id ?? 0;
+            Product.StoreId = selectedStore?.Id ?? 0;
+            
+            // Antes de guardar
+            Console.WriteLine($"Guardando producto. Id: {Product.Id}, Nombre: {Product.Name}, Descripción: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
+            
+            HttpResponseWrapper<object> response;
+            if (Product.Id == 0)
+            {
+                response = await Repository.PostAsync("api/products", Product);
+            }
+            else
+            {
+                response = await Repository.PutAsync($"api/products/{Product.Id}", Product);
+            }
+            
+            bool result = !response.Error;
+            Console.WriteLine($"Resultado del guardado: {result}");
+            
+            if (result)
+            {
+                if (ShowMessage)
+                {
+                    NavigationManager.NavigateTo($"/products/details/{Product.Id}");
+                    Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
+                }
+                
+                await SaveCallback.InvokeAsync();
+            }
+            else
+            {
+                var errorMessage = await response.GetErrorMessageAsync();
+                Snackbar.Add(errorMessage ?? Localizer["ChangesNotSaved"], Severity.Error);
+            }
         }
-
-        Return();
-        Snackbar.Add(Localizer["RecordSavedOk"], Severity.Success);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en SaveProductAsync: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
     }
 
     private void Return()

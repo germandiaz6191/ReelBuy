@@ -66,6 +66,11 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
         {
             queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
         }
+        
+        if (!string.IsNullOrEmpty(pagination.UserId))
+        {
+            queryable = queryable.Where(x => x.UserId == pagination.UserId);
+        }
 
         return new ActionResponse<IEnumerable<Store>>
         {
@@ -84,6 +89,11 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
             queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+        }
+        
+        if (!string.IsNullOrEmpty(pagination.UserId))
+        {
+            queryable = queryable.Where(x => x.UserId == pagination.UserId);
         }
 
         double count = await queryable.CountAsync();
@@ -202,15 +212,6 @@ public class StoresRepository : GenericRepository<Store>, IStoresRepository
             .Where(s => s.UserId == userId)
             .OrderBy(s => s.Name)
             .ToListAsync();
-
-        if (!stores.Any())
-        {
-            return new ActionResponse<IEnumerable<Store>>
-            {
-                WasSuccess = false,
-                Message = "ERR001"
-            };
-        }
 
         return new ActionResponse<IEnumerable<Store>>
         {

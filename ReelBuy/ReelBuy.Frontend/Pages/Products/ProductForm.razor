@@ -6,18 +6,25 @@
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
-<EditForm EditContext="editContext" OnValidSubmit="SaveProductAsync">
+<EditForm EditContext="editContext" OnSubmit="SaveProductAsync">
     <DataAnnotationsValidator />
     <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Product.Name"
                   For="@(() => Product.Name)"
                   Class="mb-4" />     
 
-    <MudTextField Label="@Localizer["Description"]"
-                  @bind-Value="@Product.Description"
-                  For="@(() => Product.Description)"
-                  Class="mb-4"
-                  Lines="3" />     
+    <MudCard Class="mb-4">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">@Localizer["Description"]</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <ReelBuy.Frontend.Shared.RichTextEditor @ref="richTextEditor" 
+                                                  Content="@Product.Description" 
+                                                  Placeholder="@Localizer["Description"]"
+                                                  ContentChanged="OnDescriptionChanged"
+                                                  EditorId="@($"productEditor_{Product.Id}")"/>
+        </MudCardContent>
+    </MudCard>
 
     <MudNumericField Label="@Localizer["Price"]"
                      @bind-Value="@Product.Price"

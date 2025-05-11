@@ -11,4 +11,8 @@ public class PaginationDTO
     public string? Filter { get; set; }
 
     public int? FilterStatus { get; set; }
+    
+    public string? StoreIds { get; set; }
+    
+    public string? UserId { get; set; }
 }

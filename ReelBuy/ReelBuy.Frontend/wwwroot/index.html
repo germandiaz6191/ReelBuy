@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://localhost:5290 https://localhost:5291; script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.jsdelivr.net cdn.quilljs.com; style-src 'self' 'unsafe-inline' cdn.jsdelivr.net cdn.quilljs.com; img-src 'self' data: https:; font-src 'self' data:;">
     <title>ReelBuy.Frontend</title>
     <base href="/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
@@ -11,6 +12,8 @@
     <link rel="icon" type="image/png" href="favicon.png" />
     <link href="ReelBuy.Frontend.styles.css" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.bubble.css" rel="stylesheet">
 </head>
 
 <body>
@@ -30,5 +33,9 @@
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/CurrieTechnologies.Razor.SweetAlert2/sweetAlert2.min.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="_content/Blazored.TextEditor/quill-blot-formatter.min.js"></script>
+    <script src="_content/Blazored.TextEditor/Blazored-BlazorQuill.js"></script>
+    <script src="/js/quill-interop.js"></script>
 </body>
 </html>

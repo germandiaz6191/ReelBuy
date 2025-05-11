@@ -13,7 +13,7 @@ public class Product
     public string Name { get; set; } = null!;
 
     [Display(Name = "Description", ResourceType = typeof(Literals))]
-    [MaxLength(500, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+    [MaxLength(4000, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
     [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
     public string Description { get; set; } = null!;
 

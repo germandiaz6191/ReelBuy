@@ -83,6 +83,20 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
         {
             queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
         }
+        
+        // Aplicar filtro por IDs de tiendas
+        if (!string.IsNullOrWhiteSpace(pagination.StoreIds))
+        {
+            var storeIdList = pagination.StoreIds.Split(',')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(int.Parse)
+                .ToList();
+                
+            if (storeIdList.Any())
+            {
+                queryable = queryable.Where(x => storeIdList.Contains(x.StoreId));
+            }
+        }
 
         return new ActionResponse<IEnumerable<Product>>
         {
@@ -106,6 +120,20 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
             queryable = queryable.Where(x => x.Name.ToLower().Contains(pagination.Filter.ToLower()));
+        }
+        
+        // Aplicar filtro por IDs de tiendas
+        if (!string.IsNullOrWhiteSpace(pagination.StoreIds))
+        {
+            var storeIdList = pagination.StoreIds.Split(',')
+                .Where(s => !string.IsNullOrWhiteSpace(s))
+                .Select(int.Parse)
+                .ToList();
+                
+            if (storeIdList.Any())
+            {
+                queryable = queryable.Where(x => storeIdList.Contains(x.StoreId));
+            }
         }
 
         double count = await queryable.CountAsync();

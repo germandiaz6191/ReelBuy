@@ -6,6 +6,7 @@ using ReelBuy.Frontend.Repositories;
 using ReelBuy.Frontend.Shared;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
+using ReelBuy.Shared.Enums;
 using System.Net;
 
 namespace ReelBuy.Frontend.Pages.Stores;
@@ -18,6 +19,7 @@ public partial class StoresIndex
     private readonly int[] pageSizeOptions = { 10, 25, 50, int.MaxValue };
     private int totalRecords = 0;
     private bool loading;
+    private User? user;
     private const string baseUrl = "api/stores";
     private string infoFormat = "{first_item}-{last_item} => {all_items}";
 
@@ -31,17 +33,63 @@ public partial class StoresIndex
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadUserAsync();
         await LoadTotalRecordsAsync();
+    }
+    
+    private async Task LoadUserAsync()
+    {
+        var responseHttp = await Repository.GetAsync<User>($"/api/accounts");
+        if (responseHttp.Error)
+        {
+            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            {
+                NavigationManager.NavigateTo("/");
+                return;
+            }
+            var messageError = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(messageError!, Severity.Error);
+            return;
+        }
+        user = responseHttp.Response;
     }
 
     private async Task LoadTotalRecordsAsync()
     {
         loading = true;
-        var url = $"{baseUrl}/totalRecordsPaginated";
 
-        if (!string.IsNullOrWhiteSpace(Filter))
+        if (user == null)
         {
-            url += $"?filter={Filter}";
+            await LoadUserAsync();
+            if (user == null)
+            {
+                loading = false;
+                return;
+            }
+        }
+
+        // Comprobar si el usuario es administrador
+        bool isAdmin = user.ProfileId == (int)UserType.Admin; // Asumiendo que el ProfileId 1 es para administradores
+        
+        string url = $"{baseUrl}/totalRecordsPaginated";
+
+        // Si no es admin, necesitamos filtrar por el usuario
+        if (!isAdmin)
+        {
+            url += $"?userId={user.Id}";
+            
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                url += $"&filter={Filter}";
+            }
+        }
+        else
+        {
+            // Para administradores, usar filtro normal si existe
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                url += $"?filter={Filter}";
+            }
         }
 
         var responseHttp = await Repository.GetAsync<int>(url);
@@ -49,6 +97,7 @@ public partial class StoresIndex
         {
             var message = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(Localizer[message!], Severity.Error);
+            loading = false;
             return;
         }
 
@@ -58,9 +107,27 @@ public partial class StoresIndex
 
     private Func<TableState, CancellationToken, Task<TableData<Store>>> LoadListAsync => async (state, cancellationToken) =>
     {
+        if (user == null)
+        {
+            await LoadUserAsync();
+            if (user == null)
+            {
+                return new TableData<Store> { Items = [], TotalItems = 0 };
+            }
+        }
+
+        // Comprobar si el usuario es administrador
+        bool isAdmin = user.ProfileId == (int)UserType.Admin; // Asumiendo que el ProfileId 1 es para administradores
+        
         int page = state.Page + 1;
         int pageSize = state.PageSize;
-        var url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
+        string url = $"{baseUrl}/paginated?page={page}&recordsnumber={pageSize}";
+
+        // Si no es admin, necesitamos filtrar por el usuario
+        if (!isAdmin)
+        {
+            url += $"&userId={user.Id}";
+        }
 
         if (!string.IsNullOrWhiteSpace(Filter))
         {
@@ -119,6 +186,13 @@ public partial class StoresIndex
 
     private async Task DeleteAsync(Store store)
     {
+        // Verificar que el usuario actual sea dueño de la tienda o admin
+        if (user != null && user.ProfileId != (int)UserType.Admin && store.UserId != user.Id)
+        {
+            Snackbar.Add("No tienes permiso para eliminar una tienda que no te pertenece", Severity.Warning);
+            return;
+        }
+        
         var parameters = new DialogParameters
             {
                 { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Store"], store.Name) }

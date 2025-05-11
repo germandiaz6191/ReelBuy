@@ -1,21 +1,27 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-             <Authorizing>
-                <p>@Localizer["Authorizing"]</p>
-            </Authorizing>
-            <NotAuthorized>
-                <p>@Localizer["NotAuthorized"]</p>
-            </NotAuthorized>
-        </AuthorizeRouteView>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-       <CascadingAuthenticationState>
-            <PageTitle>@Localizer["NotFound"]</PageTitle>
+﻿@using Microsoft.AspNetCore.Authorization
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new[] { typeof(ReelBuy.Shared.Entities.Product).Assembly }">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <Authorizing>
+                    <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">@Localizer["Loading"]</span>
+                        </div>
+                    </div>
+                </Authorizing>
+                <NotAuthorized>
+                    <h1>@Localizer["NotAuthorized"]</h1>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">@Localizer["NothingInRoute"]</p>
+                <p role="alert">Sorry, there's nothing at this address.</p>
             </LayoutView>
-        </CascadingAuthenticationState>
-    </NotFound>
-</Router>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

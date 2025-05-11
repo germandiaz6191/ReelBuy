@@ -39,11 +39,49 @@ public partial class ProductsIndex
     private async Task LoadTotalRecordsAsync()
     {
         loading = true;
-        var url = $"{baseUrl}/totalRecordsPaginated";
-
-        if (!string.IsNullOrWhiteSpace(Filter))
+        
+        if (user == null)
         {
-            url += $"?filter={Filter}";
+            await LoadUserAsyc();
+        }
+        
+        if (user == null)
+        {
+            loading = false;
+            return;
+        }
+        
+        // Comprobar si el usuario es administrador
+        bool isAdmin = user.ProfileId == 1; // Asumiendo que el ProfileId 1 es para administradores
+        
+        string url = $"{baseUrl}/totalRecordsPaginated";
+        
+        // Para usuarios normales, filtrar por tiendas
+        if (!isAdmin)
+        {
+            var storesResponse = await Repository.GetAsync<List<Store>>($"/api/stores/user/{user.Id}");
+            if (storesResponse.Error || storesResponse.Response == null || !storesResponse.Response.Any())
+            {
+                loading = false;
+                totalRecords = 0;
+                return;
+            }
+            
+            var storeIds = string.Join(",", storesResponse.Response.Select(s => s.Id));
+            url += $"?storeIds={storeIds}";
+            
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                url += $"&filter={Filter}";
+            }
+        }
+        else
+        {
+            // Para administradores, no filtrar por tiendas
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                url += $"?filter={Filter}";
+            }
         }
 
         var responseHttp = await Repository.GetAsync<int>(url);
@@ -51,6 +89,7 @@ public partial class ProductsIndex
         {
             var message = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(Localizer[message!], Severity.Error);
+            loading = false;
             return;
         }
 
@@ -65,8 +104,51 @@ public partial class ProductsIndex
             await LoadUserAsyc();
         }
 
-        // Obtener las tiendas del usuario
-        var storesResponse = await Repository.GetAsync<List<Store>>($"/api/stores/user/{user!.Id}");
+        if (user == null)
+        {
+            return new TableData<Product> { Items = [], TotalItems = 0 };
+        }
+        
+        // Comprobar si el usuario es administrador
+        bool isAdmin = user.ProfileId == 1; // Asumiendo que el ProfileId 1 es para administradores
+        
+        // Para administradores, cargar todos los productos sin filtrar por tienda
+        if (isAdmin)
+        {
+            int adminPage = state.Page + 1;
+            int adminPageSize = state.PageSize;
+            string adminUrl = $"{baseUrl}/paginated/?page={adminPage}&recordsnumber={adminPageSize}";
+
+            if (!string.IsNullOrWhiteSpace(Filter))
+            {
+                adminUrl += $"&filter={Filter}";
+            }
+            
+            var adminResponse = await Repository.GetAsync<List<Product>>(adminUrl);
+            if (adminResponse.Error)
+            {
+                var message = await adminResponse.GetErrorMessageAsync();
+                Snackbar.Add(Localizer[message!], Severity.Error);
+                return new TableData<Product> { Items = [], TotalItems = 0 };
+            }
+            
+            if (adminResponse.Response == null)
+            {
+                return new TableData<Product> { Items = [], TotalItems = 0 };
+            }
+            
+            // Cargar las relaciones necesarias
+            await LoadStoresForProducts(adminResponse.Response);
+            
+            return new TableData<Product>
+            {
+                Items = adminResponse.Response,
+                TotalItems = totalRecords
+            };
+        }
+        
+        // Para usuarios normales, obtener solo las tiendas del usuario
+        var storesResponse = await Repository.GetAsync<List<Store>>($"/api/stores/user/{user.Id}");
         if (storesResponse.Error)
         {
             var message = await storesResponse.GetErrorMessageAsync();
@@ -121,6 +203,28 @@ public partial class ProductsIndex
             TotalItems = totalRecords
         };
     };
+    
+    // Método para cargar las tiendas para productos
+    private async Task LoadStoresForProducts(List<Product> products)
+    {
+        // Obtener todas las tiendas necesarias
+        var storeIds = products.Select(p => p.StoreId).Distinct().ToList();
+        if (!storeIds.Any()) return;
+        
+        // Cargar información de tiendas una por una
+        foreach (var storeId in storeIds)
+        {
+            var storeResponse = await Repository.GetAsync<Store>($"/api/stores/{storeId}");
+            if (!storeResponse.Error && storeResponse.Response != null)
+            {
+                var store = storeResponse.Response;
+                foreach (var product in products.Where(p => p.StoreId == storeId))
+                {
+                    product.Store = store;
+                }
+            }
+        }
+    }
 
     private async Task SetFilterValue(string value)
     {
