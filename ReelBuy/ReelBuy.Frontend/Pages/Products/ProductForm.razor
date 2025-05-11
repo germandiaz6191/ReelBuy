@@ -6,7 +6,7 @@
 
 <NavigationLock OnBeforeInternalNavigation="OnBeforeInternalNavigation" />
 
-<EditForm EditContext="editContext" OnSubmit="SaveProductAsync">
+<EditForm EditContext="editContext" OnValidSubmit="OnSaveClicked">
     <DataAnnotationsValidator />
     <MudTextField Label="@Localizer["Name"]"
                   @bind-Value="@Product.Name"
@@ -18,11 +18,19 @@
             <MudText Typo="Typo.h6">@Localizer["Description"]</MudText>
         </MudCardHeader>
         <MudCardContent>
-            <ReelBuy.Frontend.Shared.RichTextEditor @ref="richTextEditor" 
-                                                  Content="@Product.Description" 
-                                                  Placeholder="@Localizer["Description"]"
-                                                  ContentChanged="OnDescriptionChanged"
-                                                  EditorId="@($"productEditor_{Product.Id}")"/>
+            @if (!isSubmitting)
+            {
+                <ReelBuy.Frontend.Shared.RichTextEditor @ref="richTextEditor" 
+                                                      Content="@Product.Description" 
+                                                      Placeholder="@Localizer["Description"]"
+                                                      ContentChanged="OnDescriptionChanged"
+                                                      EditorId="@($"productEditor_{Product.Id}")"/>
+            }
+            else
+            {
+                <MudProgressCircular Color="Color.Primary" Size="Size.Medium" Indeterminate="true" />
+                <MudText>@Localizer["Saving"]...</MudText>
+            }
         </MudCardContent>
     </MudCard>
 

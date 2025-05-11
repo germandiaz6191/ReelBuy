@@ -26,6 +26,7 @@ public partial class ProductForm
     private string? reelBase64;
     private string? reelUrl;
     private RichTextEditor? richTextEditor;
+    private bool isSubmitting = false;
 
 
     // Propiedades para manejar el estado del producto
@@ -257,39 +258,7 @@ public partial class ProductForm
         {
             Console.WriteLine("SaveProductAsync iniciado");
             
-            // Obtener el contenido HTML del editor y asignarlo a la descripción del producto
-            string editorContent = "";
-            
-            try
-            {
-                if (richTextEditor != null)
-                {
-                    editorContent = await richTextEditor.GetHTML();
-                    Console.WriteLine($"Contenido obtenido del editor: {(editorContent?.Length > 10 ? editorContent?.Substring(0, 10) + "..." : editorContent)}");
-                }
-                else 
-                {
-                    Console.WriteLine("richTextEditor es null");
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al obtener HTML del editor: {ex.Message}");
-                // Continuar con el proceso de guardado incluso si falla la obtención del contenido
-            }
-            
-            // Verificar si el contenido es significativo (no solo un espacio en blanco)
-            if (!string.IsNullOrWhiteSpace(editorContent) && 
-                editorContent != "<p>&nbsp;</p>" && 
-                editorContent != "<p></p>")
-            {
-                Product.Description = editorContent;
-            }
-            else 
-            {
-                Console.WriteLine("Editor content is empty or just whitespace");
-                Product.Description = ""; // Guardar como cadena vacía en lugar de espacio en blanco
-            }
+            // La descripción ya fue obtenida en OnSaveClicked, no intentamos acceder al editor aquí
             
             Console.WriteLine($"Category ID: {selectedCategory?.Id}, Marketplace ID: {selectedMarketplace?.Id}, Store ID: {selectedStore?.Id}");
             
@@ -326,12 +295,20 @@ public partial class ProductForm
             }
             else
             {
+                // Restaurar estado para permitir edición nuevamente
+                isSubmitting = false;
+                StateHasChanged();
+                
                 var errorMessage = await response.GetErrorMessageAsync();
                 Snackbar.Add(errorMessage ?? Localizer["ChangesNotSaved"], Severity.Error);
             }
         }
         catch (Exception ex)
         {
+            // Restaurar estado para permitir edición nuevamente
+            isSubmitting = false;
+            StateHasChanged();
+            
             Console.WriteLine($"Error en SaveProductAsync: {ex.Message}");
             Console.WriteLine($"StackTrace: {ex.StackTrace}");
             Snackbar.Add(ex.Message, Severity.Error);
@@ -392,5 +369,57 @@ public partial class ProductForm
     {
         Product.StatusId = (int)StatusProduct.Pending;
         await SaveProductAsync();
+    }
+
+    private async Task OnSaveClicked()
+    {
+        try
+        {
+            // Primero, capturar el contenido del editor antes de ocultar/desmontar el componente
+            string editorContent = "";
+            
+            try
+            {
+                if (richTextEditor != null)
+                {
+                    editorContent = await richTextEditor.GetHTML();
+                    Console.WriteLine($"Contenido obtenido del editor: {(editorContent?.Length > 10 ? editorContent?.Substring(0, 10) + "..." : editorContent)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al obtener HTML del editor: {ex.Message}");
+                // Continuar con el proceso de guardado
+            }
+            
+            // Verificar si el contenido es significativo
+            if (!string.IsNullOrWhiteSpace(editorContent) && 
+                editorContent != "<p>&nbsp;</p>" && 
+                editorContent != "<p></p>")
+            {
+                Product.Description = editorContent;
+            }
+            else 
+            {
+                Product.Description = "";
+            }
+            
+            // Activar indicador de envío para ocultar el editor (evita problemas DOM)
+            isSubmitting = true;
+            StateHasChanged();
+            
+            // Esperar un poco para asegurar que el componente editor se haya desmontado
+            await Task.Delay(100);
+            
+            // Ahora sí, llamar al método de guardado
+            await SaveProductAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error en OnSaveClicked: {ex.Message}");
+            isSubmitting = false;
+            StateHasChanged();
+            Snackbar.Add(ex.Message, Severity.Error);
+        }
     }
 }
