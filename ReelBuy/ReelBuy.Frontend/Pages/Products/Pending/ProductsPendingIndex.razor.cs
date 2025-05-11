@@ -142,13 +142,13 @@ public partial class ProductsPendingIndex
         Snackbar.Add(Localizer["RecordUpdateOk"], Severity.Success);
     }
 
-    private async Task ShowPreviewDialog(Product product)
+    private void ShowPreviewDialog(Product product)
     {
         selectedProduct = product;
         isModalOpen = true;
     }
 
-    private async Task CloseModal()
+    private void CloseModal()
     {
         selectedProduct = null;
         isModalOpen = false;
@@ -158,11 +158,20 @@ public partial class ProductsPendingIndex
     {
     }
 
-    private async Task OnStatusChanged(Product product, int newStatusId)
+    private void OnStatusChanged(Product product, int newStatusId)
     {
         product.StatusId = newStatusId;
         product.Favorites = null;
         product.Store = null;
+        if (product.Status != null)
+        {
+            product.Status.Products = new List<Product> { null };
+        }
+
+        if (product.Category != null)
+        {
+            product.Category.Products = new List<Product> { null };
+        }
 
         if (!modifiedProducts.Any(p => p.Id == product.Id))
         {

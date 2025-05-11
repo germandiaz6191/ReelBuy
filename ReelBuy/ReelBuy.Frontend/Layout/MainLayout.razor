@@ -1,7 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
 <div style="@BuildThemeCssVars()">
-    <MudThemeProvider Theme="@CustomTheme" IsDarkMode="_darkMode" />
+    <MudThemeProvider Theme="@CustomTheme" IsDarkMode="DarkMode" />
     <MudDialogProvider />
     <MudSnackbarProvider />
     <MudPopoverProvider />
@@ -23,7 +23,7 @@
                              Label=@Localizer["PrincipalSearchAProducts"]
                              Adornment="Adornment.End"
                              AdornmentIcon="@Icons.Material.Filled.Search"
-                             @bind-Value="selectedText"
+                             Value="selectedProduct"
                              SearchFunc="SearchProduct"
                              Variant="Variant.Outlined"
                              Class="principal-autocomplete"
@@ -32,7 +32,8 @@
                              Dense="true"
                              Margin="Margin.Dense"
                              ShowProgressIndicator="true"
-                             ToStringFunc="@(e=> e==null?null : $"{e}")">
+                             ToStringFunc="@(e=> e==null?null : $"{e}")"
+                             ValueChanged="ProductChanged">
                 <ItemTemplate Context="itemContext">
                     @itemContext
                 </ItemTemplate>

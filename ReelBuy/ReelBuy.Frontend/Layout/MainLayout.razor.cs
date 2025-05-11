@@ -5,6 +5,7 @@ using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
+using static MudBlazor.Colors;
 
 namespace ReelBuy.Frontend.Layout;
 
@@ -12,17 +13,18 @@ public partial class MainLayout
 {
     private bool _drawerOpen = false;
     private string _icon = Icons.Material.Filled.DarkMode;
-    private string? selectedText;
-    private List<string> searchResults = new List<string>();
+    private string? selectedProduct;
+    private List<string> _searchResults = [];
     private const string baseUrl = "api/products/search";
 
-    private bool _darkMode { get; set; } = true;
+    private bool DarkMode { get; set; } = true;
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = null!;
 
-    private MudTheme CustomTheme => new MudTheme
+    private MudTheme CustomTheme => new()
     {
         PaletteLight = new PaletteLight
         {
@@ -69,8 +71,8 @@ public partial class MainLayout
 
     private void DarkModeToggle()
     {
-        _darkMode = !_darkMode;
-        _icon = _darkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+        DarkMode = !DarkMode;
+        _icon = DarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
     }
 
     private async Task<IEnumerable<string>> SearchProduct(string searchText, CancellationToken cancellationToken)
@@ -78,7 +80,7 @@ public partial class MainLayout
         await Task.Delay(5);
         if (string.IsNullOrWhiteSpace(searchText) || searchText.Length <= 3)
         {
-            return new List<string>();
+            return [];
         }
 
         return await PerformSearch(searchText);
@@ -88,19 +90,19 @@ public partial class MainLayout
     {
         var allResults = await GetSearchResults(query);
 
-        searchResults = allResults;
+        _searchResults = allResults;
 
         if (allResults.Count == 0)
         {
-            searchResults.Add(Localizer["PrincipalSearchNotFoundResults"]);
+            _searchResults.Add(Localizer["PrincipalSearchNotFoundResults"]);
         }
         if (allResults.Count > 10)
         {
-            searchResults = allResults.Take(10).ToList();
-            searchResults.Add(Localizer["PrincipalSearchExceededMaxResults"]);
+            _searchResults = allResults.Take(10).ToList();
+            _searchResults.Add(Localizer["PrincipalSearchExceededMaxResults"]);
         }
 
-        return searchResults;
+        return _searchResults;
     }
 
     private async Task<List<string>> GetSearchResults(string query)
@@ -117,15 +119,23 @@ public partial class MainLayout
         {
             var message = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(Localizer[message!], Severity.Error);
-            return new List<string>();
+            return [];
         }
 
-        return responseHttp.Response?.Select(product => product.Name).ToList() ?? new List<string>();
+        return responseHttp.Response?.Select(product => product.Name).ToList() ?? [];
+    }
+
+    private void ProductChanged(string product)
+    {
+        if (product.Contains(Localizer["PrincipalSearchNotFoundResults"])) { return; }
+        
+        selectedProduct = product;
+        NavigationManager.NavigateTo($"/?search={Uri.EscapeDataString(product)}");
     }
 
     private string BuildThemeCssVars()
     {
-        Palette p = _darkMode ? CustomTheme.PaletteDark : CustomTheme.PaletteLight;
+        Palette p = DarkMode ? CustomTheme.PaletteDark : CustomTheme.PaletteLight;
 
         return $@"
         --color-primary: {p.Primary};
