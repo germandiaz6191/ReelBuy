@@ -4,6 +4,7 @@ using ReelBuy.Backend.Helpers;
 using ReelBuy.Backend.Repositories.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
+using ReelBuy.Shared.Enums;
 using ReelBuy.Shared.Responses;
 
 namespace ReelBuy.Backend.Repositories.Implementations;
@@ -76,8 +77,13 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
 
         if (pagination.FilterStatus.HasValue)
         {
-            queryable = queryable.Where(x => x.StatusId.Equals(pagination.FilterStatus));
+            queryable = queryable.Where(x => x.StatusId == pagination.FilterStatus);
+            
         }
+
+        queryable = pagination.FilterStatus.HasValue && pagination.FilterStatus == (int)StatusProduct.Approved
+                            ? queryable.OrderByDescending(x => x.LikesGroup)
+                            : queryable.OrderBy(x => x.Name);
 
         if (!string.IsNullOrWhiteSpace(pagination.Filter))
         {
@@ -102,7 +108,6 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
         {
             WasSuccess = true,
             Result = await queryable
-                .OrderBy(x => x.Name)
                 .Paginate(pagination)
                 .ToListAsync()
         };
@@ -148,13 +153,15 @@ public class ProductsRepository : GenericRepository<Product>, IProductsRepositor
     {
         var queryable = _context.Products.AsQueryable();
 
+        queryable = queryable.Where(x => x.StatusId == (int)StatusProduct.Approved);
+
         if (!string.IsNullOrWhiteSpace(principalSearch.keyword))
         {
             queryable = queryable.Where(x => EF.Functions.Like(x.Name, $"%{principalSearch.keyword}%"));
         }
 
         var results = await queryable
-        .OrderBy(x => x.Name)
+        .OrderByDescending(x => x.LikesGroup)
         .Take(11)
         .ToListAsync();
 

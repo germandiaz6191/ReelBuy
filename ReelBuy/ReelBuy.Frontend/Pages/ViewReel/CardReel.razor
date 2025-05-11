@@ -18,11 +18,12 @@
             </MudButton>
         </div>
         <div class="video-controls-container">
-            <button class="carousel-control prev"
-                    @onclick="OnPrevious"
-                    disabled="@IsPreviousDisabled">
-                &larr;
-            </button>
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowBackIos"
+               Color="Color.Default"
+               Size="Size.Large"
+                           OnClick="OnPrevious" IsNextDisabled
+               Disabled="@IsPreviousDisabled"
+               Class="carousel-icon-button" />
 
             @if (ReelData != null)
             {
@@ -34,11 +35,12 @@
                 </div>
             }
 
-            <button class="carousel-control next"
-                    @onclick="OnNext"
-                    disabled="@IsNextDisabled">
-                &rarr;
-            </button>
+            <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos"
+                           Color="Color.Primary"
+                           Size="Size.Large"
+                           OnClick="OnNext"
+                           Disabled="@IsNextDisabled"
+                           Class="carousel-icon-button" />
         </div>
 
         <div class="video-actions">

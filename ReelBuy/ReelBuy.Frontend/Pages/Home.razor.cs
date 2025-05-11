@@ -9,7 +9,7 @@ namespace ReelBuy.Frontend.Pages;
 
 public partial class Home
 {
-    private List<Product> allFetchedReels = new();
+    private List<Product> allFetchedReels = [];
     private int totalRecords = 0;
     private int totalPages = 0;
 
@@ -24,18 +24,12 @@ public partial class Home
     // Tamaños configurables
     private const int BatchSize = 2; // Videos por consulta
 
-    // Rotador automatico
-    private bool isTransitioning = false;
-
-    private bool isLiked = false;
-
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
+    [Parameter, SupplyParameterFromQuery] public string? Search { get; set; }
 
-    [Parameter, SupplyParameterFromQuery] public string Filter { get; set; } = string.Empty;
-
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         loading = true;
         await LoadProductsAsync();
@@ -53,9 +47,9 @@ public partial class Home
     {
         var url = $"{baseUrl}/totalRecordsPaginatedApproved";
 
-        if (!string.IsNullOrWhiteSpace(Filter))
+        if (!string.IsNullOrWhiteSpace(Search))
         {
-            url += $"?filter={Filter}";
+            url += $"?filter={Search}";
         }
 
         var responseHttp = await Repository.GetAsync<int>(url);
@@ -99,9 +93,9 @@ public partial class Home
         int pageSize = batchSize;
         var url = $"{baseUrl}/paginatedApproved/?page={page}&recordsnumber={pageSize}";
 
-        if (!string.IsNullOrWhiteSpace(Filter))
+        if (!string.IsNullOrWhiteSpace(Search))
         {
-            url += $"&filter={Filter}";
+            url += $"&filter={Search}";
         }
 
         var responseHttp = await Repository.GetAsync<List<Product>>(url);
@@ -109,7 +103,7 @@ public partial class Home
         {
             var message = await responseHttp.GetErrorMessageAsync();
             Snackbar.Add(Localizer[message!], Severity.Error);
-            return new List<Product>();
+            return [];
         }
 
         return responseHttp.Response;
@@ -171,7 +165,6 @@ public partial class Home
 
         // 2. Verificar si necesitamos cargar el batch anterior
         bool isFirstVideoInBatch = CurrentVideoIndex < 0;
-        bool hasPreviousBatches = CurrentBatch > 1;
 
         if (isFirstVideoInBatch)
         {
