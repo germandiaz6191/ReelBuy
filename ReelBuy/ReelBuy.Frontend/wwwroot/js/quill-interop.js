@@ -88,8 +88,7 @@ window.QuillFunctions = {
             var quill = Quill.find(targetElement);
             if (quill) {
                 console.log("[DEBUG] Quill instance encontrada, cargando contenido...");
-                var delta = quill.clipboard.convert(quillHTMLContent || "");
-                quill.setContents(delta);
+                quill.clipboard.dangerouslyPasteHTML(quillHTMLContent || "");
                 return true;
             } else {
                 console.error("Quill instance not found for target element");

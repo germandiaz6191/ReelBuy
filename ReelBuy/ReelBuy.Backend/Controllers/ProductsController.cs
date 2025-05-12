@@ -307,8 +307,12 @@ public class ProductsController : GenericController<Product>
         CurrentProduct.Store = ResponseStore.Result;
         CurrentProduct.Status = ResponseStatus.Result;
         CurrentProduct.Category = ResponseCategory.Result;
-        CurrentProduct.Reels = model.Reels;
 
+        if (model.Reels != null && model.Reels.Any())
+        {
+            CurrentProduct.Reels = model.Reels;
+        }
+        
         var response = await base.PutAsync(CurrentProduct);
         if (response is OkObjectResult)
         {
