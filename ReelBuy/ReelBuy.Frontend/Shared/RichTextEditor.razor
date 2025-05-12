@@ -36,14 +36,6 @@
             </span>
         </ToolbarContent>
         <EditorContent>
-            @if (!string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>")
-            {
-                @((MarkupString)Content)
-            }
-            else
-            {
-                <p></p>
-            }
         </EditorContent>
     </BlazoredTextEditor>
 </div>

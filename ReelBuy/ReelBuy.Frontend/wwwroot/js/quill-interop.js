@@ -79,24 +79,16 @@ window.QuillFunctions = {
                 console.error("Target element not found:", quillElement);
                 return false;
             }
-            
-            // Find the Quill editor within the container
-            var editorElement = targetElement.querySelector(".ql-editor");
-            if (!editorElement) {
-                // If not found directly, look for it within a BlazoredTextEditor component
-                var blazoredEditor = targetElement.querySelector(".blazored-text-editor");
-                if (blazoredEditor) {
-                    editorElement = blazoredEditor.querySelector(".ql-editor");
-                }
-            }
-            
-            if (editorElement) {
-                editorElement.innerHTML = quillHTMLContent || "";
+
+            var quill = Quill.find(targetElement);
+            if (quill) {
+                var delta = quill.clipboard.convert(quillHTMLContent || "");
+                quill.setContents(delta);
                 return true;
+            } else {
+                console.error("Quill instance not found for target element");
+                return false;
             }
-            
-            console.error("Editor element not found within target element");
-            return false;
         } catch (error) {
             console.error("Error loading Quill HTML content:", error);
             return false;
