@@ -28,13 +28,13 @@ public partial class ProductForm
     private RichTextEditor? richTextEditor;
     private bool isSubmitting = false;
 
-
     // Propiedades para manejar el estado del producto
     private bool IsStatusPending => Product.StatusId == (int)StatusProduct.Pending;
+
     private bool IsStatusApproved => Product.StatusId == (int)StatusProduct.Approved;
     private bool IsStatusInactive => Product.StatusId == (int)StatusProduct.Inactive;
     private bool IsStatusReject => Product.StatusId == (int)StatusProduct.Reject;
-    
+
     private bool ShowStatusSelect => !IsStatusPending && !IsStatusInactive && !IsStatusReject;
     private bool ShowActivateButton => IsStatusInactive;
 
@@ -53,7 +53,7 @@ public partial class ProductForm
     {
         editContext = new(Product);
         product = Product;
-        
+
         // Asegúrese de que la descripción tenga un valor significativo
         if (string.IsNullOrEmpty(product.Description) || product.Description == "<p>&nbsp;</p>")
         {
@@ -64,29 +64,29 @@ public partial class ProductForm
     protected override async Task OnInitializedAsync()
     {
         Console.WriteLine($"ProductForm.OnInitializedAsync - Product.Id: {Product.Id}, Product.Description: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
-        
+
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
         await LoadStatusesAsync();
-        
+
         if (Product.Id == 0)
         {
             Product.StatusId = (int)StatusProduct.Pending;
         }
-        
+
         editContext = new EditContext(Product);
-        
+
         if (Product.CategoryId > 0 && categories != null)
         {
             selectedCategory = categories.FirstOrDefault(c => c.Id == Product.CategoryId) ?? new Category();
         }
-        
+
         if (Product.MarketplaceId > 0 && marketplaces != null)
         {
             selectedMarketplace = marketplaces.FirstOrDefault(c => c.Id == Product.MarketplaceId) ?? new Marketplace();
         }
-        
+
         if (Product.StoreId > 0 && stores != null)
         {
             selectedStore = stores.FirstOrDefault(c => c.Id == Product.StoreId) ?? new Store();
@@ -199,53 +199,40 @@ public partial class ProductForm
     // Método que responde a cambios en la descripción desde el editor
     private void OnDescriptionChanged(string newContent)
     {
-        Console.WriteLine("FINALLLLLL" );
-        Console.WriteLine($"OnDescriptionChanged - Nuevo contenido: {(newContent?.Length > 20 ? newContent?.Substring(0, 20) + "..." : newContent)}");
-        
         // No guardar el contenido si es sólo un espacio en blanco
         if (newContent != "<p>&nbsp;</p>")
         {
-            Console.WriteLine("Paso 3.1");
             Product.Description = newContent;
         }
         else
         {
-            Console.WriteLine("Paso 3.2");
             Product.Description = "";
         }
-        
+
         editContext?.Validate();
-        Console.WriteLine("Paso 4");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && Product.Id > 0)
         {
-            Console.WriteLine($"ProductForm.OnAfterRenderAsync - firstRender: {firstRender}, Product.Id: {Product.Id}");
-            Console.WriteLine($"ProductForm.OnAfterRenderAsync - Description: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
-            
             // Si el producto ya tiene un ID, aseguramos que la descripción se carga en el editor
             if (richTextEditor != null && !string.IsNullOrWhiteSpace(Product.Description))
             {
                 // Dar más tiempo para que el editor y su elemento DOM se inicialice completamente
                 await Task.Delay(800);
-                
+
                 try
                 {
                     await richTextEditor.SetHTML(Product.Description);
-                    Console.WriteLine("ProductForm.OnAfterRenderAsync - Se ha establecido el HTML en el editor");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"ProductForm.OnAfterRenderAsync - Error al establecer HTML: {ex.Message}");
-                    
                     // Intentar nuevamente después de un tiempo adicional
                     await Task.Delay(500);
                     try
                     {
                         await richTextEditor.SetHTML(Product.Description);
-                        Console.WriteLine("ProductForm.OnAfterRenderAsync - Se ha establecido el HTML en el segundo intento");
                     }
                     catch (Exception ex2)
                     {
@@ -260,20 +247,11 @@ public partial class ProductForm
     {
         try
         {
-            Console.WriteLine("SaveProductAsync iniciado");
-            
-            // La descripción ya fue obtenida en OnSaveClicked, no intentamos acceder al editor aquí
-            
-            Console.WriteLine($"Category ID: {selectedCategory?.Id}, Marketplace ID: {selectedMarketplace?.Id}, Store ID: {selectedStore?.Id}");
-            
             // Asignar IDs de relaciones
             Product.CategoryId = selectedCategory?.Id ?? 0;
             Product.MarketplaceId = selectedMarketplace?.Id ?? 0;
             Product.StoreId = selectedStore?.Id ?? 0;
-            
-            // Antes de guardar
-            Console.WriteLine($"Guardando producto. Id: {Product.Id}, Nombre: {Product.Name}, Descripción: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
-            
+
             HttpResponseWrapper<object> response;
             if (Product.Id == 0)
             {
@@ -281,12 +259,10 @@ public partial class ProductForm
             }
             else
             {
-                response = await Repository.PutAsync($"api/products/{Product.Id}", Product);
+                response = await Repository.PutAsync($"api/products", Product);
             }
-            
+
             bool result = !response.Error;
-            Console.WriteLine($"Resultado del guardado: {result}");
-            
             if (result)
             {
                 if (ShowMessage)
@@ -294,7 +270,7 @@ public partial class ProductForm
                     NavigationManager.NavigateTo($"/products/details/{Product.Id}");
                     Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
                 }
-                
+
                 await SaveCallback.InvokeAsync();
             }
             else
@@ -302,7 +278,7 @@ public partial class ProductForm
                 // Restaurar estado para permitir edición nuevamente
                 isSubmitting = false;
                 StateHasChanged();
-                
+
                 var errorMessage = await response.GetErrorMessageAsync();
                 Snackbar.Add(errorMessage ?? Localizer["ChangesNotSaved"], Severity.Error);
             }
@@ -312,7 +288,7 @@ public partial class ProductForm
             // Restaurar estado para permitir edición nuevamente
             isSubmitting = false;
             StateHasChanged();
-            
+
             Console.WriteLine($"Error en SaveProductAsync: {ex.Message}");
             Console.WriteLine($"StackTrace: {ex.StackTrace}");
             Snackbar.Add(ex.Message, Severity.Error);
@@ -381,7 +357,7 @@ public partial class ProductForm
         {
             // Primero, capturar el contenido del editor antes de ocultar/desmontar el componente
             string editorContent = "";
-            
+
             try
             {
                 if (richTextEditor != null)
@@ -395,26 +371,26 @@ public partial class ProductForm
                 Console.WriteLine($"Error al obtener HTML del editor: {ex.Message}");
                 // Continuar con el proceso de guardado
             }
-            
+
             // Verificar si el contenido es significativo
-            if (!string.IsNullOrWhiteSpace(editorContent) && 
-                editorContent != "<p>&nbsp;</p>" && 
+            if (!string.IsNullOrWhiteSpace(editorContent) &&
+                editorContent != "<p>&nbsp;</p>" &&
                 editorContent != "<p></p>")
             {
                 Product.Description = editorContent;
             }
-            else 
+            else
             {
                 Product.Description = "";
             }
-            
+
             // Activar indicador de envío para ocultar el editor (evita problemas DOM)
             isSubmitting = true;
             StateHasChanged();
-            
+
             // Esperar un poco para asegurar que el componente editor se haya desmontado
             await Task.Delay(100);
-            
+
             // Ahora sí, llamar al método de guardado
             await SaveProductAsync();
         }
