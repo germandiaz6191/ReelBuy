@@ -19,7 +19,9 @@ window.QuillFunctions = {
             }
             
             // Crear la instancia de Quill
-            new Quill(targetElement, options);
+            var quill = new Quill(targetElement, options);
+            window.quillEditors = window.quillEditors || {};
+            window.quillEditors[quillElement] = quill;
             return true;
         } catch (error) {
             console.error("Error creating Quill instance:", error);
@@ -74,6 +76,9 @@ window.QuillFunctions = {
     
     loadQuillHTMLContent: function (quillElement, quillHTMLContent) {
         try {
+            console.log("[DEBUG] loadQuillHTMLContent llamado");
+            console.log("[DEBUG] Elemento:", quillElement);
+            console.log("[DEBUG] Contenido HTML a cargar:", quillHTMLContent);
             var targetElement = this._getElement(quillElement);
             if (!targetElement) {
                 console.error("Target element not found:", quillElement);
@@ -82,6 +87,7 @@ window.QuillFunctions = {
 
             var quill = Quill.find(targetElement);
             if (quill) {
+                console.log("[DEBUG] Quill instance encontrada, cargando contenido...");
                 var delta = quill.clipboard.convert(quillHTMLContent || "");
                 quill.setContents(delta);
                 return true;
@@ -149,8 +155,7 @@ window.QuillFunctions = {
 
 window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
     try {
-        console.log("Configurando detección de cambios para editor con ID:", quillEditorId);
-        
+                
         // Variables para el seguimiento de intentos
         var maxAttempts = 10;
         var attemptCount = 0;
@@ -188,8 +193,6 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                     return;
                 }
 
-                console.log("Configurando MutationObserver para el editor", quillEditorId);
-
                 // Configurar un observador de mutación para detectar cambios en el contenido
                 const observer = new MutationObserver(function(mutations) {
                     try {
@@ -217,7 +220,6 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                     });
                     
                     observerSetup = true;
-                    console.log("Observador de cambios configurado correctamente para editor:", quillEditorId);
                     
                     // Almacenar el observador para poder desconectarlo si es necesario
                     if (!window.quillObservers) {

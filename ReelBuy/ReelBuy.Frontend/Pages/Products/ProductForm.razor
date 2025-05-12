@@ -24,7 +24,8 @@
                                                       Content="@Product.Description" 
                                                       Placeholder="@Localizer["Description"]"
                                                       ContentChanged="OnDescriptionChanged"
-                                                      EditorId="@($"productEditor_{Product.Id}")"/>
+                                                      EditorId="@($"productEditor_{Product.Id}")"
+                                                        @bind-Value="Product.Description" />
             }
             else
             {

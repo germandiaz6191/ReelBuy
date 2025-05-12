@@ -9,6 +9,8 @@ using ReelBuy.Frontend.Repositories;
 using MudBlazor;
 using ReelBuy.Shared.Enums;
 using ReelBuy.Frontend.Shared;
+using ReelBuy.Shared.DTOs;
+using Microsoft.JSInterop;
 
 namespace ReelBuy.Frontend.Pages.Products;
 
@@ -43,6 +45,7 @@ public partial class ProductForm
     [Inject] private SweetAlertService SweetAlertService { get; set; } = null!;
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [EditorRequired, Parameter] public Product Product { get; set; } = null!;
     [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
@@ -63,8 +66,7 @@ public partial class ProductForm
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine($"ProductForm.OnInitializedAsync - Product.Id: {Product.Id}, Product.Description: {(Product.Description?.Length > 10 ? Product.Description?.Substring(0, 10) + "..." : Product.Description)}");
-
+       
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
@@ -222,12 +224,16 @@ public partial class ProductForm
                 // Dar más tiempo para que el editor y su elemento DOM se inicialice completamente
                 await Task.Delay(800);
 
+                Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: productEditor_{Product.Id}");
+                Console.WriteLine($"[DEBUG] Contenido HTML: {Product.Description}");
                 try
                 {
-                    await richTextEditor.SetHTML(Product.Description);
+                    await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", $"productEditor_{Product.Id}", Product.Description);
+                
                 }
                 catch (Exception ex)
                 {
+                    Console.WriteLine($"[ERROR] JSRuntime Error: {ex.Message}");
                     // Intentar nuevamente después de un tiempo adicional
                     await Task.Delay(500);
                     try
@@ -259,7 +265,20 @@ public partial class ProductForm
             }
             else
             {
-                response = await Repository.PutAsync($"api/products", Product);
+                var EditProduct = new ProductDTO()
+                {
+                    Id = Product.Id,
+                    Name = Product.Name,
+                    Description = Product.Description,
+                    Price = Product.Price,
+                    StatusId = Product.StatusId,
+                    CategoryId = selectedCategory!.Id,
+                    MarketplaceId = Product.MarketplaceId,
+                    StoreId = Product.StoreId,
+                    Reels = Product.Reels 
+                };
+
+                response = await Repository.PutAsync($"api/products/all", EditProduct);
             }
 
             bool result = !response.Error;
@@ -363,7 +382,6 @@ public partial class ProductForm
                 if (richTextEditor != null)
                 {
                     editorContent = await richTextEditor.GetHTML();
-                    Console.WriteLine($"Contenido obtenido del editor: {(editorContent?.Length > 10 ? editorContent?.Substring(0, 10) + "..." : editorContent)}");
                 }
             }
             catch (Exception ex)

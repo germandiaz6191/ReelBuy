@@ -46,6 +46,9 @@
     private BlazoredTextEditor? QuillEditor { get; set; }
 
     [Parameter]
+    public string Id { get; set; } = $"editor_{Guid.NewGuid()}";
+
+    [Parameter]
     public string EditorId { get; set; } = "quillEditor_" + Guid.NewGuid().ToString("N");
 
     [Parameter]
@@ -57,9 +60,20 @@
     [Parameter]
     public EventCallback<string> ContentChanged { get; set; }
 
+    [Parameter] public string Value { get; set; }
+
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (QuillEditor != null && !string.IsNullOrWhiteSpace(Content))
+        {
+            Console.WriteLine($"Valor html: {Content}");
+            await SetHTML(Content);
+        }
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine($"RichTextEditor OnAfterRenderAsync - ID: {EditorId}, firstRender: {firstRender}");
 
         if (QuillEditor != null && firstRender)
         {
@@ -69,7 +83,14 @@
                 await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection",
                     EditorId,
                     DotNetObjectReference.Create(this));
-                Console.WriteLine($"RichTextEditor OnAfterRenderAsync - Configurada detección de cambios para {EditorId}");
+
+                await JSRuntime.InvokeVoidAsync("QuillFunctions.createQuill",
+                EditorId,    // ID del div
+                true,        // Toolbar visible
+                false,       // No readonly
+                "Escribe algo...", // Placeholder
+                "snow",      // Tema
+                "info");     // Nivel de debug
 
                 // Si hay contenido inicial válido, establecerlo después de un pequeño retraso
                 await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
@@ -77,8 +98,12 @@
                 {
                     try
                     {
-                        await QuillEditor.LoadHTMLContent(Content);
-                        Console.WriteLine($"RichTextEditor OnAfterRenderAsync - Contenido cargado: {TruncateContent(Content)}");
+                        Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: {Id}");
+                        Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID 2: {EditorId}");
+                        Console.WriteLine($"[DEBUG] Contenido HTML: {Value}");
+
+                        string cleanedContent = Content.Replace("<span class=\"ql-ui\" contenteditable=\"false\"></span>", "");
+                        await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", EditorId, cleanedContent);
                     }
                     catch (Exception ex)
                     {
@@ -170,8 +195,6 @@
         {
             if (QuillEditor != null && !string.IsNullOrEmpty(html))
             {
-                Console.WriteLine($"RichTextEditor.SetHTML - ID: {EditorId}, estableciendo: {TruncateContent(html)}");
-                
                 // Asegurarse de que el editor está inicializado antes de cargar contenido
                 await Task.Delay(50);
                 

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ReelBuy.Backend.Helpers;
+using ReelBuy.Backend.UnitsOfWork.Implementations;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
@@ -17,13 +18,21 @@ public class ProductsController : GenericController<Product>
     private readonly IFileStorage _fileStorage;
     private readonly IGenericUnitOfWork<Product> _unit;
     private readonly IUsersUnitOfWork _usersUnitOfWork;
+    private readonly IStatusesUnitOfWork _statusesUnitOfWork;
+    private readonly ICategoriesUnitOfWork _categoriesUnitOfWork;
+    private readonly IMarketplacesUnitOfWork _marketplacesUnitOfWork;
+    private readonly IStoresUnitOfWork _storesUnitOfWork;
 
-    public ProductsController(IGenericUnitOfWork<Product> unit, IProductsUnitOfWork productsUnitOfWork, IFileStorage fileStorage, IUsersUnitOfWork usersUnitOfWork) : base(unit)
+    public ProductsController(IGenericUnitOfWork<Product> unit, IProductsUnitOfWork productsUnitOfWork, IFileStorage fileStorage, IUsersUnitOfWork usersUnitOfWork, IStatusesUnitOfWork statusesUnitOfWork, ICategoriesUnitOfWork categoriesUnitOfWork, IMarketplacesUnitOfWork marketplacesUnitOfWork, IStoresUnitOfWork storesUnitOfWork) : base(unit)
     {
         _unit = unit;
         _productsUnitOfWork = productsUnitOfWork;
         _fileStorage = fileStorage;
         _usersUnitOfWork = usersUnitOfWork;
+        _statusesUnitOfWork = statusesUnitOfWork;
+        _categoriesUnitOfWork = categoriesUnitOfWork;
+        _marketplacesUnitOfWork = marketplacesUnitOfWork;
+        _storesUnitOfWork = storesUnitOfWork;
     }
 
     [HttpGet("combo")]
@@ -245,32 +254,62 @@ public class ProductsController : GenericController<Product>
         return BadRequest(action.Message);
     }
 
-    [HttpPut]
+    [HttpPut("all")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public override async Task<IActionResult> PutAsync(Product model)
+    public async Task<IActionResult> PutAsyncUpdate(ProductDTO model)
     {
         // Verificar si el usuario es administrador o si el producto pertenece a una de sus tiendas
         bool isAdmin = User.IsInRole("Admin");
         var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
         string userId = currentUser.Id;
 
-        if (!isAdmin)
+        // Obtener el producto actual para verificar a qué tienda pertenece
+        var Response = await _productsUnitOfWork.GetAsync(model.Id);
+        if (!Response.WasSuccess || Response.Result == null)
         {
-            // Obtener el producto actual para verificar a qué tienda pertenece
-            var currentProduct = await _productsUnitOfWork.GetAsync(model.Id);
-            if (!currentProduct.WasSuccess || currentProduct.Result == null)
-            {
-                return NotFound("Producto no encontrado");
-            }
-
-            // Verificar si la tienda pertenece al usuario
-            if (currentProduct.Result.Store?.UserId != userId)
-            {
-                return Forbid("No tienes permiso para editar este producto");
-            }
+            return NotFound("Producto no encontrado");
         }
 
-        var response = await base.PutAsync(model);
+        Product CurrentProduct = Response.Result;
+
+        if (!isAdmin && CurrentProduct.Store?.UserId != userId)// Verificar si la tienda pertenece al usuario
+        {
+            return Forbid("No tienes permiso para editar este producto");
+        }
+
+        var ResponseStatus = await _statusesUnitOfWork.GetAsync(model.StatusId);
+        if (!ResponseStatus.WasSuccess || ResponseStatus.Result == null)
+        {
+            return NotFound("Estado no encontrado");
+        }
+
+        var ResponseCategory = await _categoriesUnitOfWork.GetAsync(model.CategoryId);
+        if (!ResponseCategory.WasSuccess || ResponseCategory.Result == null)
+        {
+            return NotFound("Categoría no encontrada");
+        }
+
+        var ResponseMarketplace = await _marketplacesUnitOfWork.GetAsync(model.MarketplaceId);
+        if (!ResponseMarketplace.WasSuccess || ResponseMarketplace.Result == null)
+        {
+            return NotFound("Marketplace no encontrada");
+        }
+
+        var ResponseStore = await _storesUnitOfWork.GetAsync(model.StoreId);
+        if (!ResponseStore.WasSuccess || ResponseStore.Result == null)
+        {
+            return NotFound("Store no encontrado");
+        }
+
+        CurrentProduct.Name = model.Name;
+        CurrentProduct.Description = model.Description;
+        CurrentProduct.Price = model.Price;
+        CurrentProduct.Store = ResponseStore.Result;
+        CurrentProduct.Status = ResponseStatus.Result;
+        CurrentProduct.Category = ResponseCategory.Result;
+        CurrentProduct.Reels = model.Reels;
+
+        var response = await base.PutAsync(CurrentProduct);
         if (response is OkObjectResult)
         {
             return response;
