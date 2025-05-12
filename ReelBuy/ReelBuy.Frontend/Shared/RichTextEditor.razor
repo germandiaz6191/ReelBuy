@@ -4,7 +4,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="editor-container" id="@EditorId">
-    <BlazoredTextEditor @ref="QuillEditor" Placeholder="@Placeholder" OnTextChanged="ContentChanged">
+    <BlazoredTextEditor @ref="QuillEditor" Placeholder="@Placeholder">
         <ToolbarContent>
             <span class="ql-formats">
                 <select class="ql-header">
@@ -52,7 +52,7 @@
 
 @code {
     private BlazoredTextEditor? QuillEditor { get; set; }
-    
+
     [Parameter]
     public string EditorId { get; set; } = "quillEditor_" + Guid.NewGuid().ToString("N");
 
@@ -65,41 +65,25 @@
     [Parameter]
     public EventCallback<string> ContentChanged { get; set; }
 
-    protected override void OnInitialized()
-    {
-        Console.WriteLine($"RichTextEditor OnInitialized - ID: {EditorId}, Contenido recibido: {TruncateContent(Content)}");
-    }
-
-    protected override void OnParametersSet()
-    {
-        Console.WriteLine($"RichTextEditor OnParametersSet - ID: {EditorId}, Contenido recibido: {TruncateContent(Content)}");
-    }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine($"RichTextEditor OnAfterRenderAsync - ID: {EditorId}, firstRender: {firstRender}");
-        
+
         if (QuillEditor != null && firstRender)
         {
             try
             {
-                // Verificar que el elemento existe en el DOM
-                bool elementExists = await JSRuntime.InvokeAsync<bool>("document.getElementById", EditorId) != null;
-                Console.WriteLine($"RichTextEditor OnAfterRenderAsync - Elemento con ID {EditorId} existe: {elementExists}");
-                
                 // Configurar interop para detectar cambios
-                await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection", 
-                    EditorId, 
+                await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection",
+                    EditorId,
                     DotNetObjectReference.Create(this));
-                    
                 Console.WriteLine($"RichTextEditor OnAfterRenderAsync - Configurada detección de cambios para {EditorId}");
-                
+
                 // Si hay contenido inicial válido, establecerlo después de un pequeño retraso
                 await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
-                
                 if (!string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>")
                 {
-                    try 
+                    try
                     {
                         await QuillEditor.LoadHTMLContent(Content);
                         Console.WriteLine($"RichTextEditor OnAfterRenderAsync - Contenido cargado: {TruncateContent(Content)}");
@@ -117,12 +101,9 @@
         }
     }
 
-    private string TruncateContent(string content)
+    private async Task NotifyContentChanged()
     {
-        if (string.IsNullOrEmpty(content))
-            return "vacio";
-            
-        return content.Length > 20 ? content.Substring(0, 20) + "..." : content;
+        await HandleContentChange();
     }
 
     [JSInvokable]
@@ -130,6 +111,7 @@
     {
         try
         {
+            Console.WriteLine("Entroo");
             if (QuillEditor != null)
             {
                 string html = await QuillEditor.GetHTML();
@@ -150,9 +132,12 @@
         }
     }
 
-    private async Task NotifyContentChanged()
+    private string TruncateContent(string content)
     {
-        await HandleContentChange();
+        if (string.IsNullOrEmpty(content))
+            return "vacio";
+
+        return content.Length > 20 ? content.Substring(0, 20) + "..." : content;
     }
 
     public async Task<string> GetHTML()
