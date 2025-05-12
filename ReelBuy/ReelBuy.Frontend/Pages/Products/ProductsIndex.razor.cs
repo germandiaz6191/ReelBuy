@@ -139,6 +139,7 @@ public partial class ProductsIndex
             
             // Cargar las relaciones necesarias
             await LoadStoresForProducts(adminResponse.Response);
+            await LoadCategoryAndMarketplaceForProducts(adminResponse.Response);
             
             return new TableData<Product>
             {
@@ -197,6 +198,9 @@ public partial class ProductsIndex
             }
         }
 
+        // Cargar información de categoría y marketplace
+        await LoadCategoryAndMarketplaceForProducts(products);
+
         return new TableData<Product>
         {
             Items = products,
@@ -221,6 +225,42 @@ public partial class ProductsIndex
                 foreach (var product in products.Where(p => p.StoreId == storeId))
                 {
                     product.Store = store;
+                }
+            }
+        }
+    }
+
+    // Método para cargar categorías y marketplaces para productos
+    private async Task LoadCategoryAndMarketplaceForProducts(List<Product> products)
+    {
+        // Obtener todas las categorías y marketplaces necesarios
+        var categoryIds = products.Select(p => p.CategoryId).Distinct().ToList();
+        var marketplaceIds = products.Select(p => p.MarketplaceId).Distinct().ToList();
+        
+        // Cargar información de categorías
+        foreach (var categoryId in categoryIds)
+        {
+            var categoryResponse = await Repository.GetAsync<Category>($"/api/categories/{categoryId}");
+            if (!categoryResponse.Error && categoryResponse.Response != null)
+            {
+                var category = categoryResponse.Response;
+                foreach (var product in products.Where(p => p.CategoryId == categoryId))
+                {
+                    product.Category = category;
+                }
+            }
+        }
+        
+        // Cargar información de marketplaces
+        foreach (var marketplaceId in marketplaceIds)
+        {
+            var marketplaceResponse = await Repository.GetAsync<Marketplace>($"/api/marketplaces/{marketplaceId}");
+            if (!marketplaceResponse.Error && marketplaceResponse.Response != null)
+            {
+                var marketplace = marketplaceResponse.Response;
+                foreach (var product in products.Where(p => p.MarketplaceId == marketplaceId))
+                {
+                    product.Marketplace = marketplace;
                 }
             }
         }
