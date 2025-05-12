@@ -173,6 +173,11 @@ public partial class ProductsPendingIndex
             product.Category.Products = new List<Product> { null };
         }
 
+        if (product.Marketplace != null)
+        {
+            product.Marketplace.Products = new List<Product> { null };
+        }
+
         if (!modifiedProducts.Any(p => p.Id == product.Id))
         {
             modifiedProducts.Add(product);
