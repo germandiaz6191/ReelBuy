@@ -199,19 +199,23 @@ public partial class ProductForm
     // Método que responde a cambios en la descripción desde el editor
     private void OnDescriptionChanged(string newContent)
     {
+        Console.WriteLine("FINALLLLLL" );
         Console.WriteLine($"OnDescriptionChanged - Nuevo contenido: {(newContent?.Length > 20 ? newContent?.Substring(0, 20) + "..." : newContent)}");
         
         // No guardar el contenido si es sólo un espacio en blanco
         if (newContent != "<p>&nbsp;</p>")
         {
+            Console.WriteLine("Paso 3.1");
             Product.Description = newContent;
         }
         else
         {
+            Console.WriteLine("Paso 3.2");
             Product.Description = "";
         }
         
         editContext?.Validate();
+        Console.WriteLine("Paso 4");
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

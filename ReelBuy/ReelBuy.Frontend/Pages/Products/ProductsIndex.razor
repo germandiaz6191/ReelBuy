@@ -35,8 +35,8 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.Name</MudTd>
-            <MudTd>@context.CategoryId</MudTd>
-            <MudTd>@context.MarketplaceId</MudTd>
+            <MudTd>@(context.Category?.Name ?? context.CategoryId.ToString())</MudTd>
+            <MudTd>@(context.Marketplace?.Name ?? context.MarketplaceId.ToString())</MudTd>
             <MudTd>
                 <MudTooltip Text="@Localizer["Edit"]">
                     <MudButton Variant="Variant.Filled"

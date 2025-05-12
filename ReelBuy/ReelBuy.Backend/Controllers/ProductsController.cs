@@ -171,13 +171,13 @@ public class ProductsController : GenericController<Product>
     {
         // Determinar si el usuario es administrador
         bool isAdmin = User.IsInRole("Admin");
-        
+
         // Si es administrador, permitir ver el total de todos los productos
         if (isAdmin)
         {
             pagination.StoreIds = null; // Limpiar filtro de tiendas para ver todo
         }
-        
+
         var action = await _productsUnitOfWork.GetTotalRecordsAsync(pagination);
         if (action.WasSuccess)
         {
@@ -251,9 +251,9 @@ public class ProductsController : GenericController<Product>
     {
         // Verificar si el usuario es administrador o si el producto pertenece a una de sus tiendas
         bool isAdmin = User.IsInRole("Admin");
-         var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
+        var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
         string userId = currentUser.Id;
-        
+
         if (!isAdmin)
         {
             // Obtener el producto actual para verificar a qué tienda pertenece
@@ -262,14 +262,14 @@ public class ProductsController : GenericController<Product>
             {
                 return NotFound("Producto no encontrado");
             }
-            
+
             // Verificar si la tienda pertenece al usuario
             if (currentProduct.Result.Store?.UserId != userId)
             {
                 return Forbid("No tienes permiso para editar este producto");
             }
         }
-        
+
         var response = await base.PutAsync(model);
         if (response is OkObjectResult)
         {
@@ -277,7 +277,7 @@ public class ProductsController : GenericController<Product>
         }
         return BadRequest();
     }
-    
+
     [HttpDelete("{id}")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public override async Task<IActionResult> DeleteAsync(int id)
@@ -286,7 +286,7 @@ public class ProductsController : GenericController<Product>
         bool isAdmin = User.IsInRole("Admin");
         var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
         string userId = currentUser.Id;
-        
+
         if (!isAdmin)
         {
             // Obtener el producto actual para verificar a qué tienda pertenece
@@ -295,14 +295,14 @@ public class ProductsController : GenericController<Product>
             {
                 return NotFound("Producto no encontrado");
             }
-            
+
             // Verificar si la tienda pertenece al usuario
             if (currentProduct.Result.Store?.UserId != userId)
             {
                 return Forbid("No tienes permiso para eliminar este producto");
             }
         }
-        
+
         var response = await base.DeleteAsync(id);
         if (response is NoContentResult)
         {
