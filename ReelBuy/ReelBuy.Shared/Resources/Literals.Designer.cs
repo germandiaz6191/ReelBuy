@@ -853,6 +853,24 @@ namespace ReelBuy.Shared.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Product link.
+        /// </summary>
+        public static string PathUri {
+            get {
+                return ResourceManager.GetString("PathUri", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter the URL without the domain.
+        /// </summary>
+        public static string PathUriTitle {
+            get {
+                return ResourceManager.GetString("PathUriTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phone Number.
         /// </summary>
         public static string PhoneNumber {
@@ -939,6 +957,15 @@ namespace ReelBuy.Shared.Resources {
         public static string ProductsPendingSecond {
             get {
                 return ResourceManager.GetString("ProductsPendingSecond", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending product approve.
+        /// </summary>
+        public static string ProdutsPending {
+            get {
+                return ResourceManager.GetString("ProdutsPending", resourceCulture);
             }
         }
         

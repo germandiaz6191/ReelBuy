@@ -22,6 +22,11 @@ public class Product
     [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0")]
     public decimal Price { get; set; }
 
+    [Display(Name = "PathUri", ResourceType = typeof(Literals))]
+    [MaxLength(400, ErrorMessageResourceName = "MaxLength", ErrorMessageResourceType = typeof(Literals))]
+    [Required(ErrorMessageResourceName = "RequiredField", ErrorMessageResourceType = typeof(Literals))]
+    public string PathUri { get; set; } = null!;
+
     public ICollection<Reel> Reels { get; set; } = new List<Reel>();
     public int StatusId { get; set; }
     public Status? Status { get; set; }
