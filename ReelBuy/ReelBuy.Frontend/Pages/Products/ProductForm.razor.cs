@@ -47,7 +47,6 @@ public partial class ProductForm
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
     [Inject] private IJSRuntime JSRuntime { get; set; } = null!;
     [EditorRequired, Parameter] public Product Product { get; set; } = null!;
-    [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
     [Parameter] public bool ShowMessage { get; set; } = true;
 
@@ -196,6 +195,41 @@ public partial class ProductForm
         stores = responseHttp.Response;
     }
 
+    private void OnBlurValidateUri()
+    {
+        if (string.IsNullOrWhiteSpace(Product.PathUri))
+            return;
+
+        if (!Product.PathUri.StartsWith("http://") && !Product.PathUri.StartsWith("https://") && Product.PathUri.StartsWith("www"))
+        {
+            Product.PathUri = "https://" + Product.PathUri;
+        }
+        // Intentar crear la URI (primero como absoluta)
+
+        if (Uri.TryCreate(Product.PathUri, UriKind.Absolute, out var absoluteUri))
+        {
+            Product.PathUri = absoluteUri.AbsolutePath;
+        }
+        else if (!Uri.TryCreate(Product.PathUri, UriKind.Relative, out _))
+        {
+            // No es válida ni como absoluta ni como relativa
+            Console.WriteLine("Formato de URI inválido.", Product.PathUri);
+
+            Product.PathUri = string.Empty;
+            return;
+        }
+
+        // Asegurar que comience con '/'
+        if (Product.PathUri == "/")
+        {
+            Product.PathUri = "";
+        }
+        else if (!Product.PathUri.StartsWith("/"))
+        {
+            Product.PathUri = "/" + Product.PathUri.TrimStart('/');  // Si no empieza con "/", agregamos el "/"
+        }
+    }
+
     // Método que responde a cambios en la descripción desde el editor
     private void OnDescriptionChanged(string newContent)
     {
@@ -224,7 +258,7 @@ public partial class ProductForm
             HttpResponseWrapper<object> response;
             if (Product.Id == 0)
             {
-                response = await Repository.PostAsync("api/products", Product);
+                response = await Repository.PostAsync("api/products/CreateProduct", Product);
             }
             else
             {
@@ -238,16 +272,16 @@ public partial class ProductForm
                     CategoryId = selectedCategory!.Id,
                     MarketplaceId = Product.MarketplaceId,
                     StoreId = Product.StoreId,
-                    Reels = Product.Reels
+                    Reels = Product.Reels,
+                    PathUri = Product.PathUri
                 };
 
-                response = await Repository.PutAsync($"api/products/all", EditProduct);
+                response = await Repository.PutAsync($"api/products/UpdateProduct", EditProduct);
             }
 
             bool result = !response.Error;
             if (result)
             {
-                NavigationManager.NavigateTo($"/products/");
                 Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
             }
             else
@@ -308,7 +342,12 @@ public partial class ProductForm
 
     private void ReelSelected(string _reelUri)
     {
-        reelUrl = _reelUri;
+        if (!string.IsNullOrWhiteSpace(_reelUri))
+        {
+            reelUrl = _reelUri;
+            product.Reels.Clear();
+            product.Reels.Add(CreateReel());
+        }
     }
 
     private Reel CreateReel()

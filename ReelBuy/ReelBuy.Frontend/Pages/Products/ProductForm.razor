@@ -18,20 +18,11 @@
             <MudText Typo="Typo.h6">@Localizer["Description"]</MudText>
         </MudCardHeader>
         <MudCardContent>
-            @if (!isSubmitting)
-            {
                 <ReelBuy.Frontend.Shared.RichTextEditor @ref="richTextEditor" 
                                                       Content="@Product.Description" 
                                                       Placeholder="@Localizer["Description"]"
                                                       ContentChanged="OnDescriptionChanged"
-                                                      EditorId="@($"productEditor_{Product.Id}")"
-                                                        @bind-Value="Product.Description" />
-            }
-            else
-            {
-                <MudProgressCircular Color="Color.Primary" Size="Size.Medium" Indeterminate="true" />
-                <MudText>@Localizer["Saving"]...</MudText>
-            }
+                                                      EditorId="@($"productEditor_{Product.Id}")"/>
         </MudCardContent>
     </MudCard>
 
@@ -119,6 +110,14 @@
             </ItemTemplate>
         </MudAutocomplete>
     </MudCardContent> 
+
+    <MudCardContent> 
+        <MudTextField Label="@Localizer["PathUriTitle"]"
+                      @bind-Value="@Product.PathUri"
+                      For="@(() => @Product.PathUri)"
+                      OnBlur="OnBlurValidateUri"
+                      Class="mb-4" />
+     </MudCardContent> 
 
     <MudCardContent>
         <MudAutocomplete T="Store"
