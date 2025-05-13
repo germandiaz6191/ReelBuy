@@ -222,6 +222,30 @@ public class ProductsController : GenericController<Product>
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> CreateProduct([FromBody] Product model)
     {
+        var ResponseStatus = await _statusesUnitOfWork.GetAsync(model.StatusId);
+        if (!ResponseStatus.WasSuccess || ResponseStatus.Result == null)
+        {
+            return NotFound("Estado no encontrado");
+        }
+
+        var ResponseCategory = await _categoriesUnitOfWork.GetAsync(model.CategoryId);
+        if (!ResponseCategory.WasSuccess || ResponseCategory.Result == null)
+        {
+            return NotFound("Categoría no encontrada");
+        }
+
+        var ResponseMarketplace = await _marketplacesUnitOfWork.GetAsync(model.MarketplaceId);
+        if (!ResponseMarketplace.WasSuccess || ResponseMarketplace.Result == null)
+        {
+            return NotFound("Marketplace no encontrada");
+        }
+
+        var ResponseStore = await _storesUnitOfWork.GetAsync(model.StoreId);
+        if (!ResponseStore.WasSuccess || ResponseStore.Result == null)
+        {
+            return NotFound("Store no encontrado");
+        }
+
         if (model.Reels.Any())
         {
             foreach (var reel in model.Reels)
@@ -229,10 +253,15 @@ public class ProductsController : GenericController<Product>
                 if (!string.IsNullOrEmpty(reel.ReelUri))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
-                    reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    //reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
                 }
             }
         }
+
+        model.Store = ResponseStore.Result;
+        model.Status = ResponseStatus.Result;
+        model.Category = ResponseCategory.Result;
 
         var action = await _unit.AddAsync(model);
         if (action.WasSuccess)
@@ -242,7 +271,7 @@ public class ProductsController : GenericController<Product>
         return BadRequest(action.Message);
     }
 
-    [HttpPut("UpdateProducts")]
+    [HttpPut("statuses")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public async Task<IActionResult> UpdateProducts([FromBody] List<Product> models)
     {
@@ -254,7 +283,7 @@ public class ProductsController : GenericController<Product>
         return BadRequest(action.Message);
     }
 
-    [HttpPut("all")]
+    [HttpPut("UpdateProduct")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<IActionResult> PutAsyncUpdate(ProductDTO model)
     {
@@ -304,15 +333,25 @@ public class ProductsController : GenericController<Product>
         CurrentProduct.Name = model.Name;
         CurrentProduct.Description = model.Description;
         CurrentProduct.Price = model.Price;
+        CurrentProduct.PathUri = model.PathUri;
         CurrentProduct.Store = ResponseStore.Result;
         CurrentProduct.Status = ResponseStatus.Result;
         CurrentProduct.Category = ResponseCategory.Result;
 
-        if (model.Reels != null && model.Reels.Any())
+        if (CurrentProduct.Reels != null && CurrentProduct.Reels.Any())
         {
-            CurrentProduct.Reels = model.Reels;
+            foreach (var reel in CurrentProduct.Reels)
+            {
+                if (!string.IsNullOrEmpty(reel.ReelUri))
+                {
+                    var productReel = Convert.FromBase64String(reel.ReelUri);
+                    //reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
+                }
+            }
+            model.Reels = CurrentProduct.Reels;
         }
-        
+
         var response = await base.PutAsync(CurrentProduct);
         if (response is OkObjectResult)
         {
