@@ -43,6 +43,20 @@
 <button type="button" style="display:none;" @onclick="NotifyContentChanged">Actualizar</button>
 
 @code {
+    private const string DefaultProductDescription = @"
+                                                    <ol>
+                                                      <li><strong>Descripción:</strong> </li>
+                                                      <li><strong>Tamaño:</strong> </li>
+                                                      <li><strong>Peso:</strong> </li>
+                                                      <li><strong>Material:</strong> </li>
+                                                      <li><strong>Colores:</strong> </li>
+                                                      <li><strong>Uso recomendado:</strong> </li>
+                                                      <li><strong>Compatibilidad:</strong> </li>
+                                                      <li><strong>Instrucciones:</strong> </li>
+                                                      <li><strong>Origen:</strong> </li>
+                                                      <li><strong>Garantía:</strong> </li>
+                                                    </ol>";
+
     private BlazoredTextEditor? QuillEditor { get; set; }
 
     [Parameter]
@@ -88,28 +102,28 @@
                 EditorId,    // ID del div
                 true,        // Toolbar visible
                 false,       // No readonly
-                "Escribe algo...", // Placeholder
+                "Escribe una descripción...", // Placeholder
                 "snow",      // Tema
                 "info");     // Nivel de debug
 
                 // Si hay contenido inicial válido, establecerlo después de un pequeño retraso
                 await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
-                if (!string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>")
-                {
                     try
                     {
                         Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: {Id}");
                         Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID 2: {EditorId}");
                         Console.WriteLine($"[DEBUG] Contenido HTML: {Value}");
+                        var contentValue = !string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>"
+                                                                                ? Content
+                                                                                : DefaultProductDescription;
 
-                        string cleanedContent = Content.Replace("<span class=\"ql-ui\" contenteditable=\"false\"></span>", "");
-                        await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", EditorId, cleanedContent);
+                        await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", EditorId, contentValue);
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine($"Error al cargar contenido inicial: {ex.Message}");
                     }
-                }
+                
             }
             catch (Exception ex)
             {
