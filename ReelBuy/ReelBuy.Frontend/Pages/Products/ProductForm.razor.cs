@@ -49,7 +49,6 @@ public partial class ProductForm
     [EditorRequired, Parameter] public Product Product { get; set; } = null!;
     [EditorRequired, Parameter] public EventCallback OnValidSubmit { get; set; }
     [EditorRequired, Parameter] public EventCallback ReturnAction { get; set; }
-    [Parameter] public EventCallback SaveCallback { get; set; }
     [Parameter] public bool ShowMessage { get; set; } = true;
 
     protected override void OnInitialized()
@@ -66,7 +65,6 @@ public partial class ProductForm
 
     protected override async Task OnInitializedAsync()
     {
-       
         await LoadCategoriesAsync();
         await LoadMarketplacesAsync();
         await LoadStoresAsync();
@@ -214,41 +212,6 @@ public partial class ProductForm
         editContext?.Validate();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender && Product.Id > 0)
-        {
-            // Si el producto ya tiene un ID, aseguramos que la descripción se carga en el editor
-            if (richTextEditor != null && !string.IsNullOrWhiteSpace(Product.Description))
-            {
-                // Dar más tiempo para que el editor y su elemento DOM se inicialice completamente
-                await Task.Delay(800);
-
-                Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: productEditor_{Product.Id}");
-                Console.WriteLine($"[DEBUG] Contenido HTML: {Product.Description}");
-                try
-                {
-                    await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", $"productEditor_{Product.Id}", Product.Description);
-                
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[ERROR] JSRuntime Error: {ex.Message}");
-                    // Intentar nuevamente después de un tiempo adicional
-                    await Task.Delay(500);
-                    try
-                    {
-                        await richTextEditor.SetHTML(Product.Description);
-                    }
-                    catch (Exception ex2)
-                    {
-                        Console.WriteLine($"ProductForm.OnAfterRenderAsync - Error en segundo intento: {ex2.Message}");
-                    }
-                }
-            }
-        }
-    }
-
     private async Task SaveProductAsync()
     {
         try
@@ -275,7 +238,7 @@ public partial class ProductForm
                     CategoryId = selectedCategory!.Id,
                     MarketplaceId = Product.MarketplaceId,
                     StoreId = Product.StoreId,
-                    Reels = Product.Reels 
+                    Reels = Product.Reels
                 };
 
                 response = await Repository.PutAsync($"api/products/all", EditProduct);
@@ -284,13 +247,8 @@ public partial class ProductForm
             bool result = !response.Error;
             if (result)
             {
-                if (ShowMessage)
-                {
-                    NavigationManager.NavigateTo($"/products/details/{Product.Id}");
-                    Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
-                }
-
-                await SaveCallback.InvokeAsync();
+                NavigationManager.NavigateTo($"/products/");
+                Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
             }
             else
             {

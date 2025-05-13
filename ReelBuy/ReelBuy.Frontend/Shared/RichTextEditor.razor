@@ -4,7 +4,7 @@
 @inject IJSRuntime JSRuntime
 
 <div class="editor-container" id="@EditorId">
-    <BlazoredTextEditor @ref="QuillEditor" Placeholder="@Placeholder">
+    <BlazoredTextEditor @ref="QuillEditor" Placeholder="@Placeholder" >
         <ToolbarContent>
             <span class="ql-formats">
                 <select class="ql-header">
@@ -43,7 +43,8 @@
 <button type="button" style="display:none;" @onclick="NotifyContentChanged">Actualizar</button>
 
 @code {
-    private const string DefaultProductDescription = @"
+    
+       private const string DefaultProductDescription = @"
                                                     <ol>
                                                       <li><strong>Descripción:</strong> </li>
                                                       <li><strong>Tamaño:</strong> </li>
@@ -56,6 +57,7 @@
                                                       <li><strong>Origen:</strong> </li>
                                                       <li><strong>Garantía:</strong> </li>
                                                     </ol>";
+
 
     private BlazoredTextEditor? QuillEditor { get; set; }
 
@@ -93,21 +95,13 @@
         {
             try
             {
+                await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
+
                 // Configurar interop para detectar cambios
                 await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection",
-                    EditorId,
+                    "QuillEditor",
                     DotNetObjectReference.Create(this));
 
-                await JSRuntime.InvokeVoidAsync("QuillFunctions.createQuill",
-                EditorId,    // ID del div
-                true,        // Toolbar visible
-                false,       // No readonly
-                "Escribe una descripción...", // Placeholder
-                "snow",      // Tema
-                "info");     // Nivel de debug
-
-                // Si hay contenido inicial válido, establecerlo después de un pequeño retraso
-                await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
                     try
                     {
                         Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: {Id}");
@@ -117,7 +111,7 @@
                                                                                 ? Content
                                                                                 : DefaultProductDescription;
 
-                        await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", EditorId, contentValue);
+                    await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", "QuillEditor", contentValue);
                     }
                     catch (Exception ex)
                     {

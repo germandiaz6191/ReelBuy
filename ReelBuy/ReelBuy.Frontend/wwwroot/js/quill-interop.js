@@ -12,30 +12,31 @@ window.QuillFunctions = {
             };
 
             var targetElement = quillElement;
-            
+
             // Si es un string, usar querySelector
             if (typeof quillElement === 'string') {
                 targetElement = document.querySelector("#" + quillElement);
             }
-            
+
             // Crear la instancia de Quill
             var quill = new Quill(targetElement, options);
             window.quillEditors = window.quillEditors || {};
-            window.quillEditors[quillElement] = quill;
+            window.quillEditors[quillElement.id] = quill;
+            console.log("[DEBUG] Quill instance created and saved:", quillElement);
             return true;
         } catch (error) {
             console.error("Error creating Quill instance:", error);
             return false;
         }
     },
-    
+
     getQuillContent: function (quillElement) {
         try {
             var targetElement = this._getElement(quillElement);
             if (!targetElement) {
                 return "";
             }
-            
+
             var editorElement = targetElement.querySelector(".ql-editor");
             return editorElement ? editorElement.innerHTML : "";
         } catch (error) {
@@ -43,14 +44,14 @@ window.QuillFunctions = {
             return "";
         }
     },
-    
+
     getQuillHTML: function (quillElement) {
         try {
             var targetElement = this._getElement(quillElement);
             if (!targetElement) {
                 return "";
             }
-            
+
             var editorElement = targetElement.querySelector(".ql-editor");
             return editorElement ? editorElement.innerHTML : "";
         } catch (error) {
@@ -58,14 +59,14 @@ window.QuillFunctions = {
             return "";
         }
     },
-    
+
     getQuillText: function (quillElement) {
         try {
             var targetElement = this._getElement(quillElement);
             if (!targetElement) {
                 return "";
             }
-            
+
             var editorElement = targetElement.querySelector(".ql-editor");
             return editorElement ? editorElement.textContent : "";
         } catch (error) {
@@ -73,7 +74,7 @@ window.QuillFunctions = {
             return "";
         }
     },
-    
+
     loadQuillHTMLContent: function (quillElement, quillHTMLContent) {
         try {
             console.log("[DEBUG] loadQuillHTMLContent llamado");
@@ -85,7 +86,9 @@ window.QuillFunctions = {
                 return false;
             }
 
-            var quill = Quill.find(targetElement);
+            var quill = window.quillEditors[quillElement];
+            console.log("[DEBUG] window.quillEditors:", window.quillEditors);
+            console.log("[DEBUG] window.quillEditors[quillElement]:", quill);
             if (quill) {
                 console.log("[DEBUG] Quill instance encontrada, cargando contenido...");
                 quill.clipboard.dangerouslyPasteHTML(quillHTMLContent || "");
@@ -99,14 +102,14 @@ window.QuillFunctions = {
             return false;
         }
     },
-    
+
     enableQuillEditor: function (quillElement, mode) {
         try {
             var targetElement = this._getElement(quillElement);
             if (!targetElement) {
                 return false;
             }
-            
+
             var quill = Quill.find(targetElement);
             if (quill) {
                 quill.enable(mode);
@@ -118,12 +121,12 @@ window.QuillFunctions = {
             return false;
         }
     },
-    
+
     insertQuillImage: function (quillElement, imageURL) {
         try {
             var element = this._getElement(quillElement);
             if (!element) return false;
-            
+
             var quill = Quill.find(element);
             if (quill) {
                 var range = quill.getSelection();
@@ -137,43 +140,42 @@ window.QuillFunctions = {
             return false;
         }
     },
-    
+
     // Función auxiliar para obtener el elemento DOM
     _getElement: function (quillElement) {
         if (!quillElement) {
             return null;
         }
-        
+
         if (typeof quillElement === 'string') {
             return document.getElementById(quillElement);
         }
-        
+
         return quillElement;
     }
 };
 
 window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
     try {
-                
         // Variables para el seguimiento de intentos
         var maxAttempts = 10;
         var attemptCount = 0;
         var observerSetup = false;
-        
+
         // Función para inicializar el observador
         function initializeObserver() {
             attemptCount++;
-            
+
             if (observerSetup) {
                 console.log("Observador ya configurado para:", quillEditorId);
                 return;
             }
-            
+
             if (attemptCount > maxAttempts) {
                 console.error("Número máximo de intentos alcanzado para configurar el observador:", quillEditorId);
                 return;
             }
-            
+
             try {
                 const editorContainer = document.getElementById(quillEditorId);
                 if (!editorContainer) {
@@ -193,13 +195,13 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                 }
 
                 // Configurar un observador de mutación para detectar cambios en el contenido
-                const observer = new MutationObserver(function(mutations) {
+                const observer = new MutationObserver(function (mutations) {
                     try {
                         console.log("Cambio detectado en el editor", quillEditorId);
                         // Notificar a .NET sobre el cambio
                         if (dotNetHelper) {
                             dotNetHelper.invokeMethodAsync('HandleContentChange')
-                                .catch(function(error) {
+                                .catch(function (error) {
                                     console.error("Error al notificar cambios:", error);
                                 });
                         } else {
@@ -217,14 +219,14 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                         subtree: true,
                         characterData: true
                     });
-                    
+
                     observerSetup = true;
-                    
+
                     // Almacenar el observador para poder desconectarlo si es necesario
                     if (!window.quillObservers) {
                         window.quillObservers = {};
                     }
-                    
+
                     // Si ya existía un observador previo, desconectarlo
                     if (window.quillObservers[quillEditorId]) {
                         try {
@@ -233,9 +235,8 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                             console.warn("Error al desconectar observador anterior:", error);
                         }
                     }
-                    
+
                     window.quillObservers[quillEditorId] = observer;
-                    
                 } catch (observeError) {
                     console.error("Error al configurar el observador:", observeError);
                 }
@@ -245,11 +246,10 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
                 setTimeout(initializeObserver, 300);
             }
         }
-        
+
         // Iniciar proceso de configuración con un pequeño retraso inicial
         setTimeout(initializeObserver, 100);
-        
     } catch (error) {
         console.error("Error al configurar detección de cambios:", error);
     }
-}; 
+};
