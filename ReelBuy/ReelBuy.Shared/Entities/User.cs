@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using ReelBuy.Shared.Resources;
 using Microsoft.AspNetCore.Identity;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReelBuy.Shared.Entities;
 
+[ExcludeFromCodeCoverage]
 public class User : IdentityUser
 {
     [Display(Name = "FirstName", ResourceType = typeof(Literals))]

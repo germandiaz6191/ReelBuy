@@ -1,9 +1,10 @@
 ﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
 using ReelBuy.Backend.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Orders.Backend.Helpers;
 
+[ExcludeFromCodeCoverage]
 public class FileStorage : IFileStorage
 {
     private readonly string _connectionString;

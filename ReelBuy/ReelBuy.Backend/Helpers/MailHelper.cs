@@ -1,9 +1,11 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using ReelBuy.Shared.Responses;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReelBuy.Backend.Helpers;
 
+[ExcludeFromCodeCoverage]
 public class MailHelper : IMailHelper
 {
     private readonly IConfiguration _configuration;

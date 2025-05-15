@@ -1,4 +1,7 @@
-﻿namespace ReelBuy.Backend.Helpers;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace ReelBuy.Backend.Helpers;
+
 
 public interface IImageResizer
 {

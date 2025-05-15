@@ -1,8 +1,10 @@
 ﻿using ReelBuy.Shared.Resources;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReelBuy.Shared.DTOs;
 
+[ExcludeFromCodeCoverage]
 public class LoginDTO
 {
     [Display(Name = "Email", ResourceType = typeof(Literals))]

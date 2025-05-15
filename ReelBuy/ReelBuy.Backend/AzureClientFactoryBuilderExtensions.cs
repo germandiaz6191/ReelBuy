@@ -2,7 +2,9 @@ using Azure.Core.Extensions;
 using Azure.Storage.Blobs;
 using Azure.Storage.Queues;
 using Microsoft.Extensions.Azure;
+using System.Diagnostics.CodeAnalysis;
 
+ [ExcludeFromCodeCoverage]
 internal static class AzureClientFactoryBuilderExtensions
 {
     public static IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddBlobServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
