@@ -114,11 +114,6 @@ code {
     color: var(--color-text-secundary);
 }
 
-.principal-autocomplete label {
-    color: var(--color-text-secundary) !important;
-    background-color: transparent !important;
-}
-
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -168,6 +163,7 @@ code {
 .bg-alternate {
     background-color: var(--color-surface) !important;
 }
+
 .rotate-icon {
     animation: spin 1s linear infinite;
 }
@@ -180,4 +176,14 @@ code {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.header-autocomplete .mud-input {
+    color: var(--color-appbar-text) !important;
+}
+
+/* color del label */
+.header-autocomplete label.mud-input-label {
+    background-color: var(--color-appbar-background);
+    color: var(--color-appbar-text) !important;
 }

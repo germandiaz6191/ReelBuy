@@ -19,14 +19,14 @@
                 @Localizer["Title"]
             </MudLink>
             <MudSpacer />
-            <MudAutocomplete T="string"
+                <MudAutocomplete T="string"
                              Label=@Localizer["PrincipalSearchAProducts"]
                              Adornment="Adornment.End"
                              AdornmentIcon="@Icons.Material.Filled.Search"
                              Value="selectedProduct"
-                             SearchFunc="SearchProduct"
+                             SearchFunc="SearchProduct"        
                              Variant="Variant.Outlined"
-                             Class="principal-autocomplete"
+                             Class="header-autocomplete"
                              IconSize="Size.Medium"
                              MaxItems="11"
                              Dense="true"

@@ -152,7 +152,7 @@ public partial class CardReel
 
     private async Task OnBuyAsync(Product product)
     {
-        var uriProduct = product.Marketplace?.Domain?.ToString().Concat(product.PathUri);
+        var uriProduct = product.Marketplace?.Domain + product.PathUri;
         // Crea y muestra el diálogo
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
 
