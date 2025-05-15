@@ -43,8 +43,8 @@
 <button type="button" style="display:none;" @onclick="NotifyContentChanged">Actualizar</button>
 
 @code {
-    
-       private const string DefaultProductDescription = @"
+
+    private const string DefaultProductDescription = @"
                                                     <ol>
                                                       <li><strong>Descripción:</strong> </li>
                                                       <li><strong>Tamaño:</strong> </li>
@@ -61,8 +61,7 @@
 
     private BlazoredTextEditor? QuillEditor { get; set; }
 
-    [Parameter]
-    public string Id { get; set; } = $"editor_{Guid.NewGuid()}";
+    private DotNetObjectReference<RichTextEditor>? dotNetRef;
 
     [Parameter]
     public string EditorId { get; set; } = "quillEditor_" + Guid.NewGuid().ToString("N");
@@ -75,8 +74,6 @@
 
     [Parameter]
     public EventCallback<string> ContentChanged { get; set; }
-
-    [Parameter] public string Value { get; set; }
 
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
 
@@ -93,37 +90,34 @@
 
         if (QuillEditor != null && firstRender)
         {
-            try
-            {
-                await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
 
-                // Configurar interop para detectar cambios
-                await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection",
-                    "QuillEditor",
-                    DotNetObjectReference.Create(this));
+                try
+                {
+                    await Task.Delay(100); // Corto retraso para asegurar que el editor está listo
 
-                    try
-                    {
-                        Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID: {Id}");
-                        Console.WriteLine($"[DEBUG] Cargando HTML en editor con ID 2: {EditorId}");
-                        Console.WriteLine($"[DEBUG] Contenido HTML: {Value}");
-                        var contentValue = !string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>"
-                                                                                ? Content
-                                                                                : DefaultProductDescription;
+                    dotNetRef = DotNetObjectReference.Create(this);
+                    // Configurar interop para detectar cambios
+                    await JSRuntime.InvokeVoidAsync("window.setupQuillChangeDetection", "QuillEditor", dotNetRef);
+                    // Configurar interop para detectar onblur
+                    await JSRuntime.InvokeVoidAsync("QuillFunctions.registerQuillBlurHandler", "QuillEditor", dotNetRef);
+
+                    var contentValue = !string.IsNullOrWhiteSpace(Content) && Content != "<p>&nbsp;</p>"
+                                                                            ? Content
+                                                                            : DefaultProductDescription;
 
                     await JSRuntime.InvokeVoidAsync("QuillFunctions.loadQuillHTMLContent", "QuillEditor", contentValue);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error al cargar contenido inicial: {ex.Message}");
-                    }
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error al configurar el editor: {ex.Message}");
-            }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error al inicializar interop: {ex.Message}");
+                }
+            
         }
+    }
+
+    public void Dispose()
+    {
+        dotNetRef?.Dispose();
     }
 
     private async Task NotifyContentChanged()
@@ -140,13 +134,13 @@
             if (QuillEditor != null)
             {
                 string html = await QuillEditor.GetHTML();
-                
+
                 // No notificar cambios si es solo un espacio en blanco
                 if (html == "<p>&nbsp;</p>" || html == "<p></p>")
                 {
                     html = "";
                 }
-                
+
                 Console.WriteLine($"RichTextEditor HandleContentChange - ID: {EditorId}, Nuevo contenido: {TruncateContent(html)}");
                 await ContentChanged.InvokeAsync(html);
             }
@@ -155,6 +149,12 @@
         {
             Console.WriteLine($"Error en HandleContentChange: {ex.Message}");
         }
+    }
+
+    [JSInvokable]
+    public async Task OnEditorBlur(string html)
+    {
+        await ContentChanged.InvokeAsync(html);
     }
 
     private string TruncateContent(string content)

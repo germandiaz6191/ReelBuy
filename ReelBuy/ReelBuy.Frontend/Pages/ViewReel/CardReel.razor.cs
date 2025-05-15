@@ -152,7 +152,7 @@ public partial class CardReel
 
     private async Task OnBuyAsync(Product product)
     {
-        var uriProduct = product.Marketplace?.Domain?.ToString();
+        var uriProduct = product.Marketplace?.Domain?.ToString().Concat(product.PathUri);
         // Crea y muestra el diálogo
         var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true };
 
@@ -341,7 +341,7 @@ public partial class CardReel
         int currentPage = page + 1;
         Filter = product.Id.ToString();
         var url = $"{baseUrlComments}/paginatedByProduct/?page={currentPage}&recordsnumber={PageSize}&filter={Filter}";
-        
+
         var responseHttp = await Repository.GetAsync<List<Comments>>(url);
         if (responseHttp.Response == null || responseHttp.Error)
         {
@@ -349,7 +349,7 @@ public partial class CardReel
             Snackbar.Add(Localizer[message!], Severity.Error);
             return;
         }
-        
+
         var newComments = responseHttp.Response;
         Page = currentPage;
         if (newComments?.Any() == true)

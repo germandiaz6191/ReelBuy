@@ -540,4 +540,13 @@
   <data name="LoadingReels" xml:space="preserve">
     <value>Loading reels...</value>
   </data>
+  <data name="PathUri" xml:space="preserve">
+    <value>Product link</value>
+  </data>
+  <data name="PathUriTitle" xml:space="preserve">
+    <value>Enter the URL without the domain</value>
+  </data>
+  <data name="ProdutsPending" xml:space="preserve">
+    <value>Pending product approve</value>
+  </data>
 </root>

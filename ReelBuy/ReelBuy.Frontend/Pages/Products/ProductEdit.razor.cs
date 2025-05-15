@@ -41,21 +41,6 @@ public partial class ProductEdit
         }
     }
 
-    private async Task EditAsync()
-    {        
-        // Enviar la solicitud de actualización al backend
-        var responseHttp = await Repository.PutAsync($"api/products", product);
-        if (responseHttp.Error)
-        {
-            var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
-        }
-        
-        Return();
-        Snackbar.Add(Localizer["RecordUpdatedOk"], Severity.Success);
-    }
-
     private void Return()
     {
         productForm!.FormPostedSuccessfully = true;

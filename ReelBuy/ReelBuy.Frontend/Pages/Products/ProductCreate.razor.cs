@@ -23,20 +23,6 @@ public partial class ProductCreate
         product.StatusId = (int)StatusProduct.Pending;
     }
 
-    private async Task CreateAsync()
-    {
-        var responseHttp = await Repository.PostAsync("/api/products", product);
-        if (responseHttp.Error)
-        {
-            var message = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(Localizer[message!], Severity.Error);
-            return;
-        }
-
-        Return();
-        Snackbar.Add(Localizer["RecordCreatedOk"], Severity.Success);
-    }
-
     private void Return()
     {
         productForm!.FormPostedSuccessfully = true;

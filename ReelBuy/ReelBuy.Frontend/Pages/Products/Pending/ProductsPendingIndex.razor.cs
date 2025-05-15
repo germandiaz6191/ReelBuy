@@ -129,7 +129,7 @@ public partial class ProductsPendingIndex
     {
         loading = true;
 
-        var url = $"{baseUrl}/UpdateProducts";
+        var url = $"{baseUrl}/statuses";
         var responseHttp = await Repository.PutAsync(url, modifiedProducts);
         if (responseHttp.Error)
         {

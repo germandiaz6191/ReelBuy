@@ -140,6 +140,25 @@ window.QuillFunctions = {
             return false;
         }
     },
+    registerQuillBlurHandler: function (quillElementId, dotNetHelper) {
+        const editorContainer = document.getElementById(quillElementId);
+        if (!editorContainer) {
+            console.error("No se encontró el contenedor del editor con ID:", quillElementId);
+            return;
+        }
+
+        const quill = window.quillEditors[quillElementId];
+        if (!quill) {
+            console.error("No se encontró la instancia Quill para el editor:", quillElementId);
+            return;
+        }
+
+        quill.root.addEventListener("blur", function () {
+            const content = quill.root.innerHTML;
+            dotNetHelper.invokeMethodAsync("OnEditorBlur", content)
+                .catch(err => console.error("Error llamando a OnEditorBlur:", err));
+        });
+    },
 
     // Función auxiliar para obtener el elemento DOM
     _getElement: function (quillElement) {
