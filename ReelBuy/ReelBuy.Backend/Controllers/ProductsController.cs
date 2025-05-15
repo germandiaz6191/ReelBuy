@@ -253,8 +253,8 @@ public class ProductsController : GenericController<Product>
                 if (!string.IsNullOrEmpty(reel.ReelUri))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
-                    //reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
-                    reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
+                    reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    //reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
                 }
             }
         }
@@ -338,11 +338,11 @@ public class ProductsController : GenericController<Product>
         CurrentProduct.Status = ResponseStatus.Result;
         CurrentProduct.Category = ResponseCategory.Result;
 
-        if (CurrentProduct.Reels != null && CurrentProduct.Reels.Any())
+        if (model.Reels != null && model.Reels.Any())
         {
-            foreach (var reel in CurrentProduct.Reels)
+            foreach (var reel in model.Reels)
             {
-                if (!string.IsNullOrEmpty(reel.ReelUri))
+                if (!string.IsNullOrEmpty(reel.ReelUri) && !reel.ReelUri.Contains(".mp4"))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
                     //reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
