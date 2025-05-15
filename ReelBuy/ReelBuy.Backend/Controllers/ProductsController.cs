@@ -345,11 +345,18 @@ public class ProductsController : GenericController<Product>
                 if (!string.IsNullOrEmpty(reel.ReelUri) && !reel.ReelUri.Contains(".mp4"))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
-                    reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    string uri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
                     //reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
+
+                    if (CurrentProduct.Reels != null)
+                    {
+                        var firstReel = CurrentProduct.Reels.FirstOrDefault();
+                        firstReel!.ReelUri = uri;
+                        firstReel!.Name = model.Name;
+                    }      
                 }
+                
             }
-            model.Reels = CurrentProduct.Reels;
         }
 
         var response = await base.PutAsync(CurrentProduct);
