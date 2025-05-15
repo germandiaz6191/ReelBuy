@@ -353,9 +353,8 @@ public class ProductsController : GenericController<Product>
                         var firstReel = CurrentProduct.Reels.FirstOrDefault();
                         firstReel!.ReelUri = uri;
                         firstReel!.Name = model.Name;
-                    }      
+                    }
                 }
-                
             }
         }
 
