@@ -1,9 +1,11 @@
 ﻿using ReelBuy.Shared.Entities;
 using ReelBuy.Shared.Resources;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReelBuy.Shared.DTOs;
 
+[ExcludeFromCodeCoverage]
 public class ProductDTO
 {
     public int Id { get; set; }

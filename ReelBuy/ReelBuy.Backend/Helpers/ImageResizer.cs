@@ -1,10 +1,11 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using System.IO;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ReelBuy.Backend.Helpers
 {
+    [ExcludeFromCodeCoverage]
     public class ImageResizer : IImageResizer
     {
         public byte[] ResizeImage(byte[] imageBytes, int maxWidth, int maxHeight, int quality)

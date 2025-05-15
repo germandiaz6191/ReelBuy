@@ -1,5 +1,8 @@
-﻿namespace ReelBuy.Shared.DTOs;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace ReelBuy.Shared.DTOs;
+
+[ExcludeFromCodeCoverage]
 public class PaginationDTO
 {
     public int Id { get; set; }

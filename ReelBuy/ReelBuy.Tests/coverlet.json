@@ -1,0 +1,17 @@
+{
+  "coverage": {
+    "exclude": [
+      "[ReelBuy.Shared].DTOs.*",
+      "[ReelBuy.Shared].Entities.*",
+      "[ReelBuy.Backend].Data.*",
+      "[ReelBuy.Backend].Migrations.*",
+      "[ReelBuy.Backend].Helpers.*"
+    ],
+    "excludeByAttribute": [
+      "System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage"
+    ],
+    "singleHit": false,
+    "mergeWith": "",
+    "useSourceLink": true
+  }
+}
