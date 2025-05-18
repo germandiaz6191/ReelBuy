@@ -283,6 +283,7 @@ public partial class ProductForm
             if (result)
             {
                 Snackbar.Add(Localizer["ChangesSaved"], Severity.Success);
+                NavigationManager.NavigateTo("/products");
             }
             else
             {

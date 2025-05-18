@@ -299,7 +299,7 @@ public partial class CardReel
         var description = product.Description;
         //description = "<p><strong>Precio especial:</strong> $9.99</p><p>Envío gratis por tiempo limitado.</p>";
         // Crea y muestra el diálogo
-        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge, };
+        var options = new DialogOptions { CloseOnEscapeKey = true, CloseButton = true, MaxWidth = MaxWidth.ExtraLarge };
 
         var parameters = new DialogParameters
         {
