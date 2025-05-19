@@ -14,10 +14,48 @@ using Microsoft.OpenApi.Models;
 using ReelBuy.Backend.Helpers;
 using Orders.Backend.Helpers;
 using Microsoft.Extensions.Azure;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddJsonFile("appsettings.Development.json", optional: true);
+}
+else
+{
+    var keyvaultUrl = builder.Configuration["AZURE_KEYVAULT_URI"];
+
+    if (!string.IsNullOrEmpty(keyvaultUrl))
+    {
+        builder.Configuration.AddAzureKeyVault(
+            new Uri(builder.Configuration["AZURE_KEYVAULT_URI"]!),
+            new DefaultAzureCredential()
+            );
+
+        var storageConnection = builder.Configuration["AzureStorageConnectionSecret"];
+        if (!string.IsNullOrEmpty(storageConnection))
+        {
+            builder.Configuration["ConnectionStrings:AzureStorage"] = storageConnection;
+        }
+    }
+}
+
+builder.Services.AddDbContext<DataContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAzureClients(clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureStorage:blob"]!, preferMsi: true);
+    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureStorage:queue"]!, preferMsi: true);
+});
+
+builder.Services.Configure<AzureStorageConfig>(options =>
+{
+    options.ConnectionString = builder.Configuration.GetConnectionString("AzureStorage");
+    options.ContainerName = "reels;
+});
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckl
@@ -55,7 +93,6 @@ builder.Services.AddSwaggerGen(c =>
         });
 });
 
-builder.Services.AddDbContext<DataContext>(d => d.UseSqlServer("name=LocalConnection"));
 builder.Services.AddTransient<SeedDb>();
 builder.Services.AddScoped(typeof(IGenericUnitOfWork<>), typeof(GenericUnitOfWork<>));
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -121,11 +158,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddScoped<IMailHelper, MailHelper>();
-builder.Services.AddAzureClients(clientBuilder =>
-{
-    clientBuilder.AddBlobServiceClient(builder.Configuration["ConnectionStrings:AzureStorage:blob"]!, preferMsi: true);
-    clientBuilder.AddQueueServiceClient(builder.Configuration["ConnectionStrings:AzureStorage:queue"]!, preferMsi: true);
-});
 
 var app = builder.Build();
 SeedData(app);

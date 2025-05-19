@@ -29,7 +29,7 @@
             {
                 <div class="main-reel color-palette-surface">
                     <video controls autoplay class="reel-video"
-                           src="data:video/mp4;base64,@FirstReel?.ReelUri"
+                           src="@FirstReel?.ReelUri"
                            @onended="OnNext">
                     </video>
                 </div>

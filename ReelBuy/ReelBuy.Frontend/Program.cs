@@ -10,11 +10,17 @@ using ReelBuy.Frontend.AuthenticationProviders;
 using ReelBuy.Frontend.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+// appsettings.json y appsettings.{Environment}.json
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+    .AddJsonFile($"appsettings.{builder.HostEnvironment.Environment}.json", optional: true, reloadOnChange: false);
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var uriApi = "https://localhost:7287";
-//var uriApi = "https://reelbuybackend.azurewebsites.net";
+var uriApi = builder.Configuration["ApiSettings:BaseUrl"];
+
 builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(uriApi) });
 builder.Services.AddScoped<IRepository, Repository>();
 builder.Services.AddLocalization();

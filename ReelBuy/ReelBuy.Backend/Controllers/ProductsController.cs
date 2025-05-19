@@ -93,17 +93,17 @@ public class ProductsController : GenericController<Product>
                 {
                     return Ok(currentReels);
                 }
-                foreach (Product reel in currentReels)
-                {
-                    var reelItem = reel.Reels.FirstOrDefault();
-                    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
-                    {
-                        var pathUri = reelItem.ReelUri.Split("/").Last();
-                        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+                //foreach (Product reel in currentReels)
+                //{
+                //    var reelItem = reel.Reels.FirstOrDefault();
+                //    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+                //    {
+                //        var pathUri = reelItem.ReelUri.Split("/").Last();
+                //        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
 
-                        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
-                    }
-                }
+                //        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+                //    }
+                //}
 
                 return Ok(currentReels);
             }
@@ -122,17 +122,17 @@ public class ProductsController : GenericController<Product>
                 {
                     return Ok(currentReels);
                 }
-                foreach (Product reel in currentReels)
-                {
-                    var reelItem = reel.Reels.FirstOrDefault();
-                    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
-                    {
-                        var pathUri = reelItem.ReelUri.Split("/").Last();
-                        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+                //foreach (Product reel in currentReels)
+                //{
+                //    var reelItem = reel.Reels.FirstOrDefault();
+                //    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+                //    {
+                //        var pathUri = reelItem.ReelUri.Split("/").Last();
+                //        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
 
-                        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
-                    }
-                }
+                //        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+                //    }
+                //}
 
                 return Ok(currentReels);
             }
@@ -157,17 +157,17 @@ public class ProductsController : GenericController<Product>
             {
                 return Ok(currentReels);
             }
-            foreach (Product reel in currentReels)
-            {
-                var reelItem = reel.Reels.FirstOrDefault();
-                if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
-                {
-                    var pathUri = reelItem.ReelUri.Split("/").Last();
-                    var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
+            //foreach (Product reel in currentReels)
+            //{
+            //    var reelItem = reel.Reels.FirstOrDefault();
+            //    if (reelItem != null && !string.IsNullOrEmpty(reelItem.ReelUri))
+            //    {
+            //        var pathUri = reelItem.ReelUri.Split("/").Last();
+            //        var reelBytes = await _fileStorage.GetFileAsync(pathUri, "reels");
 
-                    reelItem.ReelUri = Convert.ToBase64String(reelBytes);
-                }
-            }
+            //        reelItem.ReelUri = Convert.ToBase64String(reelBytes);
+            //    }
+            //}
 
             return Ok(currentReels);
         }
@@ -253,8 +253,8 @@ public class ProductsController : GenericController<Product>
                 if (!string.IsNullOrEmpty(reel.ReelUri))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
-                    //reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
-                    reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
+                    reel.ReelUri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    //reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
                 }
             }
         }
@@ -345,8 +345,8 @@ public class ProductsController : GenericController<Product>
                 if (!string.IsNullOrEmpty(reel.ReelUri) && !reel.ReelUri.Contains(".mp4"))
                 {
                     var productReel = Convert.FromBase64String(reel.ReelUri);
-                    //string uri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
-                    reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
+                    string uri = await _fileStorage.SaveFileAsync(productReel, ".mp4", "reels");
+                    //reel.ReelUri = "https://azurerb2025.blob.core.windows.net/reels/15613a15-bb46-417c-90ad-d456853a2874.mp4";
 
                     if (CurrentProduct.Reels != null)
                     {
