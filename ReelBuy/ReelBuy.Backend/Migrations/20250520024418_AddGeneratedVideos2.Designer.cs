@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReelBuy.Backend.Data;
 
@@ -11,9 +12,11 @@ using ReelBuy.Backend.Data;
 namespace ReelBuy.Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250520024418_AddGeneratedVideos2")]
+    partial class AddGeneratedVideos2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,9 +338,6 @@ namespace ReelBuy.Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StatusDetail")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Theme")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -348,9 +348,6 @@ namespace ReelBuy.Backend.Migrations
 
                     b.Property<long>("VideoId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("VideoUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Voice")
                         .IsRequired()

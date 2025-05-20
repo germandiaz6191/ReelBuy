@@ -1,0 +1,73 @@
+@using ReelBuy.Shared.Entities
+@using ReelBuy.Shared.Resources
+@using ReelBuy.Frontend.Repositories
+@using MudBlazor
+@using Microsoft.Extensions.Localization
+@using ReelBuy.Shared.DTOs
+@inject IStringLocalizer<Literals> Localizer
+@inject IRepository Repository
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="form" @bind-IsValid="@success">
+            <MudTextField @bind-Value="model.Prompt" Label="@Localizer["Prompt"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField @bind-Value="model.Voice" Label="@Localizer["Voice"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField @bind-Value="model.Theme" Label="@Localizer["Theme"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField @bind-Value="model.Language" Label="@Localizer["Language"]" Required="true" RequiredError="@Localizer["Required"]" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@Localizer["Cancel"]</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit" Disabled="@(!success)">@Localizer["Submit"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public int Id { get; set; }
+    [Parameter] public bool IsEdit { get; set; }
+
+    private MudForm form;
+    private bool success;
+    private VideoGenerationRequest model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            var responseHttp = await Repository.GetAsync<GeneratedVideo>($"/api/VideoGeneration/{Id}");
+            if (responseHttp.Error)
+            {
+                var message = await responseHttp.GetErrorMessageAsync();
+                Snackbar.Add(Localizer[message!], Severity.Error);
+                return;
+            }
+
+            var generatedVideo = responseHttp.Response;
+            if (generatedVideo != null)
+            {
+                model.Prompt = generatedVideo.Prompt;
+                model.Voice = generatedVideo.Voice;
+                model.Theme = generatedVideo.Theme;
+                model.Language = generatedVideo.Language;
+            }
+        }
+    }
+
+    private async Task Submit()
+    {
+        var responseHttp = await Repository.PostAsync<VideoGenerationRequest, GeneratedVideo>("/api/VideoGeneration/generate", model);
+        if (responseHttp.Error)
+        {
+            var message = await responseHttp.GetErrorMessageAsync();
+            Snackbar.Add(Localizer[message!], Severity.Error);
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+} 

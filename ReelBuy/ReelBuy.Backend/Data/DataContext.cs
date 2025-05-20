@@ -23,6 +23,7 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<Reel> Reels { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<Comments> Comments { get; set; }
+    public DbSet<GeneratedVideo> GeneratedVideos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -137,5 +138,15 @@ public class DataContext : IdentityDbContext<User>
                     .WithMany()
                     .HasForeignKey("LikedById")
                     .OnDelete(DeleteBehavior.Restrict));
+
+        modelBuilder.Entity<GeneratedVideo>()
+            .HasOne(gv => gv.User)
+            .WithMany()
+            .HasForeignKey(gv => gv.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GeneratedVideo>()
+            .HasIndex(gv => new { gv.UserId, gv.VideoId })
+            .IsUnique();
     }
 }

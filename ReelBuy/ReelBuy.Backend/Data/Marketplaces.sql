@@ -1,5 +1,5 @@
 ﻿INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Exito',N'www.exito.com')
-INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Mercado Libre',N'www.mercadolibre.com')
+INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Mercado Libre',N'www.mercadolibre.com.co')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Amazon',N'www.amazon.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Temu',N'www.temu.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Shain',N'www.shain.com')

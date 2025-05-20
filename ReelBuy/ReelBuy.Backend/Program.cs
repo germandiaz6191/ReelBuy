@@ -15,7 +15,7 @@ using ReelBuy.Backend.Helpers;
 using Orders.Backend.Helpers;
 using Microsoft.Extensions.Azure;
 using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
+using ReelBuy.Backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,7 +54,7 @@ builder.Services.AddAzureClients(clientBuilder =>
 builder.Services.Configure<AzureStorageConfig>(options =>
 {
     options.ConnectionString = builder.Configuration.GetConnectionString("AzureStorage");
-    options.ContainerName = "reels;
+    options.ContainerName = "reels";
 });
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -158,6 +158,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddScoped<IMailHelper, MailHelper>();
+builder.Services.AddHttpClient<IVideoGenerationService, VideoGenerationService>();
+builder.Services.AddScoped<IVideoGenerationService, VideoGenerationService>();
 
 var app = builder.Build();
 SeedData(app);

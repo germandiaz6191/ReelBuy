@@ -1,0 +1,55 @@
+@page "/generated-videos"
+
+@if (loading)
+{
+    <Loading />
+}
+else
+{
+    <MudTable Items="@GeneratedVideos"
+              @ref="table"
+              ServerData="LoadListAsync"
+              Dense="true"
+              Hover="true"
+              Striped="true"
+              FixedHeader="true"
+              FixedFooter="true">
+        <ToolBarContent>
+            <div class="d-flex justify-content-between">
+                <MudText Typo="Typo.h6" Class="me-4"> @Localizer["Generated Videos"]</MudText>
+                <MudButton Variant="Variant.Outlined"
+                           EndIcon="@Icons.Material.Filled.Add"
+                           Color="Color.Info" OnClick="@(() => ShowModalAsync())">
+                    @Localizer["New"]
+                </MudButton>
+            </div>
+            <MudSpacer />
+            <FilterComponent ApplyFilter="SetFilterValue" />
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>@Localizer["Video ID"]</MudTh>
+            <MudTh>@Localizer["Prompt"]</MudTh>
+            <MudTh>@Localizer["Voice"]</MudTh>
+            <MudTh>@Localizer["Theme"]</MudTh>
+            <MudTh>@Localizer["Language"]</MudTh>
+            <MudTh>@Localizer["Created At"]</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>@context.VideoId</MudTd>
+            <MudTd>@context.Prompt</MudTd>
+            <MudTd>@context.Voice</MudTd>
+            <MudTd>@context.Theme</MudTd>
+            <MudTd>@context.Language</MudTd>
+            <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
+        </RowTemplate>
+        <NoRecordsContent>
+            <MudText>@Localizer["NoRecords"]</MudText>
+        </NoRecordsContent>
+        <PagerContent>
+            <MudTablePager RowsPerPageString=@Localizer["RecordsNumber"]
+                           PageSizeOptions="pageSizeOptions"
+                           AllItemsText=@Localizer["All"]
+                           InfoFormat="@infoFormat" />
+        </PagerContent>
+    </MudTable>
+} 
