@@ -1,12 +1,11 @@
-using System.Net;
 using ReelBuy.Frontend.Repositories;
 using ReelBuy.Shared.Resources;
-using ReelBuy.Frontend.Shared;
 using ReelBuy.Shared.Entities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Shared.DTOs;
+using Microsoft.JSInterop;
 
 namespace ReelBuy.Frontend.Pages.GeneratedVideos;
 
@@ -26,32 +25,18 @@ public partial class GeneratedVideosIndex
     [Inject] private IDialogService DialogService { get; set; } = null!;
     [Inject] private ISnackbar Snackbar { get; set; } = null!;
     [Inject] private NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
 
     [Parameter, SupplyParameterFromQuery] public string Filter { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadUserAsyc();
-        if (user != null)
-        {
-            await LoadTotalRecordsAsync();
-        }
+        await LoadTotalRecordsAsync();
     }
 
     private async Task LoadTotalRecordsAsync()
     {
         loading = true;
-
-        if (user == null)
-        {
-            await LoadUserAsyc();
-        }
-
-        if (user == null)
-        {
-            loading = false;
-            return;
-        }
 
         string url = $"{baseUrl}/totalRecordsPaginated";
 
@@ -75,16 +60,6 @@ public partial class GeneratedVideosIndex
 
     private Func<TableState, CancellationToken, Task<TableData<GeneratedVideo>>> LoadListAsync => async (state, cancellationToken) =>
     {
-        if (user == null)
-        {
-            await LoadUserAsyc();
-        }
-
-        if (user == null)
-        {
-            return new TableData<GeneratedVideo> { Items = [], TotalItems = 0 };
-        }
-
         int page = state.Page + 1;
         int pageSize = state.PageSize;
         string url = $"{baseUrl}/paginated/?page={page}&recordsnumber={pageSize}";
@@ -106,9 +81,16 @@ public partial class GeneratedVideosIndex
             return new TableData<GeneratedVideo> { Items = [], TotalItems = 0 };
         }
 
+        var videos = responseHttp.Response;
+
+        _ = Task.Run(async () =>
+        {
+            await CheckPendingStatusesAsync(videos);
+        });
+
         return new TableData<GeneratedVideo>
         {
-            Items = responseHttp.Response,
+            Items = videos,
             TotalItems = totalRecords
         };
     };
@@ -121,16 +103,6 @@ public partial class GeneratedVideosIndex
 
     private async Task ShowModalAsync(int id = 0, bool isEdit = false)
     {
-        if (user == null)
-        {
-            await LoadUserAsyc();
-            if (user == null)
-            {
-                Snackbar.Add(Localizer["You must be logged in to perform this action"], Severity.Warning);
-                return;
-            }
-        }
-
         var parameters = new DialogParameters
         {
             { "Id", id },
@@ -145,22 +117,68 @@ public partial class GeneratedVideosIndex
             await table.ReloadServerData();
         }
     }
-    
-    private async Task LoadUserAsyc()
+
+    private async Task CheckPendingStatusesAsync(List<GeneratedVideo> videos)
     {
-        var responseHttp = await Repository.GetAsync<User>($"/api/accounts");
-        if (responseHttp.Error)
+        var pendingVideos = videos.Where(v => v.StatusDetail == "pending").ToList();
+
+        foreach (var video in pendingVideos)
         {
-            if (responseHttp.HttpResponseMessage.StatusCode == HttpStatusCode.NotFound)
+            try
             {
-                NavigationManager.NavigateTo("/");
-                return;
+                VideoStatusUpdateRequest dtoVideoStatusUpdate = new()
+                {
+                    VideoId = video.VideoId
+                };
+                var responseHttp = await Repository.PostAsync<VideoStatusUpdateRequest, GeneratedVideo>($"{baseUrl}/check-status", dtoVideoStatusUpdate);
+
+                if (responseHttp.Error)
+                {
+                    var messageError = await responseHttp.GetErrorMessageAsync();
+                    Snackbar.Add(messageError!, Severity.Error);
+                    return;
+                }
+
+                GeneratedVideo generatedVideo = responseHttp.Response;
+
+                // Si el estado cambió, actualízalo
+                if (generatedVideo.StatusDetail != video.StatusDetail)
+                {
+                    video.StatusDetail = generatedVideo.StatusDetail;
+                    video.VideoUrl = generatedVideo.VideoUrl;
+                    // Forzar renderizado en el hilo principal
+                    await InvokeAsync(StateHasChanged);
+                }
             }
-            var messageError = await responseHttp.GetErrorMessageAsync();
-            Snackbar.Add(messageError!, Severity.Error);
-            return;
+            catch (Exception e)
+            {
+                Console.WriteLine("Error actualizando el estado ", e);
+            }
         }
-        user = responseHttp.Response;
-        loading = false;
+    }
+
+    private async Task HandleExpiredDownloadAsync(GeneratedVideo video)
+    {
+        try
+        {
+            var response = await Repository.GetAsync<string>($"{baseUrl}/{video.VideoId}");
+
+            if (!response.Error && !string.IsNullOrWhiteSpace(response.Response))
+            {
+                // Opcional: actualiza la propiedad local
+                video.VideoUrl = response.Response;
+
+                // Forzar descarga desde JavaScript
+                await JS.InvokeVoidAsync("downloadFileFromUrl", video.VideoUrl, $"video_{video.Id}.mp4");
+            }
+            else
+            {
+                Snackbar.Add(Localizer["No se pudo obtener el video."], Severity.Error);
+            }
+        }
+        catch
+        {
+            Snackbar.Add(Localizer["Error al intentar descargar el video."], Severity.Error);
+        }
     }
 }

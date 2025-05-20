@@ -13,9 +13,9 @@
     <DialogContent>
         <MudForm @ref="form" @bind-IsValid="@success">
             <MudTextField @bind-Value="model.Prompt" Label="@Localizer["Prompt"]" Required="true" RequiredError="@Localizer["Required"]" />
-            <MudTextField @bind-Value="model.Voice" Label="@Localizer["Voice"]" Required="true" RequiredError="@Localizer["Required"]" />
-            <MudTextField @bind-Value="model.Theme" Label="@Localizer["Theme"]" Required="true" RequiredError="@Localizer["Required"]" />
-            <MudTextField @bind-Value="model.Language" Label="@Localizer["Language"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField ReadOnly @bind-Value="model.Voice" Label="@Localizer["Voice"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField ReadOnly @bind-Value="model.Theme" Label="@Localizer["Theme"]" Required="true" RequiredError="@Localizer["Required"]" />
+            <MudTextField ReadOnly @bind-Value="model.Language" Label="@Localizer["Language"]" Required="true" RequiredError="@Localizer["Required"]" />
         </MudForm>
     </DialogContent>
     <DialogActions>

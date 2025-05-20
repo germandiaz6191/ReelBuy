@@ -272,3 +272,17 @@ window.setupQuillChangeDetection = function (quillEditorId, dotNetHelper) {
         console.error("Error al configurar detección de cambios:", error);
     }
 };
+
+window.downloadFileFromUrl = function (url, filename) {
+    try {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename || '';
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error("Error al intentar descargar el archivo:", error);
+    }
+};

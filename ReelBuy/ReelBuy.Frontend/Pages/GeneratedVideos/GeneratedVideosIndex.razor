@@ -32,7 +32,9 @@ else
             <MudTh>@Localizer["Voice"]</MudTh>
             <MudTh>@Localizer["Theme"]</MudTh>
             <MudTh>@Localizer["Language"]</MudTh>
+            <MudTh>@Localizer["Status"]</MudTh>
             <MudTh>@Localizer["Created At"]</MudTh>
+            <MudTh>@Localizer["Actions"]</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd>@context.VideoId</MudTd>
@@ -40,7 +42,28 @@ else
             <MudTd>@context.Voice</MudTd>
             <MudTd>@context.Theme</MudTd>
             <MudTd>@context.Language</MudTd>
+            <MudTd>
+                @context.StatusDetail
+                @if (context.StatusDetail == "pending")
+                {
+                    <MudProgressCircular Indeterminate="true" Class="ml-2" Color="Color.Primary" />
+                }
+            </MudTd>
             <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
+            <MudTd>
+                @if (context.CreatedAt.AddMinutes(30) < DateTime.UtcNow)
+                {
+                    <MudButton OnClick="@(async () => await HandleExpiredDownloadAsync(context))">
+                        @Localizer["Download"]
+                    </MudButton>
+                }
+                else if (!string.IsNullOrWhiteSpace(context.VideoUrl))
+                {
+                    <a href="@context.VideoUrl" download class="mud-button mud-button-text mud-primary-text" target="_blank">
+                        @Localizer["Download"]
+                    </a>
+                }
+            </MudTd>
         </RowTemplate>
         <NoRecordsContent>
             <MudText>@Localizer["NoRecords"]</MudText>

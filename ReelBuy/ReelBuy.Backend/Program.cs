@@ -160,6 +160,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 builder.Services.AddHttpClient<IVideoGenerationService, VideoGenerationService>();
 builder.Services.AddScoped<IVideoGenerationService, VideoGenerationService>();
+builder.Services.AddScoped<IVideoGenerationUnitOfWork, VideoGenerationUnitOfWork>();
+
 
 var app = builder.Build();
 SeedData(app);

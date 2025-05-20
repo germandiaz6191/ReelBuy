@@ -9,6 +9,8 @@ using SixLabors.ImageSharp;
 using Microsoft.EntityFrameworkCore;
 using ReelBuy.Backend.Helpers;
 using ReelBuy.Shared.DTOs;
+using ReelBuy.Shared.Responses;
+using ReelBuy.Backend.Repositories.Implementations;
 
 namespace ReelBuy.Backend.Services;
 
@@ -16,9 +18,12 @@ public interface IVideoGenerationService
 {
     Task<GeneratedVideo> GenerateVideoAsync(string userId, string prompt, string voice = "Charlie", string theme = "Hormozi_1", string language = "Spanish");
     Task<GeneratedVideo> UpdateVideosStatusAsync(long videoId);
+    Task<ActionResponse<IEnumerable<GeneratedVideo>>> GetAsync(PaginationDTO pagination);
+    Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
+    Task<ActionResponse<string>> GetVideoUrlAsync(long videoId);
 }
 
-public class VideoGenerationService : IVideoGenerationService
+public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoGenerationService
 {
     private readonly IConfiguration _configuration;
     private readonly DataContext _context;
@@ -29,7 +34,7 @@ public class VideoGenerationService : IVideoGenerationService
         IConfiguration configuration,
         DataContext context,
         IHttpClientFactory httpClientFactory,
-        ILogger<VideoGenerationService> logger)
+        ILogger<VideoGenerationService> logger) : base(context)
     {
         _configuration = configuration;
         _context = context;
@@ -76,7 +81,8 @@ public class VideoGenerationService : IVideoGenerationService
             Prompt = prompt,
             Voice = voice,
             Theme = theme,
-            Language = language
+            Language = language,
+            StatusDetail = "pending"
         };
 
         _context.GeneratedVideos.Add(generatedVideo);
@@ -118,6 +124,76 @@ public class VideoGenerationService : IVideoGenerationService
 
         await _context.SaveChangesAsync();
         return video;
+    }
+    public async Task<ActionResponse<string>> GetVideoUrlAsync(long videoId)
+    {
+        var client = _httpClientFactory.CreateClient("VadooAPI");
+        var apiKey = _configuration["VadooAPI:ApiKey"];
+        client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
+
+        var video = await _context.GeneratedVideos.FirstOrDefaultAsync(v => v.VideoId == videoId);
+
+        try
+        {
+            var response = await client.GetAsync($"https://viralapi.vadoo.tv/api/get_video_url?id={video.VideoId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error checking video status: {ResponseContent}", responseContent);
+                video.StatusDetail = $"Error checking status: {responseContent}";
+            }
+            var statusResponse = JsonSerializer.Deserialize<VadooVideoStatusResponse>(responseContent);
+            video.StatusDetail = statusResponse!.Status;
+            video.VideoUrl = statusResponse.Url;
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating video status for video {VideoId}", video.Id);
+            video.StatusDetail = "error";
+            video.StatusDetail = $"Error: {ex.Message}";
+        }
+
+
+        await _context.SaveChangesAsync();
+        return video?.VideoUrl ?? string.Empty;
+    }
+    public override async Task<ActionResponse<IEnumerable<GeneratedVideo>>> GetAsync(PaginationDTO pagination)
+    {
+        var queryable = _context.GeneratedVideos
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(pagination.Filter))
+        {
+            queryable = queryable.Where(x => x.UserId.ToLower().Contains(pagination.Filter.ToLower()));
+        }
+
+        return new ActionResponse<IEnumerable<GeneratedVideo>>
+        {
+            WasSuccess = true,
+            Result = await queryable
+                .OrderBy(x => x.CreatedAt)
+                .Paginate(pagination)
+                .ToListAsync()
+        };
+    }
+
+    public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination)
+    {
+        var queryable = _context.GeneratedVideos.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(pagination.Filter))
+        {
+            queryable = queryable.Where(x => x.UserId.ToLower().Contains(pagination.Filter.ToLower()));
+        }
+
+        double count = await queryable.CountAsync();
+        return new ActionResponse<int>
+        {
+            WasSuccess = true,
+            Result = (int)count
+        };
     }
 }
 
