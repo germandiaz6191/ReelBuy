@@ -397,3 +397,7 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /ReelBuy/ReelBuy.Frontend/App.razor.css
+/ReelBuy/ReelBuy.Frontend/Properties/ServiceDependencies/app-reelbuy-blazor - Web Deploy/profile.arm.json
+/ReelBuy/ReelBuy.Backend/Properties/ServiceDependencies/app-reelbuy-api - Web Deploy
+/ReelBuy/ReelBuy.Frontend/wwwroot/appsettings.Development.json
+/ReelBuy/ReelBuy.Backend/appsettings.Development.json
