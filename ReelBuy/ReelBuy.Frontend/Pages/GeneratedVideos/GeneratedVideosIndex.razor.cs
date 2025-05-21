@@ -181,7 +181,7 @@ public partial class GeneratedVideosIndex : IDisposable
         _statusCheckTimer = new System.Timers.Timer(30000); // 30 segundos
         _statusCheckTimer.Elapsed += async (s, e) =>
         {
-            bool hayPendientes = await CheckAndUpdatePendingVideosAsync(videos);
+            bool hayPendientes = await CheckPendingStatusesAsync(videos);
             if (!hayPendientes)
             {
                 _statusCheckTimer?.Stop();
