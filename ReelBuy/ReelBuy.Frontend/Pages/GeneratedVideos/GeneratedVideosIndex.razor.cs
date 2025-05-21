@@ -9,7 +9,7 @@ using Microsoft.JSInterop;
 
 namespace ReelBuy.Frontend.Pages.GeneratedVideos;
 
-public partial class GeneratedVideosIndex
+public partial class GeneratedVideosIndex : IDisposable
 {
     private User? user;
     private List<GeneratedVideo>? GeneratedVideos { get; set; }
@@ -19,6 +19,7 @@ public partial class GeneratedVideosIndex
     private bool loading;
     private const string baseUrl = "api/VideoGeneration";
     private string infoFormat = "{first_item}-{last_item} => {all_items}";
+    private System.Timers.Timer? _statusCheckTimer;
 
     [Inject] private IStringLocalizer<Literals> Localizer { get; set; } = null!;
     [Inject] private IRepository Repository { get; set; } = null!;
@@ -32,6 +33,12 @@ public partial class GeneratedVideosIndex
     protected override async Task OnInitializedAsync()
     {
         await LoadTotalRecordsAsync();
+    }
+
+    public void Dispose()
+    {
+        _statusCheckTimer?.Stop();
+        _statusCheckTimer?.Dispose();
     }
 
     private async Task LoadTotalRecordsAsync()
@@ -85,7 +92,11 @@ public partial class GeneratedVideosIndex
 
         _ = Task.Run(async () =>
         {
-            await CheckPendingStatusesAsync(videos);
+            bool hayPendientes = await CheckPendingStatusesAsync(videos);
+            if (hayPendientes)
+            {
+                StartTimerVerify(videos);
+            }
         });
 
         return new TableData<GeneratedVideo>
@@ -118,36 +129,40 @@ public partial class GeneratedVideosIndex
         }
     }
 
-    private async Task CheckPendingStatusesAsync(List<GeneratedVideo> videos)
+    private async Task<bool> CheckPendingStatusesAsync(List<GeneratedVideo> videos)
     {
+        bool stillHasPending = false;
+
         var pendingVideos = videos.Where(v => v.StatusDetail == "pending").ToList();
 
         foreach (var video in pendingVideos)
         {
             try
             {
-                VideoStatusUpdateRequest dtoVideoStatusUpdate = new()
-                {
-                    VideoId = video.VideoId
-                };
+                VideoStatusUpdateRequest dtoVideoStatusUpdate = new() { VideoId = video.VideoId };
                 var responseHttp = await Repository.PostAsync<VideoStatusUpdateRequest, GeneratedVideo>($"{baseUrl}/check-status", dtoVideoStatusUpdate);
 
                 if (responseHttp.Error)
                 {
                     var messageError = await responseHttp.GetErrorMessageAsync();
                     Snackbar.Add(messageError!, Severity.Error);
-                    return;
+                    continue;
                 }
 
-                GeneratedVideo generatedVideo = responseHttp.Response;
+                var updatedVideo = responseHttp.Response;
 
                 // Si el estado cambió, actualízalo
-                if (generatedVideo.StatusDetail != video.StatusDetail)
+                if (updatedVideo.StatusDetail != video.StatusDetail)
                 {
-                    video.StatusDetail = generatedVideo.StatusDetail;
-                    video.VideoUrl = generatedVideo.VideoUrl;
+                    video.StatusDetail = updatedVideo.StatusDetail;
+                    video.VideoUrl = updatedVideo.VideoUrl;
                     // Forzar renderizado en el hilo principal
                     await InvokeAsync(StateHasChanged);
+                }
+
+                if (video.StatusDetail == "pending")
+                {
+                    stillHasPending = true;
                 }
             }
             catch (Exception e)
@@ -155,6 +170,27 @@ public partial class GeneratedVideosIndex
                 Console.WriteLine("Error actualizando el estado ", e);
             }
         }
+        return stillHasPending;
+    }
+
+    private void StartTimerVerify(List<GeneratedVideo> videos)
+    {
+        _statusCheckTimer?.Stop();
+        _statusCheckTimer?.Dispose();
+
+        _statusCheckTimer = new System.Timers.Timer(30000); // 30 segundos
+        _statusCheckTimer.Elapsed += async (s, e) =>
+        {
+            bool hayPendientes = await CheckAndUpdatePendingVideosAsync(videos);
+            if (!hayPendientes)
+            {
+                _statusCheckTimer?.Stop();
+                _statusCheckTimer?.Dispose();
+            }
+        };
+
+        _statusCheckTimer.AutoReset = true;
+        _statusCheckTimer.Start();
     }
 
     private async Task HandleExpiredDownloadAsync(GeneratedVideo video)
