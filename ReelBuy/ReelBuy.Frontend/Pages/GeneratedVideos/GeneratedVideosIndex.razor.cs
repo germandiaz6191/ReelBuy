@@ -197,7 +197,7 @@ public partial class GeneratedVideosIndex : IDisposable
     {
         try
         {
-            var response = await Repository.GetAsync<string>($"{baseUrl}/{video.VideoId}");
+            var response = await Repository.GetAsync<string>($"{baseUrl}/video/{video.VideoId}");
 
             if (!response.Error && !string.IsNullOrWhiteSpace(response.Response))
             {

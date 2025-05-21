@@ -17,9 +17,13 @@ namespace ReelBuy.Backend.Services;
 public interface IVideoGenerationService
 {
     Task<GeneratedVideo> GenerateVideoAsync(string userId, string prompt, string voice = "Charlie", string theme = "Hormozi_1", string language = "Spanish");
+
     Task<GeneratedVideo> UpdateVideosStatusAsync(long videoId);
+
     Task<ActionResponse<IEnumerable<GeneratedVideo>>> GetAsync(PaginationDTO pagination);
+
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
+
     Task<ActionResponse<string>> GetVideoUrlAsync(long videoId);
 }
 
@@ -65,7 +69,8 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
         //response.EnsureSuccessStatusCode();
         //var responseContent = await response.Content.ReadAsStringAsync();
         //var responseData = JsonSerializer.Deserialize<VideoResponse>(responseContent);
-        var responseData = new VideoResponse{
+        var responseData = new VideoResponse
+        {
             VideoId = 396150314229
         };
 
@@ -99,32 +104,31 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
 
         var video = await _context.GeneratedVideos.FirstOrDefaultAsync(v => v.VideoId == videoId);
 
-            try
-            {
-                var response = await client.GetAsync($"https://viralapi.vadoo.tv/api/get_video_url?id={video.VideoId}");
-                var responseContent = await response.Content.ReadAsStringAsync();
+        try
+        {
+            var response = await client.GetAsync($"https://viralapi.vadoo.tv/api/get_video_url?id={video.VideoId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogError("Error checking video status: {ResponseContent}", responseContent);
-                    video.StatusDetail = $"Error checking status: {responseContent}";
-                }
-                var statusResponse = JsonSerializer.Deserialize<VadooVideoStatusResponse>(responseContent);
-                video.StatusDetail = statusResponse!.Status;
-                video.VideoUrl = statusResponse.Url;
-                
-            }
-            catch (Exception ex)
+            if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError(ex, "Error updating video status for video {VideoId}", video.Id);
-                video.StatusDetail = "error";
-                video.StatusDetail = $"Error: {ex.Message}";
+                _logger.LogError("Error checking video status: {ResponseContent}", responseContent);
+                video.StatusDetail = $"Error checking status: {responseContent}";
             }
-        
+            var statusResponse = JsonSerializer.Deserialize<VadooVideoStatusResponse>(responseContent);
+            video.StatusDetail = statusResponse!.Status;
+            video.VideoUrl = statusResponse.Url;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating video status for video {VideoId}", video.Id);
+            video.StatusDetail = "error";
+            video.StatusDetail = $"Error: {ex.Message}";
+        }
 
         await _context.SaveChangesAsync();
         return video;
     }
+
     public async Task<ActionResponse<string>> GetVideoUrlAsync(long videoId)
     {
         var client = _httpClientFactory.CreateClient("VadooAPI");
@@ -146,7 +150,6 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
             var statusResponse = JsonSerializer.Deserialize<VadooVideoStatusResponse>(responseContent);
             video.StatusDetail = statusResponse!.Status;
             video.VideoUrl = statusResponse.Url;
-
         }
         catch (Exception ex)
         {
@@ -155,10 +158,15 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
             video.StatusDetail = $"Error: {ex.Message}";
         }
 
-
         await _context.SaveChangesAsync();
-        return video?.VideoUrl ?? string.Empty;
+
+        return new ActionResponse<string>
+        {
+            WasSuccess = true,
+            Result = video?.VideoUrl ?? string.Empty
+        };
     }
+
     public override async Task<ActionResponse<IEnumerable<GeneratedVideo>>> GetAsync(PaginationDTO pagination)
     {
         var queryable = _context.GeneratedVideos
@@ -201,4 +209,4 @@ public class VideoResponse
 {
     [JsonPropertyName("vid")]
     public long VideoId { get; set; }
-} 
+}

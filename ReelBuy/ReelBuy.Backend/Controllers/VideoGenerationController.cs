@@ -32,7 +32,7 @@ public class VideoGenerationController : GenericController<GeneratedVideo>
             var currentUser = await _usersUnitOfWork.GetUserAsync(User.Identity!.Name!);
             pagination.Filter = currentUser.Id;
         }
-        
+
         var response = await _videoGenerationUnitOfWork.GetAsync(pagination);
         if (response.WasSuccess)
         {
@@ -58,15 +58,16 @@ public class VideoGenerationController : GenericController<GeneratedVideo>
         }
         return BadRequest();
     }
-    [HttpGet("{id}")]
+
+    [HttpGet("video/{id}")]
     public async Task<ActionResult<List<GeneratedVideo>>> GetVideoUrlAsync(long id)
     {
-            var response = await _videoGenerationUnitOfWork.GetVideoUrlAsync(id);
-            if (response.WasSuccess)
-            {
-                return Ok(response.Result);
-            }
-            return BadRequest();
+        var response = await _videoGenerationUnitOfWork.GetVideoUrlAsync(id);
+        if (response.WasSuccess)
+        {
+            return Ok(response.Result);
+        }
+        return BadRequest();
     }
 
     [HttpPost("generate")]
