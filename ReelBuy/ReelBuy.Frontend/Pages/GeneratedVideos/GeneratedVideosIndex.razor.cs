@@ -6,6 +6,7 @@ using Microsoft.Extensions.Localization;
 using MudBlazor;
 using ReelBuy.Shared.DTOs;
 using Microsoft.JSInterop;
+using System;
 
 namespace ReelBuy.Frontend.Pages.GeneratedVideos;
 
@@ -197,12 +198,13 @@ public partial class GeneratedVideosIndex : IDisposable
     {
         try
         {
-            var response = await Repository.GetAsync<string>($"{baseUrl}/video/{video.VideoId}");
+            var response = await Repository.GetAsync<GeneratedVideo>($"{baseUrl}/video/{video.VideoId}");
 
-            if (!response.Error && !string.IsNullOrWhiteSpace(response.Response))
+            if (response != null && !response.Error)
             {
-                // Opcional: actualiza la propiedad local
-                video.VideoUrl = response.Response;
+                Console.WriteLine(response.Response);
+                var model = response.Response;
+                video.VideoUrl = model?.VideoUrl;
 
                 // Forzar descarga desde JavaScript
                 await JS.InvokeVoidAsync("downloadFileFromUrl", video.VideoUrl, $"video_{video.Id}.mp4");
@@ -212,8 +214,9 @@ public partial class GeneratedVideosIndex : IDisposable
                 Snackbar.Add(Localizer["No se pudo obtener el video."], Severity.Error);
             }
         }
-        catch
+        catch (Exception e)
         {
+            Console.WriteLine($"ERRO: {e}");
             Snackbar.Add(Localizer["Error al intentar descargar el video."], Severity.Error);
         }
     }

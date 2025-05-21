@@ -11,6 +11,8 @@ using ReelBuy.Backend.Helpers;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Responses;
 using ReelBuy.Backend.Repositories.Implementations;
+using Microsoft.Identity.Client;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 namespace ReelBuy.Backend.Services;
 
@@ -24,7 +26,7 @@ public interface IVideoGenerationService
 
     Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination);
 
-    Task<ActionResponse<string>> GetVideoUrlAsync(long videoId);
+    Task<ActionResponse<GeneratedVideo>> GetVideoUrlAsync(long videoId);
 }
 
 public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoGenerationService
@@ -129,7 +131,7 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
         return video;
     }
 
-    public async Task<ActionResponse<string>> GetVideoUrlAsync(long videoId)
+    public async Task<ActionResponse<GeneratedVideo>> GetVideoUrlAsync(long videoId)
     {
         var client = _httpClientFactory.CreateClient("VadooAPI");
         var apiKey = _configuration["VadooAPI:ApiKey"];
@@ -158,12 +160,17 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
             video.StatusDetail = $"Error: {ex.Message}";
         }
 
-        await _context.SaveChangesAsync();
+        var generatedVideo = new GeneratedVideo
+        {
+            VideoId = video.VideoId,
+            VideoUrl = video.VideoUrl,
+            StatusDetail = video.StatusDetail
+        };
 
-        return new ActionResponse<string>
+        return new ActionResponse<GeneratedVideo>
         {
             WasSuccess = true,
-            Result = video?.VideoUrl ?? string.Empty
+            Result = generatedVideo
         };
     }
 

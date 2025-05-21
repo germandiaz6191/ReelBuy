@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Identity.Client;
-using ReelBuy.Backend.Repositories.Implementations;
-using ReelBuy.Backend.Repositories.Interfaces;
-using ReelBuy.Backend.Services;
+﻿using ReelBuy.Backend.Services;
 using ReelBuy.Backend.UnitsOfWork.Interfaces;
 using ReelBuy.Shared.DTOs;
 using ReelBuy.Shared.Entities;
@@ -26,5 +22,6 @@ public class VideoGenerationUnitOfWork : IVideoGenerationUnitOfWork
     public async Task<ActionResponse<IEnumerable<GeneratedVideo>>> GetAsync(PaginationDTO pagination) => await _videoGenerationService.GetAsync(pagination);
 
     public async Task<ActionResponse<int>> GetTotalRecordsAsync(PaginationDTO pagination) => await _videoGenerationService.GetTotalRecordsAsync(pagination);
-    public async Task<ActionResponse<string>> GetVideoUrlAsync(long videoId) => await _videoGenerationService.GetVideoUrlAsync(videoId);
+
+    public async Task<ActionResponse<GeneratedVideo>> GetVideoUrlAsync(long videoId) => await _videoGenerationService.GetVideoUrlAsync(videoId);
 }

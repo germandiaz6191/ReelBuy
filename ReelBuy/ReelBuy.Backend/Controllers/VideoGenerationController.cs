@@ -60,7 +60,7 @@ public class VideoGenerationController : GenericController<GeneratedVideo>
     }
 
     [HttpGet("video/{id}")]
-    public async Task<ActionResult<List<GeneratedVideo>>> GetVideoUrlAsync(long id)
+    public async Task<ActionResult<GeneratedVideo>> GetVideoUrlAsync(long id)
     {
         var response = await _videoGenerationUnitOfWork.GetVideoUrlAsync(id);
         if (response.WasSuccess)
