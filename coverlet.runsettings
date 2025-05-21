@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="XPlat Code Coverage">
+        <Configuration>
+          <Format>cobertura,html</Format>
+          <Exclude>
+            [ReelBuy.Shared].DTOs.,
+            [ReelBuy.Shared].Entities.,
+            [ReelBuy.Backend].Data.,
+            [ReelBuy.Backend].Migrations.,
+            [ReelBuy.Backend].Helpers.,
+            [ReelBuy.Backend].Helpers.FileStorage.,
+            [Orders.Backend].Helpers.FileStorage.,
+            [Program]*,
+            [ReelBuy.Backend].Controllers.BeanController.,
+            [ReelBuy.Backend].Controllers.ReputationController.,
+            [ReelBuy.Backend].Data.SeedDb],
+            [ReelBuy.Backend].Helpers.ImageController.,
+            [ReelBuy.Backend].Helpers.MailHelper.,
+            [ReelBuy.Backend].Migrations.AddInitialProducts.,
+            [ReelBuy.Backend].Migrations.AddSubscriptionToProduct.,
+            [ReelBuy.Backend].Migrations.Initialize.,
+            [ReelBuy.Backend].Migrations.ChangeFavoriteUserToMobile.,
+            [ReelBuy.Backend].Migrations.DataContentModeSnapshot.,
+            [ReelBuy.Backend].Migrations.DataRegistrationComments.,
+            [ReelBuy.Backend].Migrations.GenerateIdentityFavorites.,
+            [ReelBuy.Backend].Migrations.InitialCreate.
+          </Exclude>
+          <ExcludeByFile>
+            **/*DTOs.cs,
+            **/*Entities.cs,
+            **/*Program.cs,
+            */ReelBuy.Backend/Helpers//.cs,
+            */ReelBuy.Backend/Migrations//.cs
+          </ExcludeByFile>
+          <ExcludeByAttribute>
+            System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute
+          </ExcludeByAttribute>
+          <IncludeTestAssembly>false</IncludeTestAssembly>
+          <SingleHit>false</SingleHit>
+          <UseSourceLink>true</UseSourceLink>
+          <SkipAutoProps>true</SkipAutoProps>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

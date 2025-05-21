@@ -121,7 +121,7 @@ public partial class StatusesIndex
     {
         var parameters = new DialogParameters
             {
-                { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Status"], status.Name) }
+                { "Message", string.Format(Localizer["DeleteConfirm"], status.Name) }
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
         var dialog = DialogService.Show<ConfirmDialog>(Localizer["Confirmation"], parameters, options);

@@ -355,7 +355,7 @@ public partial class ProductForm
     {
         var reel = new Reel
         {
-            Name = product.Name + "-reel-product",
+            Name = product.Name,
             ProductId = product!.Id,
             ReelUri = reelUrl!
         };

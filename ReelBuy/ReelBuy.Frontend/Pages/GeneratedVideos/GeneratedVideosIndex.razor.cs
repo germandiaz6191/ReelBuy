@@ -121,7 +121,7 @@ public partial class GeneratedVideosIndex : IDisposable
             { "IsEdit", isEdit }
         };
 
-        var dialog = await DialogService.ShowAsync<GeneratedVideoForm>("Generated Video", parameters);
+        var dialog = await DialogService.ShowAsync<GeneratedVideoForm>(@Localizer["GeneratedVideos"], parameters);
         var result = await dialog.Result;
 
         if (!result.Canceled)
@@ -152,7 +152,7 @@ public partial class GeneratedVideosIndex : IDisposable
 
                 var updatedVideo = responseHttp.Response;
 
-                // Si el estado cambió, actualízalo
+                // Si el estado cambiï¿½, actualï¿½zalo
                 if (updatedVideo.StatusDetail != video.StatusDetail)
                 {
                     video.StatusDetail = updatedVideo.StatusDetail;

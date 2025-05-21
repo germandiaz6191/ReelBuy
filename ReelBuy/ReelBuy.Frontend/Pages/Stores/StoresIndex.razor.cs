@@ -195,7 +195,7 @@ public partial class StoresIndex
         
         var parameters = new DialogParameters
             {
-                { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Store"], store.Name) }
+                { "Message", string.Format(Localizer["DeleteConfirm"], store.Name) }
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
         var dialog = DialogService.Show<ConfirmDialog>(Localizer["Confirmation"], parameters, options);

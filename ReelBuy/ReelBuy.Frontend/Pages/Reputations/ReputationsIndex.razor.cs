@@ -119,7 +119,7 @@ public partial class ReputationsIndex
     {
         var parameters = new DialogParameters
             {
-                { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Reputation"], reputation.Name) }
+                { "Message", string.Format(Localizer["DeleteConfirm"], reputation.Name) }
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
         var dialog = DialogService.Show<ConfirmDialog>(Localizer["Confirmation"], parameters, options);

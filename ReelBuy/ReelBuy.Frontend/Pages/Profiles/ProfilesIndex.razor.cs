@@ -121,7 +121,7 @@ public partial class ProfilesIndex
     {
         var parameters = new DialogParameters
             {
-                { "Message", string.Format(Localizer["DeleteConfirm"], Localizer["Profile"], profile.Name) }
+                { "Message", string.Format(Localizer["DeleteConfirm"], profile.Name) }
             };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
         var dialog = DialogService.Show<ConfirmDialog>(Localizer["Confirmation"], parameters, options);

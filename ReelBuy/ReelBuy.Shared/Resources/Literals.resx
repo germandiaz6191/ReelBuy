@@ -178,7 +178,7 @@
     <value>Error</value>
   </data>
   <data name="DeleteConfirm" xml:space="preserve">
-    <value>Are you sure to delete the {0}: {1}?</value>
+    <value>Are you sure to delete {0}?</value>
   </data>
   <data name="RecordDeletedOk" xml:space="preserve">
     <value>Record deleted successfully.</value>
@@ -331,7 +331,7 @@
     <value>If you log out, you will need to log back in to access your account.</value>
   </data>
   <data name="EditUserProfile" xml:space="preserve">
-    <value>Edit User Profile</value>
+    <value>Edit user profile</value>
   </data>
   <data name="ERR007" xml:space="preserve">
     <value>You have exceeded the maximum number of attempts, your account is blocked, please try again in 5 minutes.</value>
@@ -548,5 +548,47 @@
   </data>
   <data name="ProdutsPending" xml:space="preserve">
     <value>Pending product approve</value>
+  </data>
+   <data name="GeneratedVideos" xml:space="preserve">
+    <value>Generated videos</value>
+  </data>
+   <data name="ConfirmDeleteInline" xml:space="preserve">
+    <value>Confirm delete comment</value>
+  </data>
+   <data name="Confirmation" xml:space="preserve">
+    <value>Confirmation</value>
+  </data>
+  <data name="Favorites" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="Favorite" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="ChangesSaved" xml:space="preserve">
+    <value>Changes saved</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="RecordUpdateOk" xml:space="preserve">
+    <value>The registry updated successfully</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>Voice</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Created At</value>
+  </data>
+   <data name="VideoID" xml:space="preserve">
+    <value>Video Id</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
   </data>
 </root>

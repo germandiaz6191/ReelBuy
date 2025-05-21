@@ -178,13 +178,13 @@
     <value>Error</value>
   </data>
   <data name="DeleteConfirm" xml:space="preserve">
-    <value>¿Está seguro de borrar el {0}: {1}?</value>
+    <value>¿Está seguro de eliminar {0}?</value>
   </data>
   <data name="RecordDeletedOk" xml:space="preserve">
     <value>Registro borrado con éxito.</value>
   </data>
   <data name="Yes" xml:space="preserve">
-    <value>Si</value>
+    <value>Sí</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Nombre</value>
@@ -331,7 +331,7 @@
     <value>Si cierras sesión, tendrás que volver a iniciar sesión para acceder a tu cuenta.</value>
   </data>
   <data name="EditUserProfile" xml:space="preserve">
-    <value>Editar Perfil de Usuario</value>
+    <value>Editar perfil de usuario</value>
   </data>
   <data name="ERR007" xml:space="preserve">
     <value>Ha superado el máximo número de intentos, su cuenta está bloqueada, intente de nuevo en 5 minutos.</value>
@@ -493,7 +493,7 @@
     <value>Confirmar redirección</value>
   </data>
   <data name="DialigFirstButton" xml:space="preserve">
-    <value>Confirm</value>
+    <value>Confirmar</value>
   </data>
   <data name="DialigSecondButton" xml:space="preserve">
     <value>Cancelar</value>
@@ -548,5 +548,47 @@
   </data>
   <data name="ProdutsPending" xml:space="preserve">
     <value>Productos pendientes por aprobar</value>
+  </data>
+ <data name="GeneratedVideos" xml:space="preserve">
+    <value>Generar videos</value>
+  </data>
+ <data name="ConfirmDeleteInline" xml:space="preserve">
+    <value>Confirmar eliminacion del comentario</value>
+  </data>
+ <data name="Confirmation" xml:space="preserve">
+    <value>Confirmación</value>
+  </data>
+   <data name="Favorites" xml:space="preserve">
+    <value>Favoritos</value>
+  </data>
+  <data name="Favorite" xml:space="preserve">
+    <value>Favorito</value>
+  </data>
+  <data name="ChangesSaved" xml:space="preserve">
+    <value>Cambios guardados</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="RecordUpdateOk" xml:space="preserve">
+    <value>El registro actualizado con éxito</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>Voz</value>
+  </data>
+  <data name="Theme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Lenguaje</value>
+  </data>
+  <data name="CreatedAt" xml:space="preserve">
+    <value>Creando en</value>
+  </data>
+  <data name="VideoID" xml:space="preserve">
+    <value>Id video </value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Generar</value>
   </data>
 </root>
