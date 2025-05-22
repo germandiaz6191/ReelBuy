@@ -3,7 +3,7 @@ INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Mercado Libre',N'www.me
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Amazon',N'www.amazon.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Temu',N'www.temu.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Shain',N'www.shain.com')
-INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Falabella',N'www.falabella.com')
+INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Falabella',N'www.falabella.com.co')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Flamingo',N'www.flamingo.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Alkomprar',N'www.alkomprar.com')
 INSERT [dbo].[Marketplaces] ([Name], [Domain]) VALUES (N'Alkosto',N'www.alkosto.com')

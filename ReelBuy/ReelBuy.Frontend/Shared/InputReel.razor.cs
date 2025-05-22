@@ -17,7 +17,7 @@ public partial class InputReel
     [Parameter] public string? ReelBase64 { get; set; }
     [Parameter] public EventCallback<string> ReelSelected { get; set; }
 
-    const long MaxFileSize = 10 * 1024 * 1024; // 10 MB
+    const long MaxFileSize = 100 * 1024 * 1024; // 10 MB
 
     protected override void OnParametersSet()
     {
