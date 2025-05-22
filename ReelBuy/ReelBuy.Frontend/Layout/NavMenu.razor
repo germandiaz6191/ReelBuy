@@ -23,6 +23,10 @@
             <MudDivider />
             <MudNavLink Href="/products/pending" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.LibraryAddCheck">@Localizer["ProdutsPending"]</MudNavLink>
             <MudDivider />
+            <MudNavLink Href="/generated-videos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.VideoLibrary">@Localizer["GeneratedVideos"]</MudNavLink>
+            <MudDivider />
+            <MudNavLink Href="/reels" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Videocam">@Localizer["Reels"]</MudNavLink>
+            <MudDivider />
         </Authorized>
     </AuthorizeView>
     <AuthorizeView Roles="Seller">
@@ -31,6 +35,8 @@
             <MudNavLink Href="/stores" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Storefront">@Localizer["Stores"]</MudNavLink>
             <MudDivider />
             <MudNavLink Href="/products" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Sell">@Localizer["Products"]</MudNavLink>
+            <MudDivider />
+            <MudNavLink Href="/generated-videos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.VideoLibrary">@Localizer["GeneratedVideos"]</MudNavLink>
             <MudDivider />
         </Authorized>
     </AuthorizeView>
@@ -41,9 +47,5 @@
             <MudDivider />
         </Authorized>
     </AuthorizeView>
-    <MudDivider />
-    <MudNavLink Href="/reels" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Videocam">@Localizer["Reels"]</MudNavLink>
-    <MudDivider />
-    <MudNavLink Href="/generated-videos" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.VideoLibrary">@Localizer["GeneratedVideos"]</MudNavLink>
     <MudDivider />
 </MudNavMenu>
