@@ -153,10 +153,11 @@ public partial class GeneratedVideosIndex : IDisposable
                 var updatedVideo = responseHttp.Response;
 
                 // Si el estado cambi�, actual�zalo
-                if (updatedVideo.StatusDetail != video.StatusDetail)
+                if (updatedVideo?.StatusDetail != video.StatusDetail)
                 {
-                    video.StatusDetail = updatedVideo.StatusDetail;
-                    video.VideoUrl = updatedVideo.VideoUrl;
+
+                    video.StatusDetail = updatedVideo?.StatusDetail;
+                    video.VideoUrl = updatedVideo?.VideoUrl;
                     // Forzar renderizado en el hilo principal
                     await InvokeAsync(StateHasChanged);
                 }
@@ -168,7 +169,7 @@ public partial class GeneratedVideosIndex : IDisposable
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error actualizando el estado ", e);
+                Console.WriteLine($"Error actualizando el estado en CheckPendingStatusesAsync : {e}");
             }
         }
         return stillHasPending;
@@ -202,7 +203,6 @@ public partial class GeneratedVideosIndex : IDisposable
 
             if (response != null && !response.Error)
             {
-                Console.WriteLine(response.Response);
                 var model = response.Response;
                 video.VideoUrl = model?.VideoUrl;
 
