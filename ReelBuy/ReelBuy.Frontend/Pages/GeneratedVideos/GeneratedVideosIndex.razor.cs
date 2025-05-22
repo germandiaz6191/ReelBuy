@@ -134,7 +134,7 @@ public partial class GeneratedVideosIndex : IDisposable
     {
         bool stillHasPending = false;
 
-        var pendingVideos = videos.Where(v => v.StatusDetail == "pending").ToList();
+        var pendingVideos = videos.Where(v => v.StatusDetail == "in_progress").ToList();
 
         foreach (var video in pendingVideos)
         {
@@ -161,7 +161,7 @@ public partial class GeneratedVideosIndex : IDisposable
                     await InvokeAsync(StateHasChanged);
                 }
 
-                if (video.StatusDetail == "pending")
+                if (video.StatusDetail == "in_progress")
                 {
                     stillHasPending = true;
                 }

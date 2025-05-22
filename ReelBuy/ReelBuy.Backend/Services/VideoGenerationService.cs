@@ -67,15 +67,16 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
             Encoding.UTF8,
             "application/json");
 
-        //var response = await _httpClient.PostAsync(_apiUrl, content);
-        //response.EnsureSuccessStatusCode();
-        //var responseContent = await response.Content.ReadAsStringAsync();
-        //var responseData = JsonSerializer.Deserialize<VideoResponse>(responseContent);
-        var responseData = new VideoResponse
-        {
-            VideoId = 396150314229
-        };
+        var client = _httpClientFactory.CreateClient("VadooAPI");
+        var apiKey = _configuration["VadooAPI:ApiKey"];
+        client.DefaultRequestHeaders.Add("X-API-KEY", apiKey);
 
+        var response = await client.PostAsync($"https://viralapi.vadoo.tv/api/generate_video", content);
+        response.EnsureSuccessStatusCode();
+
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var responseData = JsonSerializer.Deserialize<VideoResponse>(responseContent);
+   
         if (responseData?.VideoId == null)
         {
             throw new Exception("Failed to generate video: Invalid response from API");
@@ -89,7 +90,7 @@ public class VideoGenerationService : GenericRepository<GeneratedVideo>, IVideoG
             Voice = voice,
             Theme = theme,
             Language = language,
-            StatusDetail = "pending"
+            StatusDetail = "in_progress"
         };
 
         _context.GeneratedVideos.Add(generatedVideo);
